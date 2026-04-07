@@ -1,6 +1,6 @@
 // Meta
-:project-name: Projektthema (X0)
-:project-system-name: Software-Name
+:project-name: SubscriptionGuard (E1)
+:project-system-name: subscription-guard
 // Settings:
 :toc:
 :toc-title: Inhaltsverzeichnis
