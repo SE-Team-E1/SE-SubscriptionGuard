@@ -155,7 +155,6 @@ _Eine User Story gilt als fertig, wenn:_
 Commit-Kategorien (siehe https://www.conventionalcommits.org/en/v1.0.0/[conventional commits]):
 
 image::conventional-categories.png[]
-
 == Teamvereinbarungen
 
 _Diese Vereinbarungen haben wir gemeinsam getroffen:_
