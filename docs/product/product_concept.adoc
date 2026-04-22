@@ -24,6 +24,8 @@ Lösung zu nennen. 3–5 Sätze genügen._
 Lernräume. Die Suche nach freien Plätzen kostet täglich wertvolle Zeit und führt zu Frust.
 Eine einfache, mobil nutzbare Lösung fehlt bisher."]
 
+Nahezu jeder Mensch sieht sich heutzutage zunehmend mit Abomodellen konfrontiert. Doch Abonnements erschweren, besonders in der Menge, ein bewusstes, transparentes und verantwortungsvolles Finanzmanagement, da sie von Natur aus unübersichtlich und unberechnbar sind. Es fehlt der Überblick und spezialisierte, einfach gehaltene Tools.
+
 == Produktvision
 
 _Die Produktvision beschreibt in einem oder wenigen Sätzen den angestrebten Zielzustand.
@@ -33,13 +35,7 @@ nicht wesentlich verändern._
 === Visions-Statement
 
 ____
-Für [Zielgruppe],
-die [Problem oder Bedarf],
-ist [Produktname]
-ein [Produktkategorie],
-das [zentraler Nutzen].
-Im Gegensatz zu [Alternative]
-bietet unser Produkt [entscheidender Unterschied].
+Für Studenten die zunehmend mit Abomodellen konfrontiert sind, ist SubscriptionGuard eine App, die ihnen hilft ihre Abonnements schnell zu überblicken und komfortabel zu verwalten. Im Gegensatz zur Konkurrenz bietet unser Produkt eine überschaubare und leicht zu bedienende UX.
 ____
 
 //Beispiel: Für Studierende der HTWD, die zu wenig Zeit in der Mittagspause zum Essen haben, ist Flying Burger ein  Lieferdient für Burger, der per Drohne liefert. Anders als landgestützte Lieferdienste kann unser Produkt durchs Fenster direkt in den Hörsaal liefern.
@@ -61,11 +57,11 @@ _Wer sind die Zielgruppen, und wie positioniert sich das Produkt im Vergleich zu
 |===
 | Zielgruppe | Beschreibung
 
-| [z. B. Studierende]
-| [Kurzbeschreibung: Wer sind sie? Was ist ihre Motivation?]
+| Studierende
+| Technisch erfahren mit einer Vielzahl digitaler Abonnements in einer vergleichsweise schwierigen? finanziellen Situation.
 
-| [z. B. Lehrende]
-| [Kurzbeschreibung]
+| junge Leute allgemein
+| 20 - 50 Jahre mit vielen Abonnements
 
 | [Weitere Zielgruppe]
 | [Kurzbeschreibung]
@@ -103,25 +99,40 @@ erklärt, warum bestimmte Entscheidungen getroffen wurden.
 |===
 | Stakeholder | Rolle / Interesse | Erwartungen an das Produkt | Einfluss
 
-| [z. B. Hochschulverwaltung]
-| [Betreiber der Infrastruktur; will Raumauslastung optimieren]
-| [Auslastungsberichte, DSGVO-Konformität]
+| Studenten
+| Hauptnutzer; wollen Abo-Konditionen überblicken und optimieren
+a| 
+* Übersichtlichkeit, einfache Bediernung, möglichst wenig manuelle Arbeit
+* Einfaches Abo-Management
+* Hilfe Abo-Nutzen zu bewerten
+* geräteunabhängige Benutzung
+* vertrauliche Behandlung von Finanzdaten
 | Hoch
 
-| [z. B. Studierende]
-| [Hauptnutzer:innen; wollen schnell freie Plätze finden]
-| [Einfache Bedienung, mobiler Zugang]
+| Entwicklerteam
+| Betreiben, Warten, Anpassen der Plattform
+a|
+* Umsetzung im Rahmen der Fähigkeiten
+* Komplexität gering halten
+* möglichst viele Bibliotheken verwenden
+* rechtlichen Aufwand gering halten
+| Hoch
+
+| Anbieter von Abomodellen
+| Bieten Gestaltungsgrundlage für Erfassung, Kündigung der Abos
+| Einhalten bestimmter Formate zur integrierten Erfassung / Kündigung
 | Mittel
 
-| [z. B. Lehrende]
-| [Nutzen Räume für Lehrveranstaltungen; wollen Konflikte vermeiden]
-| [Sichtbarkeit ihrer Buchungen]
-| Mittel
+| Werbekunden / Partner   
+| Anbieter Abomodelle, Produkt fördert Geschäftsinteressen
+| Interesse an Werbung auf der Platform, Bewerben von ihren günstigeren Abos, Nutzer ergänzende Abos vorschlagen
+| niedrig
 
-| [Weiterer Stakeholder]
-| [Beschreibung]
-| [Erwartungen]
-| [Hoch / Mittel / Niedrig]
+[.not-really]
+| Produktgegner
+| Anbieter Abomodelle, Produkt bedrohen Geschäftsinteressen
+| Das Produkt offenbart ggf. Geschäftsmodelle die auf der Unübersichtlichkeit von Abomodellen beruhen
+| niedrig
 |===
 
 == Hauptfunktionen
