@@ -24,7 +24,7 @@ Ziel der Arbeit an diesem Projekt ist für uns Grundprinzipien der agilen Softwa
 | Rolle | Person | Verantwortlichkeiten
 
 | Product Owner
-| Dat 
+| Juan 
 | Kontakt zu Stakeholdern, Priorisierung des Backlogs
 
 | Scrum Master
@@ -33,14 +33,14 @@ Ziel der Arbeit an diesem Projekt ist für uns Grundprinzipien der agilen Softwa
 
 | Tech Lead footnote:[optionale Rolle, aber empfohlen, um technische Entscheidungen zu koordinieren]
 | Johannes 
-| Einarbeiten in Technologien, Endgültige Entscheidung bei technischen Fragen
+| Einarbeiten in Technologien, Endgültige Entscheidung bei technischen Fragen, Dokumentation technischer Entscheidung
 
 | Entwickler:innen
 | Alle
-| 
+| Technische Umsetzung der Anforderungen
 
 | Stakeholder (Hauptansprechpartner)
-| Juan
+| 
 | 
 |===
 
@@ -52,29 +52,29 @@ Ziel der Arbeit an diesem Projekt ist für uns Grundprinzipien der agilen Softwa
 | Ereignis | Wann | Dauer | Moderation
 
 | Standup (Daily / Weekly)
-| wöchentlich wahrscheinlich mittwochs ab 19 Uhr
-| [z. B. 15 min]
-| [Rolle / Person]
+| wöchentlich mittwochs ab 19 Uhr
+| 15 min
+| Scrum Meeting
 
 | Sprint Planning
-| [z. B. montags, Sprintstart]
-| [z. B. 2 h]
-| [Rolle / Person]
+| freitags nach Retro
+| 90 min
+| Scrum Master / Product Owner
 
 | Sprint Review
-| [z. B. freitags, Sprintende]
-| [z. B. 1 h]
-| [Rolle / Person]
+| freitags
+| 45 min
+| Product Owner
 
 | Retrospektive
-| [z. B. freitags, nach Review]
-| [z. B. 1 h]
-| [Rolle / Person]
+| freitags nach Review
+| 30 min
+| Scrum Master
 
 | Backlog Refinement
-| [z. B. mittwochs, wöchentlich]
-| [z. B. 1 h]
-| [Rolle / Person]
+| aller 2 Wochen, nach Weekly
+| 60 min
+| Product Owner
 |===
 
 == Kommunikation
@@ -140,7 +140,7 @@ _Eine User Story gilt als fertig, wenn:_
 | Thema | Vereinbarung
 
 | Branching-Strategie
-| Ein main branch; Entwicklung auf Feature-Branches; Merge-Requests + Reviews
+| Ein main branch; Entwicklung auf Feature-Branches (aus Issues erstellen); Merge-Requests + Reviews
 
 | PR-Review-Regeln
 | mind. 1 Approval, kein Merge ohne grüne Pipeline
@@ -149,8 +149,7 @@ _Eine User Story gilt als fertig, wenn:_
 | jedes Teammitglied nach Approval
 
 | Commit-Konventionen
-| (auf englisch) Ticketnummer, Kategorie, aussagekräftige Beschreibung +
-Kategorien: siehe conventional commits ?
+| (auf englisch) Ticketnummer, Kategorie a la conventional commits, aussagekräftige Beschreibung
 |===
 
 == Teamvereinbarungen
@@ -158,6 +157,12 @@ Kategorien: siehe conventional commits ?
 _Diese Vereinbarungen haben wir gemeinsam getroffen:_
 
 . Wir lassen die andere Person ausreden und achten darauf, dass alle zu Wort kommen.
+. Wir treffen exakte Vereinbarungen, stellen sicher das alle auf demselben Stand sind und halten mündliche Absprachen schriftlich fest (Dokumentationen, Chat, ...), insbesondere Terminabsprachen
+
+. Wir verbannen "Alter", "Digga" aus unserem Sprachgebrauch
+. Wichtige Angelegenheiten werden in der Gruppe diskutiert
+. Wir reden nicht über Teammitglieder hinter deren Rücken
+. Bedürfnisse, Erwartungen werden frühzeitig geäußert, respektvoll aufgenommen und spätestens im Retro-Meeting disktutiert und umgesetzt
 . [z. B. Wir gehen respektvoll und offen miteinander um.]
 . [z. B. Wir sprechen Probleme frühzeitig an, anstatt sie zu ignorieren.]
 . [z. B. Fehler sind Lernchancen – wir suchen keine Schuldigen.]
