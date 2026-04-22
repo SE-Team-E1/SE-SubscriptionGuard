@@ -149,8 +149,12 @@ _Eine User Story gilt als fertig, wenn:_
 | jedes Teammitglied nach Approval
 
 | Commit-Konventionen
-| (auf englisch) Ticketnummer, Kategorie a la conventional commits, aussagekräftige Beschreibung
+| (auf englisch) Kategorie: #Ticketnummer, aussagekräftige Beschreibung
 |===
+
+Commit-Kategorien (siehe https://www.conventionalcommits.org/en/v1.0.0/[conventional commits]):
+
+image::conventional-categories.png[]
 
 == Teamvereinbarungen
 
