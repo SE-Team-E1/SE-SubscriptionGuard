@@ -1,55 +1,45 @@
 = Produktkonzept: {project-name}
-Vorname Nachname <email@domain.org>; Vorname2 Nachname2 <email2@domain.org>; Vorname3 Nachname3 <email3@domain.org>
+Jannik Thiele; Niels Wiesner; Quôc Dat Nguyên; Juan Ramiro Groh Fili; Johannes Meinck; Franz Rehschuh; Lennox Schmollny
 {localdatetime}
 include::../_includes/default-attributes.inc.adoc[]
-// Platzhalter für weitere Dokumenten-Attribute
 
+_Dieses Dokument beschreibt das Produkt auf konzeptioneller Ebene — was gebaut wird, warum, für wen, und unter welchen Rahmenbedingungen. Es richtet sich an alle Projektbeteiligten: Stakeholder, Product Owner, Designer und Entwickler:innen._
 
-_Dieses Dokument beschreibt das Produkt auf konzeptioneller Ebene — was gebaut wird, warum, für wen, und unter welchen Rahmenbedingungen. Es richtet sich an alle Projektbeteiligten:
-Stakeholder, Product Owner, Designer und Entwickler:innen._
-
-_Das Dokument ist so aufgebaut, dass es relativ stabil bleibt. Detaillierte UX-Artefakte wie Personas, Nutzerkontext,
-Interaktionsflüsse und Design-Entscheidungen sind im UX-Konzept beschrieben._
+_Das Dokument ist so aufgebaut, dass es relativ stabil bleibt. Detaillierte UX-Artefakte wie Personas, Nutzerkontext, Interaktionsflüsse und Design-Entscheidungen sind im UX-Konzept beschrieben._
 
 ---
 
 == Motivation
 
-_Warum wird dieses Produkt gebaut? Welches Problem existiert heute, und warum ist es relevant?
-Dieser Abschnitt beschreibt den Ausgangszustand und den Handlungsbedarf — ohne bereits eine
-Lösung zu nennen. 3–5 Sätze genügen._
+Nahezu jeder Mensch sieht sich heutzutage zunehmend mit Abomodellen konfrontiert.
+Abomodelle sind von Natur aus unübersichtlich und unberechenbar: wiederkehrende Kosten mit unterschiedlichem Beginn, Iteration, Kündigungsfristen und Überraschungen.
+Abonnements erschweren, besonders in der Menge, ein bewusstes, transparentes und verantwortungsvolles Finanzmanagement.
+Es fehlt eine einheitliche Übersicht, die einem schnell einen Überblick gibt — sodass ein Handlungsbedarf in der eigenen Kostenorganisation schnell getroffen werden kann.
 
-[Hier die Ausgangssituation und den Handlungsbedarf beschreiben. Beispiel:
-„Studierende an der Hochschule haben heute keinen zentralen Überblick über verfügbare
-Lernräume. Die Suche nach freien Plätzen kostet täglich wertvolle Zeit und führt zu Frust.
-Eine einfache, mobil nutzbare Lösung fehlt bisher."]
-
-Nahezu jeder Mensch sieht sich heutzutage zunehmend mit Abomodellen konfrontiert. Doch Abonnements erschweren, besonders in der Menge, ein bewusstes, transparentes und verantwortungsvolles Finanzmanagement, da sie von Natur aus unübersichtlich und unberechnbar sind. Es fehlt der Überblick und spezialisierte, einfach gehaltene Tools.
+Moderne Unternehmen fokussieren sich mehr und mehr auf Abo-Modelle statt Einmalkäufe.
+Sie spekulieren und setzen bewusst auf Unübersichtlichkeit der monatlichen Zahlungen durch Rabattcodes, kostenlose Monate, Jahrestarife und Feature-Vergleichstabellen.
+All das macht das Preis-Leistungs-Verhältnis schwer zu erfassen, und Ausgaben in der Summe schwer vorherzusehen.
 
 == Produktvision
 
-_Die Produktvision beschreibt in einem oder wenigen Sätzen den angestrebten Zielzustand.
-Sie ist inspirierend, prägnant und stabil — sie sollte sich über die gesamte Projektlaufzeit
-nicht wesentlich verändern._
+_Die Produktvision beschreibt in einem oder wenigen Sätzen den angestrebten Zielzustand._
 
 === Visions-Statement
 
 ____
-Für Studenten die zunehmend mit Abomodellen konfrontiert sind, ist SubscriptionGuard eine App, die ihnen hilft ihre Abonnements schnell zu überblicken und komfortabel zu verwalten. Im Gegensatz zur Konkurrenz bietet unser Produkt eine überschaubare und leicht zu bedienende UX.
+Für Studenten, die zunehmend mit Abomodellen konfrontiert sind, ist SubscriptionGuard eine App, die ihnen hilft, ihre Abonnements schnell zu überblicken und komfortabel zu verwalten.
+Im Gegensatz zu Finanzguru bietet unser Produkt eine überschaubare und leicht zu bedienende UX.
 ____
-
-//Beispiel: Für Studierende der HTWD, die zu wenig Zeit in der Mittagspause zum Essen haben, ist Flying Burger ein  Lieferdient für Burger, der per Drohne liefert. Anders als landgestützte Lieferdienste kann unser Produkt durchs Fenster direkt in den Hörsaal liefern.
-
-NOTE: Das Visions-Statement kann im Team mit der „Elevator Pitch"-Methode oder dem „Future Press Release"-Format erarbeitet werden.
 
 === Zielbild
 
-_Optional: Beschreibe in 2–4 Sätzen, wie die Welt mit diesem Produkt aussieht. Was hat sich für die Nutzer:innen verändert?_
-//[Hier das Zielbild beschreiben]
+Für alle Personen, die Abomodelle nutzen, ist SubscriptionGuard eine App/Webapp, um Abomodelle hinzuzufügen oder automatisch einzubinden und in wenigen Übersichten in einem Blick die wichtigsten Informationen zum Verwalten zu erhalten.
 
+Wir bauen eine Abomodel-Übersicht und Vergleichsplattform für Abo-Kunden aller Art.
+Wir managen bestehend wiederkehrende Ausgaben in Abomodellen des Kunden.
+Wir zeigen ihm, was er monatlich zahlt und wofür er es erhält, dabei bewahren wir ihn vor Marketing-Maschen, irreführenden Zahlungskonditionen und Produktfeatures.
 
 == Produktpositionierung
-_Wer sind die Zielgruppen, und wie positioniert sich das Produkt im Vergleich zu bestehenden Alternativen?_
 
 === Zielgruppen
 
@@ -58,17 +48,16 @@ _Wer sind die Zielgruppen, und wie positioniert sich das Produkt im Vergleich zu
 | Zielgruppe | Beschreibung
 
 | Studierende
-| Technisch erfahren mit einer Vielzahl digitaler Abonnements in einer vergleichsweise schwierigen? finanziellen Situation.
+| Technisch erfahren, mit einer Vielzahl digitaler Abonnements (Streaming, Lizenzen, Gym) in einer vergleichsweise schwierigen finanziellen Situation. Verlieren schnell den Überblick über laufende Kosten und Kündigungsfristen.
 
-| junge Leute allgemein
-| 20 - 50 Jahre mit vielen Abonnements
+| Junge Leute allgemein (20–50 Jahre)
+| Viele digitale Abos, fehlendes Verständnis über Gesamtausgaben, verlieren schnell den Überblick. Einschließlich WG-Mitglieder, Freelancer, Familien und technikoffene Personen.
 
-| [Weitere Zielgruppe]
-| [Kurzbeschreibung]
+| Technisch weniger erfahrene Nutzer
+| Ältere oder technikfernere Personen, die Hilfe beim Verwalten digitaler Abos benötigen und eine einfache, geführte Oberfläche brauchen.
 |===
 
-NOTE: Ausführliche Beschreibungen der Nutzenden — Personas, Nutzungskontext,
-typische Aufgaben — sind im link:ux_concept.adoc[UX-Konzept] dokumentiert.
+NOTE: Ausführliche Beschreibungen der Nutzenden — Personas, Nutzungskontext, typische Aufgaben — sind im link:ux_concept.adoc[UX-Konzept] dokumentiert.
 
 === Wettbewerb & Alternativen
 
@@ -76,161 +65,170 @@ typische Aufgaben — sind im link:ux_concept.adoc[UX-Konzept] dokumentiert.
 |===
 | Alternative | Beschreibung | Warum unser Produkt besser passt
 
-| [z. B. E-Mail-Anfrage an Sekretariat]
-| [Wie lösen Nutzer:innen das Problem heute?]
-| [Worin liegt unser Vorteil?]
+| Finanzguru
+| Umfassende Finanz-App mit Abo-Übersicht als Teilfunktion. Verbindet sich mit Bankkonten, analysiert Ausgaben breit.
+| SubscriptionGuard fokussiert sich ausschließlich auf Abos — einfacher, übersichtlicher, kein Bankzugang nötig.
 
-| [z. B. Aushang an schwarzem Brett]
-| [Beschreibung]
-| [Unterschied]
+| Papier / Excel / Notizen
+| Manuelle Führung von Abo-Listen durch den Nutzer selbst.
+| Keine automatische Erkennung, keine Erinnerungen, kein strukturierter Überblick.
 
-| [Weitere Alternative]
-| [Beschreibung]
-| [Unterschied]
+| Kontoauszüge / E-Mails
+| Nutzer versuchen, Abos selbst durch Durchsuchen von Kontoauszügen oder E-Mails nachzuvollziehen.
+| Zeitaufwändig, fehleranfällig, keine proaktiven Hinweise auf Kündigungsfristen.
 |===
 
-
 == Stakeholder
-
-Wer hat Einfluss auf das Produkt oder ein Interesse an dessen Erfolg? Stakeholder formen oft Anforderungen und Rahmenbedingungen — ihre Nennung hier
-erklärt, warum bestimmte Entscheidungen getroffen wurden.
 
 [cols="1,2,2,1", options="header"]
 |===
 | Stakeholder | Rolle / Interesse | Erwartungen an das Produkt | Einfluss
 
-| Studenten
+| Studenten (Nutzer)
 | Hauptnutzer; wollen Abo-Konditionen überblicken und optimieren
-a| 
-* Übersichtlichkeit, einfache Bediernung, möglichst wenig manuelle Arbeit
-* Einfaches Abo-Management
-* Hilfe Abo-Nutzen zu bewerten
-* geräteunabhängige Benutzung
-* vertrauliche Behandlung von Finanzdaten
+a|
+* Übersichtlichkeit, einfache Bedienung
+* Einfachheit bei Management von Abos (automatische Erfassung?)
+* Hilfe bei Vermeidung von Abos (Alternativen, Zusammenfassen, …)
+* Geräteunabhängig
+* Möglichst wenig manuelle Arbeit
+* Vertraulichkeit
 | Hoch
+
+| Anbieter von Abomodellen (Produktgegner)
+| Großteils negatives Interesse, da SubscriptionGuard gegen Geschäftsinteressen arbeitet. Eventuell aber teils offen für Integration (automatische Erfassung).
+| Kündigungsschreiben muss Mindestanforderungen entsprechen.
+| niedrig – mittel
+
+| Anbieter von Abomodellen (Werbekunde/Partner)
+| Positives Interesse an Werbung auf der Plattform, Bewerben günstiger Abos, Nutzer ergänzende Abos vorschlagen.
+| Kündigungsschreiben muss Mindestanforderungen entsprechen.
+| Mittel
+
+| Produktgegner
+| Anbieter Abomodelle, Geschäftsinteressen bedroht von SubscriptionGuard. Menschen, die nicht möchten, dass ihre Überweisungen überwacht werden.
+| Negatives Interesse; keine Bankverbindung gewollt.
+| niedrig
+
+| Werbekunden / Partner
+| Anbieter Abomodelle, SubscriptionGuard fördert Geschäftsinteressen.
+| Interesse an Werbung auf der Plattform, Bewerben von günstigeren Abos, Nutzer ergänzende Abos vorschlagen.
+| niedrig
 
 | Entwicklerteam
 | Betreiben, Warten, Anpassen der Plattform
 a|
-* Umsetzung im Rahmen der Fähigkeiten
+* Im Rahmen unserer Fähigkeiten
 * Komplexität gering halten
-* möglichst viele Bibliotheken verwenden
-* rechtlichen Aufwand gering halten
+* Möglichst viele Bibliotheken verwenden
+* Rechtlichen Aufwand gering halten
 | Hoch
 
-| Anbieter von Abomodellen
-| Bieten Gestaltungsgrundlage für Erfassung, Kündigung der Abos
-| Einhalten bestimmter Formate zur integrierten Erfassung / Kündigung
+| Behörden
+| Einhaltung der Gesetzgebung
+| Einhaltung von Nutzerinteressen/Datenschutz; kein unerlaubtes Weiterleiten von Daten an Dritte; ordnungsgemäße Datenspeicherung (verschlüsselt, …)
+| Hoch
+
+| Zahlungsdienstleister
+| API-Anbindung
+a|
+* Abos automatisch aus Abbuchungen auslesen
+* An API angewiesen
+| (sehr) gering
+
+| Plattformbetreiber von App-Stores
+| Vertriebskanal
+| Erfüllt die Anforderungen der jeweiligen Plattform.
+| gering
+
+| Datenanbieter (z. B. Vergleichsportale)
+| Liefern Preise, Alternativen und Marktinfos
+| —
 | Mittel
-
-| Werbekunden / Partner   
-| Anbieter Abomodelle, Produkt fördert Geschäftsinteressen
-| Interesse an Werbung auf der Platform, Bewerben von ihren günstigeren Abos, Nutzer ergänzende Abos vorschlagen
-| niedrig
-
-[.not-really]
-| Produktgegner
-| Anbieter Abomodelle, Produkt bedrohen Geschäftsinteressen
-| Das Produkt offenbart ggf. Geschäftsmodelle die auf der Unübersichtlichkeit von Abomodellen beruhen
-| niedrig
 |===
 
 == Hauptfunktionen
-
-Welche Kernfunktionen muss das Produkt bieten, um die Produktvision zu erfüllen? Jede Funktion ist direkt auf einen Nutzerbedarf zurückgeführt — nicht als technische Anforderung, sondern als Antwort auf ein Nutzungsproblem.
-
-Diese Hauptfunktionen sollten als Epics im Product Backlog für die Gruppierung von User Stories verwendet werden.
 
 [cols="2,2,1", options="header"]
 |===
 | Nutzerbedarf | Hauptfunktion | Priorität
 
-| Studierende wollen schnell sehen, welche Räume gerade frei sind.
-| Echtzeit-Übersicht freier Lernräume
+| Nutzer wollen schnell sehen, welche Abos sie haben und was sie insgesamt kosten.
+| Einfacher, schneller Überblick über Abos (Liste, Kennzahlen, Detailansicht)
 | Hoch
 
-| Nutzer:innen wollen einen Raum für einen bestimmten Zeitraum reservieren.
-| Raumbuchung mit Zeitfenster
+| Nutzer wollen Abos erfassen, ändern und verwalten — mit möglichst wenig Aufwand.
+| Verwaltung der Abos schnell und direkt in der App (manuelle Erfassung, Änderung, Löschung, Import)
 | Hoch
 
-| Nutzer:innen wollen ihre aktiven Buchungen verwalten.
-| Buchungsübersicht & Stornierung
+| Nutzer wollen unnötige Abos erkennen und reduzieren.
+| Aboanzahl reduzieren (unnötige Abos anzeigen, Warnungen, Schranken setzen)
 | Mittel
 
-| Verwaltung will die Auslastung der Räume analysieren.
-| Auslastungsberichte für Administratoren
-| Niedrig
+| Nutzer wollen Einsparpotenziale entdecken und Abos vergleichen.
+| Personalisierte Einsparpotenziale entdecken (erweiterte Kennzahlen, Abo-Vergleich, Handlungsempfehlungen)
+| Mittel
 
-| [Nutzerbedarf]
-| [Hauptfunktion]
-| [Hoch / Mittel / Niedrig]
+| Nutzer wollen Kündigungsfristen nicht verpassen.
+| Erinnerung an Kündigungsfristen (Benachrichtigungen, Anzeige nahender Fristen)
+| Hoch
+
+| Nutzer wollen Datenhoheit und Transparenz über ihre gespeicherten Daten.
+| Datenhoheit / Datenschutz (Export, lokale Speicherung, Privacydashboard, feinere Berechtigungen)
+| niedrig
 |===
-
-NOTE: Die Reihenfolge entspricht einer ersten groben Priorisierung und wird im Rahmen
-der Backlog-Priorisierung verfeinert.
 
 == Qualitätsziele & Einschränkungen
 
-_Dieser Abschnitt beschreibt, unter welchen Rahmenbedingungen das Produkt entwickelt
-und betrieben wird. Es wird unterschieden zwischen Qualitätszielen (angestrebte
-Eigenschaften) und Einschränkungen (nicht verhandelbare Rahmenbedingungen)._
-
 === Qualitätsziele
-
-_Qualitätsziele sind messbare oder zumindest überprüfbare Eigenschaften, die das
-Produkt erfüllen soll. Sie sollten spezifisch genug sein, um als Testkriterium zu dienen._
-
-NOTE: Dieses Dokument ist die einzige Quelle für Qualitätsziele und Einschränkungen.
-Das link:../technical/architecture.adoc[Architektur]-Dokument referenziert diese Anforderungen und dokumentiert die
-technischen Entscheidungen, die sich daraus ergeben — ohne sie hier zu wiederholen.
 
 [cols="1,3,2", options="header"]
 |===
 | Qualitätsziel | Beschreibung | Messkriterium
 
 | Benutzbarkeit
-| Das Produkt ist ohne Einarbeitung nutzbar.
-| Neue Nutzer:innen finden die Kernfunktion innerhalb von 2 Minuten ohne Hilfe.
+| Das Produkt ist ohne Einarbeitung nutzbar; einfache, übersichtliche Oberfläche.
+| Neue Nutzer:innen finden die Kernfunktion (Abo erfassen) innerhalb von 2 Minuten ohne Hilfe.
 
 | Performance
 | Das Produkt reagiert schnell auf Nutzerinteraktionen.
 | Seitenladezeit unter 2 Sekunden bei normaler Netzwerkverbindung.
 
-| Verfügbarkeit
-| Das Produkt ist während der Hochschulöffnungszeiten zuverlässig erreichbar.
-| Verfügbarkeit ≥ 99 % während Betriebszeiten.
+| Datenschutz & Vertraulichkeit
+| Finanzdaten der Nutzer werden vertraulich behandelt und nicht unbefugt weitergegeben.
+| Daten werden verschlüsselt gespeichert; kein Weitergeben an Dritte ohne explizite Zustimmung; DSGVO-konform.
 
-| [Qualitätsziel]
-| [Beschreibung]
-| [Messkriterium]
+| Geräteunabhängigkeit
+| Das Produkt ist auf verschiedenen Endgeräten nutzbar.
+| Funktioniert auf Smartphone (iOS, Android) und Desktop-Browser ohne Einschränkungen.
+
+| Verfügbarkeit
+| Das Produkt ist zuverlässig erreichbar.
+| Verfügbarkeit ≥ 99 % während Betriebszeiten.
 |===
 
 === Einschränkungen
-
-_Einschränkungen sind Rahmenbedingungen, die nicht verhandelbar sind — technische,
-organisatorische, rechtliche oder zeitliche Vorgaben._
 
 [cols="1,2,1", options="header"]
 |===
 | Einschränkung | Beschreibung | Kategorie
 
-| Betrieb auf Hochschulinfrastruktur
-| Das System muss auf den vorhandenen Servern der Hochschule betrieben werden können.
-| Technisch
-
 | DSGVO-Konformität
-| Personenbezogene Daten dürfen nur gemäß DSGVO verarbeitet und gespeichert werden.
+| Personenbezogene Daten — insbesondere Finanzdaten — dürfen nur gemäß DSGVO verarbeitet und gespeichert werden. Kein unerlaubtes Weiterleiten an Dritte.
 | Rechtlich
 
 | Projektlaufzeit
 | Das Produkt muss innerhalb eines Semesters (ca. 4 Monate) lieferbar sein.
 | Zeitlich
 
-| [Einschränkung]
-| [Beschreibung]
-| [Technisch / Rechtlich / Organisatorisch / Zeitlich]
-|===
+| Komplexität gering halten
+| Die Implementierung soll im Rahmen der Teamfähigkeiten bleiben; möglichst vorhandene Bibliotheken nutzen.
+| Organisatorisch
 
+| Keine Bankverbindung als Pflicht
+| Die automatische Erfassung über Bankkonten ist optional — das Produkt muss auch ohne Bankanbindung vollständig nutzbar sein.
+| Technisch
+|===
 
 == Versionsverlauf
 
@@ -239,12 +237,14 @@ organisatorische, rechtliche oder zeitliche Vorgaben._
 | Version | Datum | Änderung
 
 | 1.0
-| [Datum]
-| Initiale Version nach Kick-off-Workshop
+| Mai 2025
+| Initiale Version nach Kick-off und Stakeholder-Analyse im Miro Board
 
+| 1.1
+| Mai 2025
+| Hauptfunktionen und Qualitätsziele ergänzt auf Basis der User Story Map
 |===
 
 ---
 
-_Dieses Dokument ist bewusst stabil gehalten. Änderungen sollten nur bei wesentlichen
-Richtungsentscheidungen vorgenommen werden und im Versionsverlauf dokumentiert sein._
+_Dieses Dokument ist bewusst stabil gehalten. Änderungen sollten nur bei wesentlichen Richtungsentscheidungen vorgenommen werden und im Versionsverlauf dokumentiert sein._

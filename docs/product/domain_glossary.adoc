@@ -1,132 +1,240 @@
 = Domänenmodell und Glossar: {project-name}
-Vorname Nachname <email@domain.org>; Vorname2 Nachname2 <email2@domain.org>; Vorname3 Nachname3 <email3@domain.org>
+Jannik Thiele; Niels Wiesner; Quôc Dat Nguyên; Juan Ramiro Groh Fili; Johannes Meinck; Franz Rehschuh; Lennox Schmollny
 {localdatetime}
 include::../_includes/default-attributes.inc.adoc[]
-// Platzhalter für weitere Dokumenten-Attribute
 
-_Dieses Dokument beschreibt die wesentlichen fachlichen Begriffe und ihre  Beziehungen untereinander. Es bildet die gemeinsame Sprache des Teams und aller Stakeholder — unabhängig von technischen Umsetzungsentscheidungen.
-Alle Begriffe in User Stories, Personas und Gesprächen mit Stakeholdern sollten hier definiert sein._
+_Dieses Dokument beschreibt die wesentlichen fachlichen Begriffe und ihre Beziehungen untereinander. Es bildet die gemeinsame Sprache des Teams und aller Stakeholder — unabhängig von technischen Umsetzungsentscheidungen. Alle Begriffe in User Stories, Personas und Gesprächen mit Stakeholdern sollten hier definiert sein._
 
 ---
 
 == Glossar
 
-Alle *fachlichen* Begriffe und Abkürzungen werden hier alphabetisch definiert.
-Ziel ist eine einheitliche Sprache im gesamten Team.
-Technische Implementierungsdetails gehören nicht hierher!
-
 [cols="1,3,2", options="header"]
 |===
 | Begriff / Abkürzung | Definition | Synonyme / Abgrenzungen
 
-| Bestellung
-| Eine vom Nutzer ausgelöste Anforderung, ein oder mehrere Produkte zu erwerben.
-  Eine Bestellung durchläuft verschiedene Status (offen, bezahlt, versendet, abgeschlossen).
-| Auftrag; nicht zu verwechseln mit „Warenkorb" (noch nicht abgeschlossen)
+| Abo
+| Eine wiederkehrende Zahlungsvereinbarung zwischen einem Nutzer und einem Anbieter, bei der der Nutzer in regelmäßigen Abständen (monatlich, jährlich, etc.) einen Betrag zahlt und dafür Zugang zu einem Dienst oder Produkt erhält.
+| Abonnement, Subscription; nicht zu verwechseln mit Einmalkauf
+
+| Abomodell
+| Das Geschäftsmodell eines Anbieters, das auf wiederkehrenden Zahlungen statt Einmalkäufen basiert. Abomodelle umfassen Streaming-Dienste, Gym-Mitgliedschaften, Software-Lizenzen, Cloud-Speicher u. ä.
+| Subscription Model; abzugrenzen von Einzelkauf/Lizenz
+
+| Zahlungsbetrag
+| Der Betrag, den ein Nutzer pro Zahlungsintervall für ein Abo zahlt.
+| Beitrag, Preis, Kosten; abzugrenzen vom Gesamtbetrag (Summe aller Abos)
+
+| Zahlungsintervall
+| Der Zeitraum zwischen zwei aufeinanderfolgenden Abbuchungen eines Abos. Typische Werte: monatlich, vierteljährlich, jährlich.
+| Zahlungsrhythmus, Abrechnungszeitraum; Synonym: Zahlungsabstand
+
+| Zahlungsabstand
+| Synonym für Zahlungsintervall — der Abstand in Tagen/Monaten/Jahren zwischen zwei Zahlungen.
+| Zahlungsintervall
+
+| Kündigungsfrist
+| Der Zeitraum, innerhalb dessen ein Abo vor dem nächsten Verlängerungstermin gekündigt werden muss, um eine weitere Abbuchung zu vermeiden.
+| Notice Period; abzugrenzen vom Abschlussdatum oder der Laufzeit
+
+| Automatische Verlängerung
+| Eine Eigenschaft von Abos, bei der das Abonnement nach Ablauf der Laufzeit automatisch verlängert wird, sofern es nicht fristgerecht gekündigt wurde.
+| Auto-Renewal; Gegenteil: manuelle Verlängerung
+
+| Abschlussdatum
+| Das Datum, an dem ein Abo ursprünglich abgeschlossen bzw. begonnen wurde.
+| Startdatum, Vertragsbeginn; abzugrenzen vom Verlängerungsdatum
+
+| Vertragspartner
+| Das Unternehmen oder die Organisation, mit der der Nutzer das Abo-Vertragsverhältnis eingegangen ist (z. B. Netflix, Spotify, Gym XY).
+| Anbieter, Dienstleister
+
+| Abo-Details
+| Die Gesamtheit der relevanten Informationen zu einem Abo: Produktname, Vertragspartner, Zahlungsbetrag, Zahlungsintervall, Abschlussdatum, Kündigungsfrist, Kategorie, Notizen.
+| Abo-Informationen, Abo-Konditionen, Abo-Eigenschaften
+
+| Kategorie
+| Eine vom Nutzer zugewiesene oder automatisch erkannte Klassifikation eines Abos (z. B. Streaming, Sport, Musik, Software, privat, geschäftlich).
+| Tag, Label; ermöglicht Gruppierung und Filterung von Abos
+
+| Übersicht
+| Die Hauptansicht der App, die alle erfassten Abos strukturiert darstellt — mit Filtermöglichkeiten, Sortierung und Kennzahlen.
+| Dashboard, Abo-Liste; abzugrenzen von der Detailansicht eines einzelnen Abos
+
+| Kennzahl
+| Eine aggregierte Information über alle oder eine Gruppe von Abos, z. B. Gesamtkosten pro Monat, Anzahl aktiver Abos, Abos mit nahender Kündigungsfrist.
+| Metrik, KPI
+
+| Gesamtkosten
+| Die Summe aller aktiven Abo-Zahlungsbeträge pro Monat (oder anderes Intervall), ggf. gefiltert nach Kategorie.
+| Monatliche Gesamtausgaben; abzugrenzen von Jahreskosten (Hochrechnung)
+
+| Erinnerung
+| Eine vom System ausgelöste Benachrichtigung, die den Nutzer auf eine nahende Kündigungsfrist oder Verlängerung hinweist.
+| Notification, Alert; Gegenteil: keine Benachrichtigung
+
+| Kündigung
+| Der Vorgang, mit dem ein Nutzer ein Abo beendet. Kann direkt über die App (Weiterleitung zur Anbieter-Website, Generierung eines Kündigungsschreibens) oder manuell erfolgen.
+| Abokündigung, Vertragskündigung
+
+| Kündigungsschreiben
+| Ein formal korrektes Schreiben zur Kündigung eines Abos, das von der App generiert und dem Nutzer bereitgestellt wird.
+| Kündigungsbrief; muss Mindestanforderungen des Anbieters entsprechen
 
 | Nutzer
-| Eine Person, die das System aktiv verwendet. Nutzer müssen registriert und eingeloggt
-  sein, um Bestellungen aufzugeben.
+| Eine Person, die SubscriptionGuard aktiv verwendet, um ihre Abos zu verwalten. Nutzer können registriert oder (je nach Implementierung) auch als Gast agieren.
 | Anwender, Benutzer; abzugrenzen von „Administrator"
 
-| Produkt
-| Ein im System angebotener Artikel, der bestellt werden kann. Ein Produkt hat eine
-  Bezeichnung, einen Preis und eine Verfügbarkeit.
-| Artikel, Ware
+| Erfassung
+| Das Hinzufügen eines Abos in SubscriptionGuard — entweder manuell durch den Nutzer oder automatisch durch Erkennung (aus E-Mails, Kontoauszügen).
+| Anlegen, Registrieren; abzugrenzen von Bearbeiten/Ändern
 
-| [Begriff]
-| [Präzise, fachliche Definition in 1–3 Sätzen]
-| [Synonyme oder Abgrenzungen zu ähnlichen Begriffen]
+| Manuelle Erfassung
+| Der Nutzer gibt die Abo-Details selbst ein (Name, Betrag, Intervall, Datum, etc.).
+| Abzugrenzen von automatischer Erfassung
 
-| [Begriff]
-| [Präzise, fachliche Definition in 1–3 Sätzen]
-| [Synonyme oder Abgrenzungen zu ähnlichen Begriffen]
+| Automatische Erfassung
+| Das System erkennt Abos selbstständig aus verknüpften Quellen (z. B. E-Mail-Postfach, Bankdaten) und schlägt sie dem Nutzer zur Bestätigung vor.
+| Auto-Detection, automatische Erkennung; setzt Nutzererlaubnis voraus
+
+| Import
+| Das Einlesen von Abo-Daten aus einem externen Format (z. B. CSV, Excel) in SubscriptionGuard.
+| Datenimport; abzugrenzen von automatischer Erfassung
+
+| Export
+| Das Ausgeben von Abo-Daten aus SubscriptionGuard in ein externes Format.
+| Datenexport; relevant für Datenhoheit und Datenschutz
+
+| Preisänderung
+| Eine Änderung des Zahlungsbetrags eines Abos durch den Anbieter, die dem Nutzer als Warnung angezeigt werden soll.
+| Preisanpassung, Preiserhöhung
+
+| Einsparpotenzial
+| Eine von der App identifizierte Möglichkeit, Abokosten zu reduzieren — z. B. durch Kündigung ungenutzter Abos, Wechsel zu günstigeren Alternativen oder Zusammenlegung ähnlicher Abos.
+| Sparpotenzial, Optimierungspotenzial
+
+| Handlungsempfehlung
+| Ein konkreter Vorschlag der App an den Nutzer, wie er seine Abo-Situation verbessern kann (z. B. „Dieses Abo nutzt du seit 3 Monaten nicht — kündigen?").
+| Empfehlung, Suggestion
+
+| Datenschutz / Datenhoheit
+| Das Recht und die Möglichkeit des Nutzers, zu kontrollieren, welche seiner Daten wie gespeichert und verwendet werden. Umfasst Einstellungen zur Datenweitergabe, lokale Speicherung und Export.
+| Privacy, DSGVO-Konformität
 |===
 
+---
 
 == Domänenmodell
 
-_Das Domänenmodell zeigt die wichtigsten fachlichen Konzepte (Entitäten) und ihre Beziehungen.
-Es beschreibt die Realität des Problemraums, nicht die Datenbankstruktur._
+_Das Domänenmodell zeigt die wichtigsten fachlichen Konzepte und ihre Beziehungen. Es beschreibt die Realität des Problemraums, nicht die Datenbankstruktur._
 
 === Diagramm
-
-//Fügen Sie hier ein Diagramm ein — entweder als eingebettetes PlantUML oder als exportiertes Bild.
 
 [plantuml, domain-model, svg]
 ....
 @startuml
-' Beispiel — bitte durch das echte Domänenmodell ersetzen
+skinparam monochrome true
+skinparam defaultFontSize 12
 
 entity Nutzer {
   Name
   E-Mail
 }
 
-entity Bestellung {
-  Bestellnummer
-  Datum
-  Status
+entity Abo {
+  Produktname
+  Zahlungsbetrag
+  Zahlungsintervall
+  Abschlussdatum
+  Kündigungsfrist
+  AutomatischeVerlängerung
 }
 
-entity Produkt {
+entity Vertragspartner {
+  Name
+  Kündigungsweg
+}
+
+entity Kategorie {
   Bezeichnung
-  Preis
 }
 
-Nutzer "1" --> "0..*" Bestellung : gibt auf
-Bestellung "1" --> "1..*" Produkt : enthält
+entity Erinnerung {
+  Datum
+  Typ
+}
+
+entity Kennzahl {
+  GesamtkostenProMonat
+  AnzahlAktiveAbos
+}
+
+Nutzer "1" --> "0..*" Abo : verwaltet
+Abo "0..*" --> "1" Vertragspartner : hat
+Abo "0..*" --> "0..1" Kategorie : gehört zu
+Abo "1" --> "0..*" Erinnerung : löst aus
+Nutzer "1" --> "1" Kennzahl : sieht
 
 @enduml
 ....
 
-NOTE: Das Domänenmodell wird im Laufe des Projekts weiterentwickelt.
-Änderungen sollten immer gemeinsam im Team besprochen und hier nachgepflegt werden.
-
 === Beschreibung der Entitäten
-
-Kurze Erläuterung zu den im Modell enthaltenen Entitäten.
 
 [cols="1,3", options="header"]
 |===
 | Entität | Beschreibung
 
 | Nutzer
-| [Beschreibung der Entität und ihrer Rolle im System]
+| Die Person, die SubscriptionGuard verwendet. Verwaltet eine Liste von Abos und sieht aggregierte Kennzahlen.
 
-| Bestellung
-| [Beschreibung der Entität und ihrer Rolle im System]
+| Abo
+| Die zentrale Entität: ein wiederkehrendes Abonnement mit allen relevanten Details (Betrag, Intervall, Frist etc.).
 
-| Produkt
-| [Beschreibung der Entität und ihrer Rolle im System]
+| Vertragspartner
+| Das Unternehmen oder der Dienst, bei dem das Abo besteht (z. B. Netflix, Spotify). Hat einen definierten Kündigungsweg.
 
-| [Weitere Entität]
-| [Beschreibung]
+| Kategorie
+| Eine Klassifikation für Abos, die Filterung und Gruppierung ermöglicht (z. B. Streaming, Sport, Software).
+
+| Erinnerung
+| Eine termingebundene Benachrichtigung, die auf eine nahende Kündigungsfrist oder Verlängerung hinweist.
+
+| Kennzahl
+| Aggregierte Auswertung aller Abos eines Nutzers — z. B. Gesamtkosten pro Monat, Anzahl aktiver Abos.
 |===
 
 === Beschreibung der Beziehungen
-
-Beschreibung der wichtigsten Beziehungen zwischen den Entitäten, sofern diese besondere Kardinalitäten haben oder aus anderen Gründen erklärungsbedürftig sind.
 
 [cols="1,1,1,3", options="header"]
 |===
 | Von | Zu | Kardinalität | Bedeutung
 
 | Nutzer
-| Bestellung
+| Abo
 | 1 zu 0..*
-| Ein Nutzer kann keine oder mehrere Bestellungen aufgeben.
+| Ein Nutzer kann kein oder mehrere Abos verwalten.
 
-| Bestellung
-| Produkt
-| 1 zu 1..*
-| Eine Bestellung enthält mindestens ein Produkt.
+| Abo
+| Vertragspartner
+| 0..* zu 1
+| Jedes Abo gehört zu genau einem Vertragspartner.
 
-| [Entität]
-| [Entität]
-| [z. B. 0..* zu 1]
-| [Beschreibung der Beziehung in natürlicher Sprache]
+| Abo
+| Kategorie
+| 0..* zu 0..1
+| Ein Abo kann einer Kategorie zugeordnet sein (optional).
+
+| Abo
+| Erinnerung
+| 1 zu 0..*
+| Aus einem Abo können mehrere Erinnerungen (Kündigungsfrist, Verlängerung) entstehen.
+
+| Nutzer
+| Kennzahl
+| 1 zu 1
+| Ein Nutzer sieht eine aggregierte Kennzahl-Übersicht über alle seine Abos.
 |===
 
-_Dieses Dokument wird kontinuierlich gepflegt. Änderungen an Fachbegriffen oder Beziehungen
-müssen hier nachgezogen werden, bevor sie in User Stories oder Code einfließen._
+---
+
+_Dieses Dokument wird kontinuierlich gepflegt. Änderungen an Fachbegriffen oder Beziehungen müssen hier nachgezogen werden, bevor sie in User Stories oder Code einfließen._
