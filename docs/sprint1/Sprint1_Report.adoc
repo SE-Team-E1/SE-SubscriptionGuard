@@ -1,0 +1,196 @@
+= Sprint-1-Report: Produktkonzept und agile Arbeitsweise
+
+// Bitte fügen Sie hier die Informationen zu Ihrem Team, Projekt, Datum und Repository ein.
+Team:: E1
+Projektname:: SubscriptionGuard
+Datum:: 06.05.2026
+Repository-Link:: https://github.com/SE-Team-E1/SE-SubscriptionGuard
+
+====
+Dieser Report soll auf maximal einer Seite zeigen, wie Ihr Team in Sprint 1 gearbeitet hat,
+welche Praktiken Sie angewendet haben, welche Artefakte entstanden sind und was Sie daraus gelernt haben.
+
+Der Report ist kein Tätigkeitsprotokoll. Beschreiben Sie nicht nur, _was_ Sie gemacht haben,
+sondern vor allem, _warum_ Sie es gemacht haben und was sich dadurch verbessert oder verändert hat.
+====
+
+== 1. Sprintziel und zentrale Fragestellung
+
+Formulieren Sie Ihr Sprintziel in 1–2 Sätzen. Leitfragen:
+
+* Welches Produktproblem oder Nutzerbedürfnis wollte Ihr Team in diesem Sprint besser verstehen?
+* Welche zentrale Unsicherheit sollte Sprint 1 reduzieren?
+* Warum ist Ihr Produktkonzept nach diesem Sprint besser begründet als vorher?
+
+[cols="1,3", options="header"]
+|===
+| Kriterium | Ihre Antwort
+
+| Sprintziel
+a| 
+Das Ziel des ersten Sprints war es für uns die Zielgruppe, sowie deren Probleme zu erkennen. Aufbauend darauf können wir herausfinden welcher Lösungsansatz der Zielgruppe einen Mehrwert liefern kann.  Unsere Erkenntnisse können wir durch Feedback im Sprint-Review zu validieren. 
+
+* Probleme der Nutzer erkennen und durch Feedback validieren
+* Warum braucht es das Produkt?
+* Addressiert Lösungsansatz die Bedürfnisse? 
+* Grobe Priorisierung ableiten
+
+| Zentrale Unsicherheit / Annahme
+a|
+* Was ist das Hauptproblem der Nutzer? 
+* Was brauchen Nutzer eigentlich?
+* Wer sind die Nutzer überhaupt?
+* Hilft den Nutzern unser Lösungsansatz?
+|===
+
+
+== 2. Erwartete Praktiken in Sprint 1
+
+Wählen Sie 3–5 Praktiken aus, die für Ihren Sprint besonders relevant waren.
+Beziehen Sie sich bevorzugt auf Praktiken, die in den Hinweisen für Sprint 1 beschrieben werden. Mögliche Praktiken:
+
+* Produktvision formulieren
+* Problem und Zielgruppe eingrenzen
+* Stakeholder identifizieren
+* Personas oder Nutzergruppen beschreiben
+* Nutzerziele formulieren
+* Epics und User Stories ableiten
+* Product Backlog initial strukturieren und priorisieren
+* Akzeptanzkriterien für ausgewählte User Stories formulieren
+* User Stories zerlegen oder verfeinern
+* Wireframes oder Low-Fidelity-Prototypen erstellen
+* Feedback zum Produktkonzept einholen
+* Feedback auswerten und Artefakte anpassen
+* Qualitätsanforderungen und Randbedingungen erfassen
+* ethische Risiken, Missbrauchsszenarien oder Ausschlussrisiken reflektieren
+* Rollen, Zusammenarbeit oder Arbeitsvereinbarungen im Team klären
+
+[cols="1,2,2,2", options="header"]
+|===
+| Praktik
+| Konkrete Anwendung in unserem Sprint
+| Nachweis / Artefakt (Link einfügen)
+| Nutzen, Erkenntnis oder Anpassung
+
+| Zielgruppe präzisieren
+a| 
+* initiales Brainstorming
+* Erarbeiten von Personas mit konkreten Zielen, Erwartungen und Anforderungen
+* Nutzerziele formulieren
+| Produktkonzept
+| Nützlich für Hereinversetzen in Nutzerperspektive, Grundlage Problemableitung, Priorisierung
+
+| Probleme der Zielgruppe eingrenzen
+| Brainstorming, Ausgangssituation erfassen, Präzisieren einer Produktvision
+| Miro
+| Aus Problemen Notwendigkeit eines Produkts und Lösungsansätze ableiten
+
+| Epics und User Stories ableiten
+| Ableitung mittels User Flow und User Story Maps; Diskussion im Team
+| User Story Maps, Product Backlog
+| Nutzerzentrierung, Grundlage für Funktionen des Produkts (aus Nutzerbedürfnissen ableiten)
+
+| Vorbereitung und Durchführung des Sprint-Review
+| Herausarbeiten der wichtigsten Bestandteile unseres Produktkonzepts; Wichtige Fragen klären im Gespräch und mittels Fragebogen
+| leitfaden vortrag, fragebogen ergebnisse, review protokoll
+| Nutzer bekommen strukturierten Eindruck, Validieren der Sprint-Ergebnisse -> Grundlage für gesamtes Produkt, Anpassung der Priorisierung
+
+| Organisation des Teams
+| Rollen, Zusammenarbeit oder Arbeitsvereinbarungen im Team klären
+| Team Charta
+| Regelmäßigigkeit, zunehmende Effizienz, Grundlage für erfolgreiche Projektarbeit
+|===
+
+
+== 3. Wichtigste Lernergebnisse aus Sprint 1
+
+Beschreiben Sie 2–3 zentrale Erkenntnisse aus Sprint 1. Leitfragen:
+
+* Was hat Ihr Team über Nutzer, Problem, Kontext oder Produktidee gelernt?
+* Welche Annahme wurde bestätigt, widerlegt oder präzisiert?
+* Welche Rückmeldung hatte den größten Einfluss auf Ihr Produktkonzept?
+
+[cols="1,3", options="header"]
+|===
+| Kriterium | Ihre Antwort
+
+| Teamorganisation
+| Organisation des Teams, Terminabsprachen schwieriger als gedacht
+
+| Persona-Priorität
+| Datenschutz-Bedenken, kontrolle, transparenz für alle Feedbackgeber relevant höhere Priorität als gedacht
+
+| Erkenntnis 3
+| Überblick über Abos als höchste Priorität hat sich bestätigt
+|===
+ 
+== 4. Änderungen am Produktkonzept
+
+Beschreiben Sie konkret anhand von drei Beispielen, was sich durch Ihre Arbeit und Ihr Feedback verändert hat.
+
+[cols="2,2,2", options="header"]
+|===
+| Ursprüngliche Annahme / Idee
+| Neue Erkenntnis
+| Anpassung am Produktkonzept oder Backlog
+
+| Otto > Maxi > Thomas
+| Otto > Thomas > Maxi
+| Priorisierung
+
+| 
+| 
+| 
+
+| 
+| 
+| 
+|===
+
+
+== 5. Qualität, Randbedingungen und Verantwortung
+
+Beschreiben Sie kurz, welche nicht-funktionalen Anforderungen, Randbedingungen oder ethischen Aspekte Sie identifiziert haben. Leitfragen:
+
+* Welche Qualitätsanforderungen sind für Ihr Produkt besonders wichtig?
+* Welche technischen, organisatorischen, rechtlichen oder fachlichen Randbedingungen gibt es?
+* Welche möglichen Schäden, Missbrauchsszenarien oder Ausschlussrisiken haben Sie erkannt?
+
+
+[cols="1,3", options="header"]
+|===
+| Kriterium | Ihre Antwort
+
+| Qualitätsanforderungen
+| Benutzbarikeit Einarbeitung, Bedienbarkeit gute UX/UI, ohne Account nutzbar
+
+| Randbedingungen
+| Datenschutz, Projektlaufzeit, Barrierefreiheit
+
+| Ethische Aspekte / Risiken
+| 
+|===
+
+
+== 6. Anpassung der Arbeitsweise für Sprint 2
+
+Beschreiben Sie, was Ihr Team im nächsten Sprint beibehalten, ändern oder gezielt verbessern will. Leitfragen:
+
+* Welche Arbeitsweise hat gut funktioniert?
+* Was hat Ihre Zusammenarbeit behindert?
+* Was wollen Sie in Sprint 2 konkret anders machen?
+* Welche offene Frage soll Sprint 2 beantworten?
+
+[cols="1,3", options="header"]
+|===
+| Kriterium | Ihre Antwort
+
+| Beibehalten
+| Asynchrone Recherche, synchrones Vergleich, präzisieren für Planungsphase
+
+| Ändern / verbessern
+| Engagement, Proaktivität
+
+| Offene Frage für Sprint 2
+| 
+|===
