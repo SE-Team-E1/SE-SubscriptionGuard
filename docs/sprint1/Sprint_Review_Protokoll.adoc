@@ -1,0 +1,77 @@
+= Kurzprotokoll für ein Sprint-Review
+
+// Kurzer Kontext zur Einordnung des Reviews.
+Team:: E1 - SubscriptionGuard
+Sprint:: 1
+Datum:: 04.05.2026
+
+// Das Sprint-Ziel soll in einem Satz benannt werden.
+// Es beschreibt, was im Sprint erreicht oder validiert werden sollte.
+
+== Sprint-Ziel
+* Ziel: Es ist klar, warum es sich lohnt, dieses Produkt zu bauen, für wen, und unter welchen wichtigen Rahmenbedingungen.
+* Status: Erreicht
+
+// Hier nur die wichtigsten Ergebnisse des Reviews festhalten.
+// "Artefakte" können z. B. ein Produktinkrement, Wireframes, Architekturentwürfe, Modelle, Produktvision 
+// oder andere überprüfte Ergebnisse sein.
+== Gezeigte Ergebnisse
+* Gezeigte Artefakte:
+** Zielgruppe und deren Hauptprobleme
+** Produktvisions-Statement
+** Kernpersonas: 
+*** Otto Normal, 
+*** Thomas der Skeptische, 
+*** Maximilian der Fortschrittliche
+** Nutzungskontext
+*** Abo-Anzahl
+*** Wie häufig Vergessen von Kündigung?
+*** In welcher Situation / an welchem Ort wird die App genutzt?
+** Qualitätsanforderungen
+** Wireframes
+
+* Links zu Nachweisen:
+
+// Feedback möglichst knapp und konkret dokumentieren.
+// Positiv = was überzeugt hat
+// Bedenken = was problematisch, unklar oder riskant erschien
+// Offene Fragen = was noch geklärt werden muss
+== Feedback
+* Positiv:
+** Hauptprobleme gut erfasst:
+*** Fehlender Überblick über aktive Abos
+*** Verpassen von Kündigungsfristen
+*** regelmäßiges Zahlen von unnötigen Beiträgen
+** treffende Produktvision (außer des explliziten Vergleichs zu Finanzguru)
+** treffende Einschätzung der wichtigsten Personas
+*** Jede Persona traf auf mind. einen Feedbackgeber zu
+*** Thomas der Skeptische stößt auf positive Resonanz, da transparente Datennutzung evtl ausschlaggebendes Argument für SubscriptionGuard
+*** Abgrenzung Maximilian und Otto ist Notwendigkeit von Analysen
+** treffende Auswahl an Qualitätsanforderungen
+** Nutzung ohne Account
+** erste Wireframes decken notwendige Funktionalität ab
+* Bedenken:
+** evtl. zu ambitionierte Anforderungen
+*** Geräteunabhängigkeit im Rahmen der Projektarbeit erreichbar?
+*** Mehrsprachigkeit viel Aufwand und tendenziell nicht benötigt. Umsetzbar und notwendig?
+* Offene Fragen:
+** Wie kann sich SubscriptionGuard von der Konkurrenz, insbesondere Finanzguru, abgrenzen?
+** Wie relevant ist eine automatische Erfassung von Abos?
+
+// Nur die wichtigsten Entscheidungen und Zielkonflikte aufnehmen.
+// Beispiele für Trade-off: schnellere Umsetzung vs. saubere Architektur oder besonders ausgefallene Features vs. solide Umsetzung von Basisfunktionen
+== Entscheidungen
+* Zentrale Entscheidung(en):
+* Wichtige Trade-offs:
+
+// Konkrete nächste Schritte notieren.
+// Fokus = worauf sich das Team im nächsten Sprint besonders konzentrieren will
+== Nächste Schritte
+* Folgeaktionen:
+* Fokus für den nächsten Sprint:
+
+// Was haben wir gelernt? 
+== Reflexion
+- Wichtigste Erkenntnis:  
+- Größte Überraschung:
+** Verpassen von Kündigungsfristen war nicht das überwiegende Hauptproblem

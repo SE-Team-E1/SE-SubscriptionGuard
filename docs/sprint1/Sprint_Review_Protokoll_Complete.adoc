@@ -1,0 +1,328 @@
+= Stakeholder-Gespräch-Protokoll: SubscriptionGuard
+Juan Ramiro Groh Fili
+{localdatetime}
+:toc:
+:toc-title: Inhaltsverzeichnis
+:toclevels: 2
+:sectnums:
+:icons: font
+:experimental:
+
+// ============================================================
+//  LEGENDE
+//  🎤  = Was DU sagst (Moderatorenteil — nur für dich)
+//  👥  = Was die STAKEHOLDER sehen / bekommen
+// ============================================================
+
+---
+
+[abstract]
+== Zeitplan 🎤
+
+[cols="1,2,1", options="header"]
+|===
+| Block | Inhalt | Dauer
+
+| Eröffnung | Begrüßung, Ziel des Gesprächs | 2 min
+| Block 1 | Ausgangszustand & Problemstellung | 5 min
+| Block 2 | Produktvision | 3 min
+| Block 3 | Zielgruppe & Personas | 8 min
+| Block 4 | Nutzungskontext | 5 min
+| Block 5 | Qualitätsanforderungen | 5 min
+| Block 6 | Wireframes | 8 min
+| Block 7 | Umfrage-Formular | 5 min
+| Abschluss | Dank, nächste Schritte | 2 min
+| *Gesamt* | | *~43 Minuten*
+|===
+
+
+---
+
+== Block 1 — Ausgangszustand & Problemstellung
+
+
+=== 👥 Fragen an die Stakeholder
+*Was zeigst du:* Das Problem-Brainstorming aus dem Miro-Board — Cluster: „zahlen regelmäßig unnötige Beiträge", „verpassen Kündigungsfristen", „haben keinen Überblick".
+
+- Haben wir die *Hauptprobleme richtig erfasst*?
+** Thani: 
+*** Hauptprobleme gut erfasst; 
+*** bezahlte bereits unnötig, weil sie die Kündigung verpasste
+** Armando: 
+*** Hauptprobleme gut erfasst; 
+*** ist gespannt, wie wir uns von Finanzguru abgrenzen
+- Fehlen aus eurer Sicht *wesentliche Aspekte*?
+** keine Anmerkungen zu fehlenden Problemaspekte
+
+---
+
+== Block 2 — Produktvision
+
+=== 🎤 Moderatorennotizen
+
+*Was zeigst du:* Den Produktvisions-Frame im Miro-Board mit dem finalen Vision Statement.
+
+=== 👥 Visions-Statement
+
+[quote]
+____
+Für Studenten, die zunehmend mit Abomodellen konfrontiert sind, ist *SubscriptionGuard* eine App, die ihnen hilft, ihre Abonnements schnell zu überblicken und komfortabel zu verwalten.
+Im Gegensatz zu Finanzguru bietet unser Produkt eine *überschaubare und leicht zu bedienende UX*.
+____
+
+=== 👥 Fragen an die Stakeholder
+
+- Fühlt ihr euch als Zielgruppe *davon angesprochen*?
+** Max:
+*** Fühlt sich angesprochen, Vision trifft Kernaspekte
+** Nathan:
+*** Vergleich Finanzguru trifft vermutlich nicht zu
+- Trifft das die *Essenz des Produkts*?
+
+---
+
+== Block 3 — Zielgruppe & Personas
+
+=== 🎤 Moderatorennotizen
+
+*Was zeigst du:* Die Persona-Tabelle aus Frame 3 im Miro-Board.
+
+
+=== 👥 Unsere drei Kernpersonas
+
+[cols="1,2,2,1", options="header"]
+|===
+| Persona | Fokus | Kernfrustration | Priorität
+
+| *Otto Normal*
+| Einfachheit, Überblick, Verwaltung
+| Vergisst Abos; ändernde Kosten fallen nicht auf
+| ⭐ 9
+
+| *Thomas der Skeptische*
+| Datenschutz & Transparenz
+| Bauchschmerzen bei digitalen Finanzdiensten; wer hat meine Daten?
+| 7
+
+| *Maximilian der Fortschrittliche*
+| Bestmögliche Optimierung
+| Fehlende Analysen; bisher alles manuell erfassen
+| 7
+|===
+
+=== 👥 Fragen an die Stakeholder
+
+- Welche Persona trifft am ehesten auf *euch oder euer Umfeld* zu?
+** Nathan:
+*** 50/50 Maximilian/Otto
+*** Einschätzung der Personas passt gut
+*** Nutzerscope gut getroffen
+** Armando:
+*** Thomas der Skeptische
+*** kommt auch ohne Abo-App gut klar, ist datenschutztechnisch vorsichtig
+*** interessiert sich jedoch für eine Lösung die diese sensitive Daten transparent und konfigurierbar behandelt
+** Max:
+*** Otto x Thomas
+*** pro Thomas der Skeptische: Datennutzung sollte man selbst bestimmen können
+** Thani:
+*** komplett Otto
+*** vergisst öfters Abos
+- Warum *nicht die anderen*?
+** Thani:
+*** Analysen des Maximilian Fortschritt sind egal
+- Worauf sollten wir unseren *Hauptfokus* legen?
+
+---
+
+== Block 4 — Nutzungskontext
+
+=== 🎤 Moderatorennotizen
+
+*Was zeigst du:* Die vorbereiteten Fragen — direkt als Gesprächsrunde, kein Folienwechsel nötig.
+
+
+=== 👥 Fragen an die Stakeholder
+
+. *Wie viele aktive Abos* habt ihr ungefähr gerade?
+** Thani: 5
+** Armando: 10 (mit Verträgen)
+** Max: 5
+** Nathan: 5
+. Habt ihr schon mal ein Abo *vergessen zu kündigen* — was ist passiert?
+** Thani:
+*** nutzt häufig Probeabos und vergisst sie rechtzeitig zu kündigen
+*** 2 Wochen Testzeit gefolgt von einem ganzen Jahr Abo
+*** musste Apple anschreiben um Vertrag zu stornieren
+*** Geld gabs zurück, aber umständlich
+** Armando:
+*** vergisst Kündigungen eher nicht
+*** Verträge auch Abo?
+** Max:
+*** hat noch nie Kündigung vergessen
+*** ihm fehlt die Übersicht
+** Nathan:
+*** hat noch kein Abo vergessen
+*** Otto Normal trifft daher nicht gut auf ihn zu
+. Welches *Gerät* nutzt ihr primär für Finanzen — Smartphone, Laptop, oder beides?
+** Armando: Kopf
+. In welcher *Situation* würdet ihr die App öffnen — spontan unterwegs, oder gezielt einmal im Monat?
+** Armando:
+*** Sonntag früh/abend
+*** fragt sich dann was braucht er noch, was kann weg
+** Max:
+*** würde einmal im Monat Abos checken
+*** evtl würde er bei neuen Abos nachdenken, ob ein altes gekündigt werden kann
+** Juan:
+*** Betrachtet in dem Zusammenhang auch gern seine Einnahmen/Ausgaben-Konstellation
+** Thani:
+*** Nutzung eher spontan in Smartphone-App, da Probeabos oft variieren
+** Nathan:
+*** Nutzung immer mal spontan auf dem Smartphone
+*** mag Dashboards und Zahlen / Analysen
+*** Benachrichtigungen veranlassen ihn zur Nutzung der App
+. Trifft das, was wir beschrieben haben, *generell auf euch zu*?
+
+---
+
+== Block 5 — Qualitätsanforderungen
+ 
+=== 🎤 Moderatorennotizen
+ 
+*Was zeigst du:* Die Qualitätsanforderungen aus dem Produktkonzept (Dat hat diese vorbereitet).
+ 
+*Was du sagst:*
+ 
+____
+„Wir haben erste Qualitätsanforderungen formuliert und möchten gemeinsam bewerten, was wirklich wichtig ist."
+____
+ 
+TIP: Geht Tabelle A gemeinsam durch — Stakeholder nennen spontan *must have / nice to have / unnecessary*. Tabelle B (Einschränkungen) kurz vorstellen und nur auf Nachfrage vertiefen.
+ 
+=== 👥 Tabelle A — Qualitätsziele: Bitte bewerten
+ 
+[cols="2,3,2,1,1,1", options="header"]
+|===
+| Qualitätsziel | Beschreibung | Messkriterium | Must have | Nice to have | Unnecessary
+ 
+| Benutzbarkeit
+| Das Produkt ist ohne Einarbeitung nutzbar.
+| Neue Nutzer:innen finden die Kernfunktion innerhalb von 2 Minuten ohne Hilfe.
+| x | ☐ | ☐
+ 
+| Performance
+| Das Produkt reagiert schnell auf Nutzerinteraktionen.
+| Seitenladezeit unter 2 Sekunden bei normaler Netzwerkverbindung.
+| ☐ | ☐ | ☐
+ 
+| Verfügbarkeit
+| Das Produkt ist von 6–24 Uhr ganzwöchig zuverlässig erreichbar.
+| Verfügbarkeit ≥ 99 %
+| ☐ | ☐ | ☐
+ 
+| Verfügbarkeit (zeitkritisch)
+| Zeitkritische Erinnerungen erreichen den User rechtzeitig.
+| Kündigungsfrist-Erinnerungen erreichen den Nutzer mindestens 2 Tage vor Ablauf.
+| ☐ | x (da für Nathan + Max Erinnerung nicht Hauptproblem) | ☐
+ 
+| Bedienbarkeit
+| Viele Funktionen sollten auf dem Smartphone einhändig erreichbar sein.
+| Alle Hauptfunktionen sollten mit einer Hand erreicht werden können.
+| ☐ | x | ☐
+ 
+| Geräteunabhängigkeit
+| Anwendung ist auf allen gängigen Geräten und Plattformen nutzbar.
+| Anwendung vollständig nutzbar auf Android, iOS, Web (gängige Browser).
+| ☐ | x (viel Aufwand) | ☐
+
+| Benutzbarkeit (Sprache)
+| Die App sollte auch einfacher benutzbar für Menschen sein, die der deutschen Sprache nicht mächtig sind.
+| Nutzung leichter Sprachen / internationalisierbare Oberfläche.
+| ☐ | ☐ | x (viel Aufwand)
+|===
+
+==== Rückfragen
+
+* Thani: auch ohne Account nutzbar?
+ 
+=== 👥 Tabelle B — Einschränkungen (nicht verhandelbar)
+ 
+[cols="1,3,1", options="header"]
+|===
+| Einschränkung | Beschreibung | Kategorie
+ 
+| Barrierefreiheit
+| Hauptfunktionen müssen barrierefrei nutzbar sein (laut WCAG 2.1).
+| Rechtlich / Ethisch
+ 
+| DSGVO-Konformität
+| Personenbezogene Daten dürfen nur gemäß DSGVO verarbeitet und gespeichert werden.
+| Rechtlich
+ 
+| Projektlaufzeit
+| Das Produkt muss innerhalb eines Semesters (ca. 4 Monate) lieferbar sein.
+| Zeitlich
+ 
+| Ressourcen
+| Das Geld ist begrenzt.
+| Technisch
+|===
+ 
+=== 👥 Ergänzungsfragen
+ 
+- Gibt es *Qualitätsziele*, die wir noch nicht berücksichtigt haben?
+- Seht ihr bei den *Einschränkungen* etwas, das für euch als Nutzer relevant wäre?
+ 
+---
+
+== Block 6 — Wireframes vorstellen
+
+=== 🎤 Moderatorennotizen
+
+*Was zeigst du:* Die Wireframe-Frames aus dem Board — Ablauf für *Otto Normal*: Abo-Liste → Filter/Suche → Detailansicht → Kennzahlen.
+
+=== 👥 Der Ablauf im Überblick
+
+*Schritt 1 — Abo-Liste:*
+Alle erfassten Abos strukturiert sehen; suchen, filtern, sortieren, gruppieren.
+
+*Schritt 2 — Kennzahlen:*
+Gesamtkosten pro Monat, Anzahl aktiver Abos, nahende Kündigungsfristen auf einen Blick.
+
+*Schritt 3 — Detailansicht:*
+Produktname, Vertragspartner, Zahlungsbetrag, Zahlungsintervall, Abschlussdatum pro Abo.
+
+=== 👥 Fragen an die Stakeholder
+
+- Ist dieser *Ablauf* so, wie ihr euch die Nutzung vorstellt?
+*** Armando:
+*** wichtigste Funktionalitäten sind abgedeckt
+- Was würdet ihr *sofort weglassen*?
+- Was *vermisst* ihr?
+** Max:
+*** Anzeige nächstes Kündigungsdatum
+
+---
+
+== Block 7 — Umfrage-Formular
+
+=== 🎤 Moderatorennotizen
+
+*Was du sagst:*
+
+____
+„Zum Abschluss bitten wir euch, kurz unseren Fragebogen auszufüllen — das dauert ca. 3–5 Minuten und hilft uns, eure Einschätzungen zu dokumentieren und zu vergleichen."
+____
+
+TIP: Franz hat den Fragebogen vorbereitet — https://tally.so/r/oblGLx
+
+
+---
+
+== Abschluss 🎤
+
+____
+„Vielen Dank für euer wertvolles dFeedback!
+Alles, was ihr heute gesagt habt, fließt direkt in unser Produktkonzept und den nächsten Sprint ein.
+Falls euch später noch etwas einfällt — meldet euch gerne über Discord."
+____
+
