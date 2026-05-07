@@ -28,7 +28,9 @@ Formulieren Sie Ihr Sprintziel in 1–2 Sätzen. Leitfragen:
 
 | Sprintziel
 a| 
-Das Ziel des ersten Sprints war es für uns die Zielgruppe, sowie deren Probleme zu erkennen. Aufbauend darauf können wir herausfinden welcher Lösungsansatz der Zielgruppe einen Mehrwert liefern kann.  Unsere Erkenntnisse können wir durch Feedback im Sprint-Review zu validieren. 
+Das Ziel des ersten Sprints war es für uns die Zielgruppe, sowie deren Probleme zu erkennen. Aufbauend darauf können wir herausfinden welcher Lösungsansatz der Zielgruppe einen Mehrwert liefern kann.  Unsere Erkenntnisse können wir durch Feedback im Sprint-Review validieren. 
+
+(Brainstorming: 
 
 * Probleme der Nutzer erkennen und durch Feedback validieren
 * Warum braucht es das Produkt?
@@ -37,6 +39,10 @@ Das Ziel des ersten Sprints war es für uns die Zielgruppe, sowie deren Probleme
 
 | Zentrale Unsicherheit / Annahme
 a|
+Die zentrale Unsicherheit dieses Sprints war für uns, ob unsere Annahmen über den Nutzer, dessen Hauptprobleme und Ziele, sich bestätigen.
+
+(Brainstorming: 
+
 * Was ist das Hauptproblem der Nutzer? 
 * Was brauchen Nutzer eigentlich?
 * Wer sind die Nutzer überhaupt?
@@ -77,28 +83,55 @@ a|
 * initiales Brainstorming
 * Erarbeiten von Personas mit konkreten Zielen, Erwartungen und Anforderungen
 * Nutzerziele formulieren
-| Produktkonzept
-| Nützlich für Hereinversetzen in Nutzerperspektive, Grundlage Problemableitung, Priorisierung
+| https://miro.com/app/board/uXjVHdouxH8=/?moveToWidget=3458764670936251822&cot=14[Miro Brainstorming], 
+
+https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/46122c645b4bc82d453f9be7dbbf56a2a248671f/docs/product/product_concept.adoc[Dokumentation Produktkonzept] 
+| Konkrete Zielgruppen und Personas dienen uns als Grundlage, um die Anforderungen aus der Nutzerperspektive zu erfassen.
+
+(Nützlich für Hereinversetzen in Nutzerperspektive, Grundlage Problemableitung, Priorisierung)
 
 | Probleme der Zielgruppe eingrenzen
-| Brainstorming, Ausgangssituation erfassen, Präzisieren einer Produktvision
-| Miro
-| Aus Problemen Notwendigkeit eines Produkts und Lösungsansätze ableiten
+a| 
+* Problem-Brainstorming
+* Ausgangssituation erfassen
+* Präzisieren einer Produktvision
+| https://miro.com/app/board/uXjVHdouxH8=/?moveToWidget=3458764670936251822&cot=14[Miro Brainstorming], 
+
+https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/46122c645b4bc82d453f9be7dbbf56a2a248671f/docs/product/product_concept.adoc[Dokumentation Produktkonzept]
+| Die ausgearbeiteten Problemen zeigen die Notwendigkeit eines Produkts und dienen als Grundlage dafür Lösungsansätze ableiten.
 
 | Epics und User Stories ableiten
-| Ableitung mittels User Flow und User Story Maps; Diskussion im Team
-| User Story Maps, Product Backlog
-| Nutzerzentrierung, Grundlage für Funktionen des Produkts (aus Nutzerbedürfnissen ableiten)
+a| 
+* Ableitung mittels User Flow und User Story Maps
+* ausführliche Diskussion im Team
+| https://miro.com/app/board/uXjVHdouxH8=/?moveToWidget=3458764670937745416&cot=14[Miro User Story Maps], 
+
+https://github.com/orgs/SE-Team-E1/projects/2/views/1[Product Backlog]
+| User Stories helfen uns nutzerzentrierte Lösungen zu entwickeln und zu formulieren. Sie dienen dabei als Grundlage, um Funktionen der Anwendung aus Nutzerbedürfnissen abzuleiten.
+
+(Nutzerzentrierung, Grundlage für Funktionen des Produkts (aus Nutzerbedürfnissen ableiten))
 
 | Vorbereitung und Durchführung des Sprint-Review
-| Herausarbeiten der wichtigsten Bestandteile unseres Produktkonzepts; Wichtige Fragen klären im Gespräch und mittels Fragebogen
-| leitfaden vortrag, fragebogen ergebnisse, review protokoll
+a| 
+* Herausarbeiten wichtigster Bestandteile des Produktkonzepts
+* Wichtige Fragen klären im Gespräch und mittels Fragebogen
+| https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/46122c645b4bc82d453f9be7dbbf56a2a248671f/docs/sprint1/vortragsleitfaden_stakeholder_gespraech.adoc[Leitfaden Vortrag], 
+
+https://tally.so/r/oblGLx[Fragebogen]
+
+Fragebogen-Ergebnisse, 
+
+https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/46122c645b4bc82d453f9be7dbbf56a2a248671f/docs/sprint1/Sprint_Review_Protokoll.adoc[Review-Protokoll]
 | Nutzer bekommen strukturierten Eindruck, Validieren der Sprint-Ergebnisse -> Grundlage für gesamtes Produkt, Anpassung der Priorisierung
 
 | Organisation des Teams
-| Rollen, Zusammenarbeit oder Arbeitsvereinbarungen im Team klären
-| Team Charta
-| Regelmäßigigkeit, zunehmende Effizienz, Grundlage für erfolgreiche Projektarbeit
+a| 
+* Rollen, Zusammenarbeit und Arbeitsvereinbarungen im Team klären
+* Geeignete Arbeitsweisen (bspw. Aufteleilung synchron, asynchron) ermitteln
+| https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/46122c645b4bc82d453f9be7dbbf56a2a248671f/docs/team/team_charter.adoc[Team Charta]
+| Im Verlaufe des Sprints hat die Regelmäßigkeit und die Effizienz von Arbeit und Meetings zugenommen. Ein gute Teamorganisation ist notwendig für eine erfolgreiche Projektarbeit
+
+(Regelmäßigigkeit, zunehmende Effizienz, Grundlage für erfolgreiche Projektarbeit)
 |===
 
 
