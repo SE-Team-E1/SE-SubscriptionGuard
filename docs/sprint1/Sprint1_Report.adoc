@@ -47,6 +47,8 @@ Die zentrale Unsicherheit dieses Sprints war für uns, ob unsere Annahmen über 
 * Was brauchen Nutzer eigentlich?
 * Wer sind die Nutzer überhaupt?
 * Hilft den Nutzern unser Lösungsansatz?
+
+Des weiteren wurden Unsicherheiten im Team bezüglich der Organisation, Zeiten, Arbeitsweisen und Aufgabenverteilung mithilfe von Rollen und Regeln in der Teamcharta geklärt.
 |===
 
 
@@ -127,7 +129,8 @@ https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/46122c645b4bc82d453f9be7
 | Organisation des Teams
 a| 
 * Rollen, Zusammenarbeit und Arbeitsvereinbarungen im Team klären
-* Geeignete Arbeitsweisen (bspw. Aufteleilung synchron, asynchron) ermitteln
+* Geeignete Arbeitsweisen (bspw. Aufteilung synchron, asynchron) ermitteln
+* Fixe Meetings für wichtige Themen und finale Absprachen, sowie flexible, optionale Meetings um auf unterschiedliche Zeiten und Arbeitsaufwand einzugehen
 | https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/46122c645b4bc82d453f9be7dbbf56a2a248671f/docs/team/team_charter.adoc[Team Charta]
 | Im Verlaufe des Sprints hat die Regelmäßigkeit und die Effizienz von Arbeit und Meetings zugenommen. Ein gute Teamorganisation ist notwendig für eine erfolgreiche Projektarbeit
 
@@ -148,13 +151,13 @@ Beschreiben Sie 2–3 zentrale Erkenntnisse aus Sprint 1. Leitfragen:
 | Kriterium | Ihre Antwort
 
 | Teamorganisation
-| Organisation des Teams, Terminabsprachen schwieriger als gedacht
+| Organisation des Teams, Terminabsprachen schwieriger als gedacht => nutzen von fixen/optionalen Meetings, Aufgaben asynchron/synchron abarbeiten
 
 | Persona-Priorität
-| Datenschutz-Bedenken, kontrolle, transparenz für alle Feedbackgeber relevant höhere Priorität als gedacht
+| Datenschutz-Bedenken, Kontrolle, Transparenz für alle Feedbackgeber relevant höhere Priorität als gedacht => Priorisierung der Personas muss leicht angepasst werden
 
 | Erkenntnis 3
-| Überblick über Abos als höchste Priorität hat sich bestätigt
+| Überblick über Abos als höchste Priorität, sowie viele User Stories auf Grundlage der Personas haben sich bestätigt => Einige, erste Annahmen haben sich als korrekt erwiesen
 |===
  
 == 4. Änderungen am Produktkonzept
@@ -167,9 +170,9 @@ Beschreiben Sie konkret anhand von drei Beispielen, was sich durch Ihre Arbeit u
 | Neue Erkenntnis
 | Anpassung am Produktkonzept oder Backlog
 
-| Otto > Maxi > Thomas
-| Otto > Thomas > Maxi
-| Priorisierung
+| Angenommene Priorität der Personas: Otto Normal > Maximilian der Fortschrittliche > Thomas der Skeptische
+| Angepasste Priorität der Personas nach Sprint-Review+Retro: Otto Normal > Thomas der Skeptische > Maximilian der Fortschrittliche
+| Anpassung der Priorisierung der Personas
 
 | 
 | 
@@ -195,10 +198,10 @@ Beschreiben Sie kurz, welche nicht-funktionalen Anforderungen, Randbedingungen o
 | Kriterium | Ihre Antwort
 
 | Qualitätsanforderungen
-| Benutzbarikeit Einarbeitung, Bedienbarkeit gute UX/UI, ohne Account nutzbar
+| Benutzbarkeit z.B. Einhändig, schnelle Einarbeitung, Bedienbarkeit gute UX/UI, ohne Account nutzbar, Verfügbarkeit, Performance
 
 | Randbedingungen
-| Datenschutz, Projektlaufzeit, Barrierefreiheit
+| Datenschutz/DSGVO-Konformität, Projektlaufzeit, Barrierefreiheit
 
 | Ethische Aspekte / Risiken
 | 
@@ -222,7 +225,7 @@ Beschreiben Sie, was Ihr Team im nächsten Sprint beibehalten, ändern oder gezi
 | Asynchrone Recherche, synchrones Vergleich, präzisieren für Planungsphase
 
 | Ändern / verbessern
-| Engagement, Proaktivität
+| Engagement, Proaktivität für asynchrone Recherchen und optionale Meetings
 
 | Offene Frage für Sprint 2
 | 
