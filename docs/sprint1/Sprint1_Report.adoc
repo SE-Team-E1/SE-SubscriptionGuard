@@ -167,17 +167,17 @@ Beschreiben Sie konkret anhand von drei Beispielen, was sich durch Ihre Arbeit u
 | Neue Erkenntnis
 | Anpassung am Produktkonzept oder Backlog
 
-| Otto > Maxi > Thomas
+| Otto Normal und Maximilian der Fortschrittliche sind die relevantesten Personas, Thomas der Skeptische ist eher eine Nieschenpersona
 | Otto > Thomas > Maxi
 | Priorisierung
 
-| 
-| 
-| 
+| Mehrsprachigkeit ist dringend erfoderlich
+| Mehrsprachigkeit ist eventuell aufwendig in der Umsetzung und liefert keinen Nutzen für Testnutzer
+| Mehrsprachigkeit niedriger priorisert
 
-| 
-| 
-| 
+| Fokus auf advanced Features wie automatische Kündigung / Aboerfassung
+| aufwendig in der Umsetzung und ohne Grundlagen sinnlos
+| Niedrige Priorisierung
 |===
 
 
@@ -201,7 +201,7 @@ Beschreiben Sie kurz, welche nicht-funktionalen Anforderungen, Randbedingungen o
 | Datenschutz, Projektlaufzeit, Barrierefreiheit
 
 | Ethische Aspekte / Risiken
-| 
+| Missbrauch sensibler Daten, neutral Datenaufbereitung, Ausfallsicherheit
 |===
 
 
@@ -222,8 +222,8 @@ Beschreiben Sie, was Ihr Team im nächsten Sprint beibehalten, ändern oder gezi
 | Asynchrone Recherche, synchrones Vergleich, präzisieren für Planungsphase
 
 | Ändern / verbessern
-| Engagement, Proaktivität
+| Engagement, Proaktivität, Effektivät der Diskussionen, Review: Feedbackgeber aus der Reserve locken, konkrete Aufgabenverteilung (project-tasks) und Beurteilung in einer angemessene Gruppengröße
 
 | Offene Frage für Sprint 2
-| 
+| Wie kann man die Zusammenarbeit effektiver gestalten?
 |===
