@@ -3,7 +3,7 @@
 // Bitte fügen Sie hier die Informationen zu Ihrem Team, Projekt, Datum und Repository ein.
 Team:: E1
 Projektname:: SubscriptionGuard
-Datum:: 06.05.2026
+Datum:: 11.05.2026
 Repository-Link:: https://github.com/SE-Team-E1/SE-SubscriptionGuard
 
 ====
@@ -30,23 +30,10 @@ Formulieren Sie Ihr Sprintziel in 1–2 Sätzen. Leitfragen:
 a| 
 Das Ziel des ersten Sprints war es für uns die Zielgruppe, sowie deren Probleme zu erkennen. Aufbauend darauf können wir herausfinden welcher Lösungsansatz der Zielgruppe einen Mehrwert liefern kann.  Unsere Erkenntnisse können wir durch Feedback im Sprint-Review validieren. 
 
-(Brainstorming: 
-
-* Probleme der Nutzer erkennen und durch Feedback validieren
-* Warum braucht es das Produkt?
-* Addressiert Lösungsansatz die Bedürfnisse? 
-* Grobe Priorisierung ableiten
-
 | Zentrale Unsicherheit / Annahme
 a|
 Die zentrale Unsicherheit dieses Sprints war für uns, ob unsere Annahmen über den Nutzer, dessen Hauptprobleme und Ziele, sich bestätigen.
 
-(Brainstorming: 
-
-* Was ist das Hauptproblem der Nutzer? 
-* Was brauchen Nutzer eigentlich?
-* Wer sind die Nutzer überhaupt?
-* Hilft den Nutzern unser Lösungsansatz?
 |===
 
 
@@ -88,8 +75,6 @@ a|
 https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/46122c645b4bc82d453f9be7dbbf56a2a248671f/docs/product/product_concept.adoc[Dokumentation Produktkonzept] 
 | Konkrete Zielgruppen und Personas dienen uns als Grundlage, um die Anforderungen aus der Nutzerperspektive zu erfassen.
 
-(Nützlich für Hereinversetzen in Nutzerperspektive, Grundlage Problemableitung, Priorisierung)
-
 | Probleme der Zielgruppe eingrenzen
 a| 
 * Problem-Brainstorming
@@ -98,7 +83,7 @@ a|
 | https://miro.com/app/board/uXjVHdouxH8=/?moveToWidget=3458764670936251822&cot=14[Miro Brainstorming], 
 
 https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/46122c645b4bc82d453f9be7dbbf56a2a248671f/docs/product/product_concept.adoc[Dokumentation Produktkonzept]
-| Die ausgearbeiteten Problemen zeigen die Notwendigkeit eines Produkts und dienen als Grundlage dafür Lösungsansätze ableiten.
+| Die ausgearbeiteten Probleme zeigen die Notwendigkeit eines Produkts und dienen als Grundlage dafür, Lösungsansätze abzuleiten.
 
 | Epics und User Stories ableiten
 a| 
@@ -109,8 +94,6 @@ a|
 https://github.com/orgs/SE-Team-E1/projects/2/views/1[Product Backlog]
 | User Stories helfen uns nutzerzentrierte Lösungen zu entwickeln und zu formulieren. Sie dienen dabei als Grundlage, um Funktionen der Anwendung aus Nutzerbedürfnissen abzuleiten.
 
-(Nutzerzentrierung, Grundlage für Funktionen des Produkts (aus Nutzerbedürfnissen ableiten))
-
 | Vorbereitung und Durchführung des Sprint-Review
 a| 
 * Herausarbeiten wichtigster Bestandteile des Produktkonzepts
@@ -119,19 +102,18 @@ a|
 
 https://tally.so/r/oblGLx[Fragebogen]
 
-Fragebogen-Ergebnisse, 
-
 https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/46122c645b4bc82d453f9be7dbbf56a2a248671f/docs/sprint1/Sprint_Review_Protokoll.adoc[Review-Protokoll]
-| Nutzer bekommen strukturierten Eindruck, Validieren der Sprint-Ergebnisse -> Grundlage für gesamtes Produkt, Anpassung der Priorisierung
+| Die Nutzer bekommen einen strukturierten Eindruck unseres Produktentwurfs und können dadurch Stärken und Schwächen individuell beurteilen und hilfreiches Feedback bieten.
+
+Der Sprint-Review reduziert Unsicherheit, indem er unser Produktkonzept validiert und uns Erkenntnisse zur Priorisierung des Product Backlogs liefert
 
 | Organisation des Teams
 a| 
 * Rollen, Zusammenarbeit und Arbeitsvereinbarungen im Team klären
 * Geeignete Arbeitsweisen (bspw. Aufteleilung synchron, asynchron) ermitteln
 | https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/46122c645b4bc82d453f9be7dbbf56a2a248671f/docs/team/team_charter.adoc[Team Charta]
-| Im Verlaufe des Sprints hat die Regelmäßigkeit und die Effizienz von Arbeit und Meetings zugenommen. Ein gute Teamorganisation ist notwendig für eine erfolgreiche Projektarbeit
+| Im Verlaufe des Sprints hat die Regelmäßigkeit und die Effizienz von Arbeit und Meetings zugenommen. Ein gute Teamorganisation ist notwendig für eine erfolgreiche Projektarbeit.
 
-(Regelmäßigigkeit, zunehmende Effizienz, Grundlage für erfolgreiche Projektarbeit)
 |===
 
 
@@ -148,13 +130,14 @@ Beschreiben Sie 2–3 zentrale Erkenntnisse aus Sprint 1. Leitfragen:
 | Kriterium | Ihre Antwort
 
 | Teamorganisation
-| Organisation des Teams, Terminabsprachen schwieriger als gedacht
+| Organisation des Teams, sowie Terminabsprachen sind schwieriger als gedacht
 
-| Persona-Priorität
-| Datenschutz-Bedenken, kontrolle, transparenz für alle Feedbackgeber relevant höhere Priorität als gedacht
+| Nutzerprobleme
+| Fehlender Überblick über Abos, Vergessen von Kündigungen wurden von Feedbackgebern im Gespräch als Hauptprobleme bestätigt
 
-| Erkenntnis 3
-| Überblick über Abos als höchste Priorität hat sich bestätigt
+| Einschätzung Personas
+| Kontrolle und Transparenz bezüglich sensibler Daten sind für alle Feedbackgeber relevant
+
 |===
  
 == 4. Änderungen am Produktkonzept
@@ -167,17 +150,31 @@ Beschreiben Sie konkret anhand von drei Beispielen, was sich durch Ihre Arbeit u
 | Neue Erkenntnis
 | Anpassung am Produktkonzept oder Backlog
 
-| Otto Normal und Maximilian der Fortschrittliche sind die relevantesten Personas, Thomas der Skeptische ist eher eine Nieschenpersona
-| Otto > Thomas > Maxi
-| Priorisierung
+a| 
+* Otto Normal und Maximilian der Fortschrittliche sind die relevantesten Personas
+* Thomas der Skeptische wurde nur der Vollständigkeit halber als Edge Case erstellt
+a| 
+* Thomas der Skeptische ist für alle Nutzer (Feedbackgeber) relevant, genau wie Otto Normal
+* Maximilan der Fortschrittliche ist eher der Edge Case
+a| 
+* Neue Erkenntnis wird bei der Priorisierung der User Stories im Product Backlog berücksichtigt
 
-| Mehrsprachigkeit ist dringend erfoderlich
-| Mehrsprachigkeit ist eventuell aufwendig in der Umsetzung und liefert keinen Nutzen für Testnutzer
-| Mehrsprachigkeit niedriger priorisert
+a| 
+* Mehrsprachigkeit ist dringend erfoderlich
+a| 
+* Mehrsprachigkeit wird von Stakeholdern vorerst nicht benötigt
+* ist zudem aufwendig in der Umsetzung
+a|
+* niedrig priorisierte Qualitätsanforderung
+* sollte dennoch in der Architektur berücksichtigt werden 
 
-| Fokus auf advanced Features wie automatische Kündigung / Aboerfassung
-| aufwendig in der Umsetzung und ohne Grundlagen sinnlos
-| Niedrige Priorisierung
+a| 
+* Viele Ideen beliefen sich auf anspruchsvolle Features wie automatische Kündigung / Aboerfassung
+a| 
+* Diese Features bleiben weitherhin von Bedeutung und basieren auch auf relevanten Nutzerbedürfnissen
+* Wir verschieben unseren Fokus auf die Hauptfunktionen der Aboübersicht und -verwaltung, da diese einfacher umzusetzen sind und zudem die Grundlage für die fortgeschrittenen Features bilden
+a|
+* Neue Erkenntnis wird bei der Priorisierung der User Stories im Product Backlog berücksichtigt
 |===
 
 
@@ -195,13 +192,22 @@ Beschreiben Sie kurz, welche nicht-funktionalen Anforderungen, Randbedingungen o
 | Kriterium | Ihre Antwort
 
 | Qualitätsanforderungen
-| Benutzbarikeit Einarbeitung, Bedienbarkeit gute UX/UI, ohne Account nutzbar
+a| 
+* Benutzbarkeit und leichte Einarbeitung
+* Bedienbarkeit und intuitives UX/UI
+* Offline und ohen Account nutzbar
 
 | Randbedingungen
-| Datenschutz, Projektlaufzeit, Barrierefreiheit
+a| 
+* Einhaltung der Datenschutzbestimmung
+* Berücksichtigung Projektlaufzeit im Produktumfang
+* Einhaltung von Richtlinien zur Barrierefreiheit
 
 | Ethische Aspekte / Risiken
-| Missbrauch sensibler Daten, neutral Datenaufbereitung, Ausfallsicherheit
+a| 
+* Schutz sensibler Daten vor Missbrauch
+* Datenaufbereitung und -präsentation in neutraler Art und Weise
+* Verlässliche Bereitstellung der Daten für den Nutzer
 |===
 
 
@@ -219,11 +225,18 @@ Beschreiben Sie, was Ihr Team im nächsten Sprint beibehalten, ändern oder gezi
 | Kriterium | Ihre Antwort
 
 | Beibehalten
-| Asynchrone Recherche, synchrones Vergleich, präzisieren für Planungsphase
+a| 
+* Asynchrone Recherche und synchrone Besprechung der Ergebnisse während des Produktentwurfs
 
 | Ändern / verbessern
-| Engagement, Proaktivität, Effektivät der Diskussionen, Review: Feedbackgeber aus der Reserve locken, konkrete Aufgabenverteilung (project-tasks) und Beurteilung in einer angemessene Gruppengröße
+a| 
+* Steigern von Engagement und Proaktivität
+* Optimieren der Effektivität von Meetings bspw. durch Time-Blocking und eine Agenda
+* Im Sprint Review: konsequent alle Feedbackgeber aus der Reserve locken
+* Konkrete Aufgabenverteilung mithilfe von project tasks im Backlog und ein angemessener Review
 
 | Offene Frage für Sprint 2
-| Wie kann man die Zusammenarbeit effektiver gestalten?
+a| 
+* Wie kann man die Zusammenarbeit noch effektiver gestalten?
+* Insbesondere: Wie können wir die Effizienz von Diskussionen steigern, also erkennen, wann wir uns im Kreis drehen und wie kommen wir dann zu einem Ergebnis?
 |===
