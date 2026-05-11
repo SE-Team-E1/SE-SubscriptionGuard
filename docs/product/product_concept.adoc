@@ -76,17 +76,32 @@ typische Aufgaben — sind im link:ux_concept.adoc[UX-Konzept] dokumentiert.
 |===
 | Alternative | Beschreibung | Warum unser Produkt besser passt
 
-| [z. B. E-Mail-Anfrage an Sekretariat]
-| [Wie lösen Nutzer:innen das Problem heute?]
+| Multibanking-App mit Abo-Erkennung 
+
+Bsp.: Finanzguru, Outbank, teils N26, Revolut
+| Studierende scrollen in unregelmäßigen Abständen durch Banking-App oder Kontoauszug, versuchen wiederkehrende Zahlungen selbst zu identifizieren und Kündigungsfristen im Kopf zu behalten.
 | [Worin liegt unser Vorteil?]
 
-| [z. B. Aushang an schwarzem Brett]
-| [Beschreibung]
+| Abo-Tracker
+
+Bsp.: Bobby, Subby, Subscriptions
+| Manuell gepflegte Abo-Liste in einer dedizierten App, meist mit Erinnerungen und Visualisierung der Kosten.
 | [Unterschied]
 
-| [Weitere Alternative]
-| [Beschreibung]
+| Eigene Liste
+
+Bsp.: Excel, Notion, Notizen-App
+| Selbst angelegte Tabelle oder Notiz mit Anbieter, Betrag und nächster Abbuchung – manuell gepflegt.
 | [Unterschied]
+
+| Nichts tun / Aus dem Gedächtnis
+| Status quo der meisten Studierenden: man "weiß ungefähr", was man zahlt, vergisst aber Kündigungsfristen und Verlängerungen.
+|
+
+| Manueller Kontoauszug-Check
+| Studierende scrollen in unregelmäßigen Abständen durch Banking-App oder Kontoauszug, versuchen wiederkehrende Zahlungen selbst zu identifizieren und Kündigungsfristen im Kopf zu behalten.
+|
+
 |===
 
 
@@ -145,21 +160,19 @@ Diese Hauptfunktionen sollten als Epics im Product Backlog für die Gruppierung 
 |===
 | Nutzerbedarf | Hauptfunktion | Priorität
 
-| Studierende wollen schnell sehen, welche Räume gerade frei sind.
-| Echtzeit-Übersicht freier Lernräume
+| Nutzer wollen alle ihre abgeschlossenen Abos schnell überblicken
+| Strukturierte Übersicht erfasster Abos
 | Hoch
 
-| Nutzer:innen wollen einen Raum für einen bestimmten Zeitraum reservieren.
-| Raumbuchung mit Zeitfenster
+| Nutzer wollen abos zentral verwalten
+| Verwalten (Erfassen, Ändern und Löschen / Kündigen) erfasster Abos
 | Hoch
 
-| Nutzer:innen wollen ihre aktiven Buchungen verwalten.
-| Buchungsübersicht & Stornierung
+| Nutzer wollen Abos rechtzeitig kündigen
+| Erinnerung Kündigungsfrist (Mitteilungen)
+
+Abo zentral kündigen (so zentral wie möglich)
 | Mittel
-
-| Verwaltung will die Auslastung der Räume analysieren.
-| Auslastungsberichte für Administratoren
-| Niedrig
 
 | [Nutzerbedarf]
 | [Hauptfunktion]
@@ -197,8 +210,24 @@ technischen Entscheidungen, die sich daraus ergeben — ohne sie hier zu wiederh
 | Seitenladezeit unter 2 Sekunden bei normaler Netzwerkverbindung.
 
 | Verfügbarkeit
-| Das Produkt ist während der Hochschulöffnungszeiten zuverlässig erreichbar.
+| Das Produkt ist von 6-24 Uhr ganzwöchig zuverlässig erreichbar
 | Verfügbarkeit ≥ 99 % während Betriebszeiten.
+
+| Verfügbarkeit
+| Zeitkritische Erinnerungen erreichen den User rechtzeitig
+| Kündigungsfrist - Erinnerungen erreichen den Nutzer mindestens 2 Tage vor Ablauf
+
+| Bedienbarkeit
+| Viele Funktionen sollten auf dem Smartphone einhändig erreichbar sein?
+| Alle Hauptfunktionen sollten mit einer Hand erreicht werden können
+
+| Geräteunabhängigkeit
+| Anwendung ist auf allen gängigen Geräten und Plattformen nutzbar
+| Anwendung vollständig nutzbar auf Android, iOS, Web (gängige Browser)
+
+| Benutzbarkeit
+| Die App sollte auch einfacher benutzbarer für Menschen sein, die der deutschen Sprache nicht mächtig sind
+| Nutzen der leichten Sprachen
 
 | [Qualitätsziel]
 | [Beschreibung]
@@ -214,9 +243,9 @@ organisatorische, rechtliche oder zeitliche Vorgaben._
 |===
 | Einschränkung | Beschreibung | Kategorie
 
-| Betrieb auf Hochschulinfrastruktur
-| Das System muss auf den vorhandenen Servern der Hochschule betrieben werden können.
-| Technisch
+| Barrierefreiheit
+| Hauptfunktionen müssen barrierefrei nutzbar sein (laut WCAG 2.1)
+| Rechtlich / Ethisch
 
 | DSGVO-Konformität
 | Personenbezogene Daten dürfen nur gemäß DSGVO verarbeitet und gespeichert werden.
@@ -226,9 +255,9 @@ organisatorische, rechtliche oder zeitliche Vorgaben._
 | Das Produkt muss innerhalb eines Semesters (ca. 4 Monate) lieferbar sein.
 | Zeitlich
 
-| [Einschränkung]
-| [Beschreibung]
-| [Technisch / Rechtlich / Organisatorisch / Zeitlich]
+| Resourcen
+| Das Geld ist begrenzt
+| Technisch
 |===
 
 
@@ -241,6 +270,10 @@ organisatorische, rechtliche oder zeitliche Vorgaben._
 | 1.0
 | [Datum]
 | Initiale Version nach Kick-off-Workshop
+
+| 2.0
+| 11.05.2026
+| Übertagen der Ergebnisse aus dem Miro
 
 |===
 
