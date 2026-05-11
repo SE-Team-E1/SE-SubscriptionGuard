@@ -34,6 +34,7 @@ Das Ziel des ersten Sprints war es für uns die Zielgruppe, sowie deren Probleme
 a|
 Die zentrale Unsicherheit dieses Sprints war für uns, ob unsere Annahmen über den Nutzer, dessen Hauptprobleme und Ziele, sich bestätigen.
 
+Des weiteren wurden Unsicherheiten im Team bezüglich der Organisation, Zeiten, Arbeitsweisen und Aufgabenverteilung mithilfe von Rollen und Regeln in der Teamcharta geklärt.
 |===
 
 
@@ -110,7 +111,8 @@ Der Sprint-Review reduziert Unsicherheit, indem er unser Produktkonzept validier
 | Organisation des Teams
 a| 
 * Rollen, Zusammenarbeit und Arbeitsvereinbarungen im Team klären
-* Geeignete Arbeitsweisen (bspw. Aufteleilung synchron, asynchron) ermitteln
+* Geeignete Arbeitsweisen (bspw. Aufteilung synchron, asynchron) ermitteln
+* Fixe Meetings für wichtige Themen und finale Absprachen, sowie flexible, optionale Meetings um auf unterschiedliche Zeiten und Arbeitsaufwand einzugehen
 | https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/46122c645b4bc82d453f9be7dbbf56a2a248671f/docs/team/team_charter.adoc[Team Charta]
 | Im Verlaufe des Sprints hat die Regelmäßigkeit und die Effizienz von Arbeit und Meetings zugenommen. Ein gute Teamorganisation ist notwendig für eine erfolgreiche Projektarbeit.
 
@@ -130,7 +132,7 @@ Beschreiben Sie 2–3 zentrale Erkenntnisse aus Sprint 1. Leitfragen:
 | Kriterium | Ihre Antwort
 
 | Teamorganisation
-| Organisation des Teams, sowie Terminabsprachen sind schwieriger als gedacht
+| Organisation des Teams, sowie Terminabsprachen sind schwieriger als gedacht.
 
 | Nutzerprobleme
 | Fehlender Überblick über Abos, Vergessen von Kündigungen wurden von Feedbackgebern im Gespräch als Hauptprobleme bestätigt
@@ -195,7 +197,8 @@ Beschreiben Sie kurz, welche nicht-funktionalen Anforderungen, Randbedingungen o
 a| 
 * Benutzbarkeit und leichte Einarbeitung
 * Bedienbarkeit und intuitives UX/UI
-* Offline und ohen Account nutzbar
+* Offline und ohne Account nutzbar
+* Verfügbarkeit, Performance
 
 | Randbedingungen
 a| 
@@ -230,7 +233,7 @@ a|
 
 | Ändern / verbessern
 a| 
-* Steigern von Engagement und Proaktivität
+* Steigern von Engagement und Proaktivität in Meetings und individueller Arbeit
 * Optimieren der Effektivität von Meetings bspw. durch Time-Blocking und eine Agenda
 * Im Sprint Review: konsequent alle Feedbackgeber aus der Reserve locken
 * Konkrete Aufgabenverteilung mithilfe von project tasks im Backlog und ein angemessener Review
