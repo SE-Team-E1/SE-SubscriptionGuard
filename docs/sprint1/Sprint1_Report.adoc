@@ -1,3 +1,5 @@
+:text-align: left
+
 = Sprint-1-Report: Produktkonzept und agile Arbeitsweise
 
 // Bitte fügen Sie hier die Informationen zu Ihrem Team, Projekt, Datum und Repository ein.
