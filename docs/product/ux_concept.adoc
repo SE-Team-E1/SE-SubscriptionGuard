@@ -35,7 +35,7 @@ _Hinweis: Im link:product_concept.adoc[Produktkonzept] werden Zielgruppen nur be
 
 | *Ziele*
 a| 
-* einfacher,schneller Überblick über Abos
+* einfacher, schneller Überblick über Abos
 * Verwaltung seiner Abos schnell und zentral
 * einfache Handlungsempfehlungen, Kennzahlen, Analysen
 
@@ -54,7 +54,8 @@ a|
 * nutzt gern Test-Abos
 
 | *Bezug zum Produkt*
-| [Warum ist dieses Produkt für sie relevant? Was ist ihr primärer Nutzen?]
+// | [Warum ist dieses Produkt für sie relevant? Was ist ihr primärer Nutzen?]
+| Proaktive Erinnerungen verhindern vergessene Kündigungen und somit ist sein Hauptproblem direkt gelöst.
 |===
 
 === Persona 2: Thomas der Skeptische
@@ -62,13 +63,13 @@ a|
 [cols="1,3"]
 |===
 | *Rolle*
-| 
+| Studierender oder junger Berufstätiger mit Datenschutzbewusstsein
 
 | *Alter*
 | 20-50 Jahre
 
 | *Zitat*
-| _„[Prägnantes Zitat]"_
+| _„Ich will wissen, wo meine Daten landen — und ob ich dem wirklich vertrauen kann."_
 
 | *Ziele*
 a| 
@@ -89,7 +90,8 @@ nutzt die digitalen Produkte die er zwingend benötigt, aber ist nicht stolz dar
 * Schätzt vertrauenswürdige, transparente Dienstleister sehr
 
 | *Bezug zum Produkt*
-| [Bezug zum Produkt]
+| Kein Bankzugang, Gastmodus verfügbar +
+  Es muss datenschutzkonform nutzbar.
 |===
 
 === Persona 3: Maximilian der Fortschrittliche
@@ -97,12 +99,12 @@ nutzt die digitalen Produkte die er zwingend benötigt, aber ist nicht stolz dar
 [cols="1,3"]
 |===
 | *Rolle*
-| 
+| Technikaffiner Studierender / Early Adopter (Edge Case)
 | *Alter*
 | 20-30 Jahre
 
 | *Zitat*
-| _„[Prägnantes Zitat]"_
+| _„Ich will nicht nur tracken — ich will verstehen, was meine Abos wirklich wert sind."_
 
 | *Ziele*
 a| 
@@ -125,7 +127,8 @@ nutzt immer die neuesten Tools insbesondere KI (Early Adopter)
 * gutes finanzielles Verständnis
 
 | *Bezug zum Produkt*
-| [Bezug zum Produkt]
+| Kostenkennzahlen und Übersicht sprechen ihn an +
+ Statistik-Features sind für ihn wichtiger als die Kernfunktion.
 |===
 
 NOTE: Für jedes Projekt sind 2–4 Personas ausreichend. Mehr Personas verwässern
@@ -140,22 +143,26 @@ _Der Nutzungskontext gemäß DIN EN ISO 9241-11 beschreibt die Lebenswirklichkei
 | Aspekt | Beschreibung
  
 | Benutzer
-| [Eigenschaften, Kenntnisse, Erfahrung, Motivation der Nutzenden.
-(Verweis auf Personas für ausführliche Beschreibungen)]
+| Studierende und junge Berufstätige, 20–50 Jahre; 5–10 aktive Abos; technisch vertraut; teils datenschutzbewusst.
+Siehe Personas: Otto Normal, Thomas der Skeptische, Maximilian der Fortschrittliche.
  
 | Ziele & Aufgaben
-| [Was wollen Nutzende erreichen?
-Welche konkreten Aufgaben führen sie dazu aus?]
+a|
+* Alle aktiven Abos auf einen Blick überblicken
+* Kündigungsfristen rechtzeitig im Blick behalten
+* Abos erfassen, bearbeiten und kündigen
+* Gesamtkosten und Einsparpotenziale erkennen
  
 | Ressourcen
-| [Hardware, Software, Eingabegeräte, Hilfsmittel, die zur Nutzung des Produkts benötigt werden oder vorhanden sind.]
- 
+a| 
+* Smartphone (primär); PC/Laptop (gelegentlich). 
+* Android, iOS oder Web-Browser. 
+* Standard-Internetverbindung.
 | Umgebung
-| [Technische Umgebung: Netzwerk, Plattformen, Betriebssysteme, Interoperabilität.
-
- Physische Umgebung: Ort der Nutzung, Lichtverhältnisse, Lärm, Mobilität.
-
-Soziale & organisatorische Umgebung: Organisationsstruktur, Zusammenarbeit, Unterbrechungen, rechtliche oder regulatorische Rahmenbedingungen.]
+a|
+* *Technisch:* Android / iOS / Web; mobile Nutzung dominant
+* *Physisch:* spontan unterwegs; gezielt zu Hause am PC
+* *Sozial/rechtlich:* individuelle Nutzung; DSGVO-Rahmenbedingungen relevant
  
 |===
 
@@ -164,8 +171,10 @@ Soziale & organisatorische Umgebung: Organisationsstruktur, Zusammenarbeit, Unte
 _Wie lösen die Nutzenden ihr Problem heute? Diese Beschreibung zeigt, was das Produkt
 verbessern soll — und macht den Mehrwert explizit._
 
-[Beschreibe den heutigen Ablauf in 3–5 Sätzen oder als kurze Schrittfolge. Beispiel: „Heute fragt Maria an der Infotheke nach freien Räumen, erhält eine Liste per E-Mail, und stellt beim Ankommen fest, dass der Raum bereits belegt ist.
-Der Prozess kostet sie im Schnitt 20 Minuten pro Tag."]
+Heute verwalten die meisten Nutzenden ihre Abos nicht aktiv. +
+- Stk T vergisst Probeabo-Kündigungen (einmal folgte auf 2 Wochen Testphase ein ungewolltes Jahresabo). +
+- Stk A scrollt sonntags den Kontoauszug durch, um Abos manuell zu identifizieren. +
+- Stk M weiß ungefähr, was er zahlt, hat aber keinen strukturierten Überblick.
 
 === Nutzungshürden & Risiken
 
@@ -175,14 +184,17 @@ _Was könnte die Akzeptanz oder Nutzung des Produkts beeinträchtigen?_
 |===
 | Hürde / Risiko | Mögliche Reaktion im Design
 
-| [z. B. Datenschutzbedenken bei Registrierungspflicht]
-| [z. B. Gastzugang für erste Nutzung anbieten]
+| Datenschutzbedenken bei Registrierungspflicht
+| Gastmodus ohne Account; Registrierung nur optional für Sync
 
-| [z. B. Schlechte WLAN-Verfügbarkeit in Gebäudeteilen]
-| [z. B. Offline-Ansicht für zuletzt geladene Daten]
+| Manuelle Abo-Erfassung zu aufwendig
+| Minimale Pflichtfelder; schnelle Eingabe mit Vorschlägen
 
-| [Weitere Hürde]
-| [Reaktion]
+| Misstrauen gegenüber Finanz-Apps
+| Kein Bankzugang; transparente Datenpolitik; lokale Datenspeicherung im Gastmodus
+
+// | [z. B. Datenschutzbedenken bei Registrierungspflicht]
+// | [z. B. Gastzugang für erste Nutzung anbieten]
 |===
 
 == Systemweite Interaktionsflüsse
@@ -310,8 +322,8 @@ wird begründet, damit sie nicht aus Unwissenheit verletzt wird._
 | Primäre Aktionen befinden sich im unteren Bildschirmbereich (Daumenzone).
   Optimiert für einhändige Smartphone-Nutzung.
 
-| [Weiteres Prinzip]
-| [Beschreibung & Begründung]
+// | [Weiteres Prinzip]
+// | [Beschreibung & Begründung]
 |===
 
 === Barrierefreiheit
@@ -332,8 +344,8 @@ wird begründet, damit sie nicht aus Unwissenheit verletzt wird._
 | Schriftgröße
 | Keine Schrift unter 14px; Nutzer:innen können Systemschriftgröße nutzen
 
-| [Weiterer Aspekt]
-| [Anforderung]
+// | [Weiterer Aspekt]
+// | [Anforderung]
 |===
 
 
