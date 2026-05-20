@@ -19,28 +19,113 @@ Technische Implementierungsdetails gehören nicht hierher!
 |===
 | Begriff / Abkürzung | Definition | Synonyme / Abgrenzungen
 
-| Bestellung
-| Eine vom Nutzer ausgelöste Anforderung, ein oder mehrere Produkte zu erwerben.
-  Eine Bestellung durchläuft verschiedene Status (offen, bezahlt, versendet, abgeschlossen).
-| Auftrag; nicht zu verwechseln mit „Warenkorb" (noch nicht abgeschlossen)
+| Abonnement
+| Wiederkehrendes Vertragsverhältnis: Nutzer zahlt regelmäßig und erhält Zugang zu einem Dienst.
+| Abo, Vertrag, Subscription; abzugrenzen von Einmalkauf
+
+| Abo-Kategorie
+| Thematische Gruppe eines Abonnements, z.B. Streaming, Software, Gaming, Fitness.
+| Gruppe, Tag; dient der Filterung und Übersicht — kein eigener Vertragsbestandteil
+
+| Abo-Überschneidung
+| Zustand, bei dem zwei oder mehr Abonnements ähnliche Leistungen abdecken.
+| 
+
+| Abo-Status
+| Aktueller Zustand eines Abonnements: aktiv, pausiert, gekündigt oder abgelaufen.
+| Status; nicht zu verwechseln mit Zahlungsstatus
+
+| Abrechnungszyklus
+| Zeitraum zwischen zwei aufeinanderfolgenden Zahlungen eines Abonnements.
+| Zahlungsrhythmus; vgl. Zahlungsintervall
+
+| Anbieter
+| Unternehmen oder Person, die einen Dienst im Rahmen eines Abonnements bereitstellt.
+| Dienstleister; abzugrenzen von Nutzer
+
+| ARIA
+| Accessible Rich Internet Applications — W3C-Standard für barrierefreie Web-Inhalte. Wird in Screenreader-Anforderungen verwendet (vgl. WCAG)
+| 
+
+| Ausgabenübersicht
+| Berechnete Gesamtheit aller aktiven Abo-Kosten eines Nutzers in einem Zeitraum.
+| Kostenübersicht; kein eigenes Abo, sondern eine abgeleitete Ansicht
+
+| Automatische Verlängerung
+| Mechanismus, bei dem ein Abonnement nach Ablauf der Laufzeit ohne aktive Zustimmung verlängert wird.
+| Auto-Renewal; tritt ein, wenn die Kündigungsfrist nicht eingehalten wurde
+
+| Budget
+| Nutzer-definiertes monatliches Ausgabenlimit für Abonnements.
+|
+
+| DSGVO
+| Datenschutz-Grundverordnung — EU-Recht zum Schutz personenbezogener Daten. Bindende Einschränkung für Datenspeicherung und -verarbeitung
+| GDPR (englisch)
+
+| Erinnerung
+| Automatische Benachrichtigung auf ein bevorstehendes Ereignis, z.B. Ablauf der Kündigungsfrist.
+| Benachrichtigung; abzugrenzen von manuell gesetzter Notiz
+
+| Gastmodus
+| Nutzungsmodus ohne Registrierung; Daten werden ausschließlich lokal gespeichert.
+| Offline-Modus; abzugrenzen von registriertem Account
+
+| Geteiltes Abo
+| Ein Abonnement, das mehrere Personen (z.B. Familie, WG) gemeinsam nutzen.
+| Familienabo, Gruppenabo
+
+| KI
+| Künstliche Intelligenz — im Kontext des Projekts: KI-gestützte Empfehlungen oder Abo-Erkennung.
+| AI (englisch)
+
+| Kündigungsfrist
+| Zeitraum, der vor dem gewünschten Vertragsende eingehalten werden muss.
+| Frist; abzugrenzen von Vertragslaufzeit
+
+| Kündigungsprozess
+| Die notwendigen Schritte, um ein Abonnement beim Anbieter zu beenden.
+| abzugrenzen von Kündigungsfrist (Timing)
 
 | Nutzer
-| Eine Person, die das System aktiv verwendet. Nutzer müssen registriert und eingeloggt
-  sein, um Bestellungen aufzugeben.
-| Anwender, Benutzer; abzugrenzen von „Administrator"
+| Person, die SubscriptionGuard verwendet. Kann im Gastmodus oder mit Account agieren.
+| Anwender; abzugrenzen von Anbieter
 
-| Produkt
-| Ein im System angebotener Artikel, der bestellt werden kann. Ein Produkt hat eine
-  Bezeichnung, einen Preis und eine Verfügbarkeit.
-| Artikel, Ware
+| Preisänderung
+| Erhöhung oder Senkung des Abobetrags durch den Anbieter, oft ohne aktive Benachrichtigung des Nutzers.
+| Preiserhöhung; abzugrenzen von einmaligem Sonderpreis
 
-| [Begriff]
-| [Präzise, fachliche Definition in 1–3 Sätzen]
-| [Synonyme oder Abgrenzungen zu ähnlichen Begriffen]
+| Probeabo
+| Zeitlich begrenztes Abo zu Sonderkonditionen; geht automatisch in reguläres Abo über, sofern nicht rechtzeitig gekündigt.
+| Testabo, Gratiszeitraum; Sonderfall eines Abonnements
 
-| [Begriff]
-| [Präzise, fachliche Definition in 1–3 Sätzen]
-| [Synonyme oder Abgrenzungen zu ähnlichen Begriffen]
+| Stk
+| Stakeholder — Person oder Gruppe mit Interesse am oder Einfluss auf das Produkt.
+| In Dokumenten abgekürzt als Stk T (Thani), Stk A (Armando), Stk M (Max)
+
+| UI
+| User Interface — die sichtbare Benutzeroberfläche des Produkts.
+| Benutzeroberfläche; abzugrenzen von UX (Erlebnis) und Backend (Logik)
+
+| UX
+| User Experience — das Gesamterlebnis der Nutzenden bei der Interaktion mit dem Produkt.
+| Nutzererlebnis; umfasst UI, Abläufe, Emotionen und wahrgenommene Qualität
+
+| WCAG
+| Web Content Accessibility Guidelines — W3C-Standard für barrierefreie Webinhalte.
+| Ziel: WCAG 2.1 Level AA; bindende Einschränkung laut Produktkonzept (vgl. ARIA)
+
+| Zahlungsbetrag
+| Der konkrete Geldbetrag, der pro Abrechnungszyklus für ein Abonnement fällig wird.
+| Betrag, Beitrag; abzugrenzen von Gesamtkosten (Ausgabenübersicht)
+
+| Zahlungsintervall
+| Häufigkeit der Abrechnung: monatlich, jährlich, wöchentlich o.ä.
+| Abrechnungszyklus, Zahlungsabstand
+
+// | [Begriff]
+// | [Präzise, fachliche Definition in 1–3 Sätzen]
+// | [Synonyme oder Abgrenzungen zu ähnlichen Begriffen]
 |===
 
 
