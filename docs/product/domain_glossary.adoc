@@ -1,7 +1,7 @@
 = Domänenmodell und Glossar: {project-name}
-Vorname Nachname <email@domain.org>; Vorname2 Nachname2 <email2@domain.org>; Vorname3 Nachname3 <email3@domain.org>
-{localdatetime}
 include::../_includes/default-attributes.inc.adoc[]
+{authoren}
+{localdatetime}
 // Platzhalter für weitere Dokumenten-Attribute
 
 _Dieses Dokument beschreibt die wesentlichen fachlichen Begriffe und ihre  Beziehungen untereinander. Es bildet die gemeinsame Sprache des Teams und aller Stakeholder — unabhängig von technischen Umsetzungsentscheidungen.
