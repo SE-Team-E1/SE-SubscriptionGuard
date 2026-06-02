@@ -5,9 +5,10 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
+      path: '/overview',
       name: 'overview',
       component: HomeView,
+      meta: { pageTitle: 'Overview' },
     },
     {
       path: '/add',
@@ -16,11 +17,13 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
+      meta: { pageTitle: 'Add Subscription' },
     },
     {
       path: '/list',
       name: 'list',
-      component: () => import('../views/AboutView.vue'),
+      component: () => import('../views/SubscriptionsView.vue'),
+      meta: { pageTitle: 'Subscriptions' },
     }
   ],
 })
