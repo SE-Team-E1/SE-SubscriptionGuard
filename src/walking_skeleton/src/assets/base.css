@@ -36,6 +36,10 @@
   --section-gap: 160px;
 }
 
+:root {
+  --horizontal-screen-padding: 10px;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --color-background: var(--vt-c-black);
@@ -50,13 +54,13 @@
   }
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  font-weight: normal;
-}
+/**,*/
+/**::before,*/
+/**::after {*/
+/*  box-sizing: border-box;*/
+/*  margin: 0;*/
+/*  font-weight: normal;*/
+/*}*/
 
 body {
   min-height: 100vh;
