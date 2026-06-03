@@ -13,7 +13,7 @@ class VertragSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'anbieter', 'preis', 'preis_amount', 'preis_currency',
             'kündigungsfrist_amount', 'kündigungsfrist_unit',
-            'buchumsdatum', 'abschlussdatum',
+            'buchungsdatum', 'abschlussdatum',
         ]
 
     def get_preis(self, obj):
