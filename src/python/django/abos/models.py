@@ -19,7 +19,7 @@ class Vertrag(models.Model):
   ]
   kündigungsfrist_amount = models.PositiveSmallIntegerField(null=True, blank=True, help_text='Zahl z.B. 3')
   kündigungsfrist_unit = models.CharField(max_length=10, choices=NOTICE_UNIT_CHOICES, default='months', blank=True)
-  buchumsdatum = models.PositiveSmallIntegerField(
+  buchungsdatum = models.PositiveSmallIntegerField(
     null=True,
     blank=True,
     validators=[MinValueValidator(1), MaxValueValidator(31)],
@@ -30,14 +30,14 @@ class Vertrag(models.Model):
   def get_billing_date_for_month(self, year: int, month: int) -> datetime.date | None:
     """
     Gibt ein konkretes Datum im angegebenen Jahr/Monat zurück,
-    das dem gewünschten `buchumsdatum` entspricht.
+    das dem gewünschten `buchungsdatum` entspricht.
     Falls der Monat weniger Tage hat, wird das letzte Tagesdatum verwendet.
     Beispiel: buchumsdatum=31, Monat=Februar -> 28 (oder 29)
     """
-    if not self.buchumsdatum:
+    if not self.buchungsdatum:
       return None
     last_day = calendar.monthrange(year, month)[1]  # z.B. 28,29,30,31
-    day = min(self.buchumsdatum, last_day)
+    day = min(self.buchungsdatum, last_day)
     return datetime.date(year, month, day)
 
   def next_billing_date_after(self, reference_date: datetime.date | None = None) -> datetime.date | None:
@@ -45,7 +45,7 @@ class Vertrag(models.Model):
     Berechnet das nächste Buchungs-/Rechnungsdatum nach `reference_date`.
     Falls kein reference_date übergeben wird, wird heute verwendet.
     """
-    if not self.buchumsdatum:
+    if not self.buchungsdatum:
       return None
     if reference_date is None:
       reference_date = datetime.date.today()
