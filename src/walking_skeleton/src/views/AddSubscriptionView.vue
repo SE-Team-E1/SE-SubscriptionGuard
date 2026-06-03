@@ -185,8 +185,7 @@ const form = reactive({
   display:flex;
   gap:8px;
 }
-  flex:1;
-git 
+
 .date-inputs input{
   flex:1;
   text-align:center;
