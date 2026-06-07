@@ -56,7 +56,7 @@ a|
 * Reproduzierbare lokale Ausführbarkeit geprüft (Tags v0.0.1–v0.0.5)
 * Im Frontend wurde Grundlegene Struktur gebaut um einen Klickdummy zu bauen, z.b. das Formular um ein neues Abo anzulegen.
 | https://github.com/SE-Team-E1/SE-SubscriptionGuard/releases/tag/v0.0.5[Release v0.0.5 (GitHub)],
-https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/main/.github/workflows/[CI/CD Workflow]
+https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/feature/70-aufgabe-backend-api-endpunkt-zur-erfassung-eines-neuen-abos-implementieren/.github/workflows/[CI/CD Workflow],
 https://github.com/SE-Team-E1/SE-SubscriptionGuard/tree/feature/71_walking_skeleton_vuejs/src/walking_skeleton[Walking Skeleton Frontend (GitHub)]
 | Das Walking Skeleton zeigt, dass Django-Backend + REST-API + Docker lokal und reproduzierbar ausführbar sind. Jeder Push löst automatisch einen Docker-Build aus. Die technische Grundstruktur ist damit beweisbar tragfähig.
 
