@@ -35,7 +35,10 @@ a|
 * Glossar-Kandidaten asynchron im Miro-Board gesammelt (24 Begriffe, kollaborativ)
 * Terminologische Abgrenzungen erarbeitet (z. B. Abo vs. Vertrag, Abrechnungszyklus vs. Zahlungsintervall)
 * Domain Glossary mit projektspezifischen Begriffen befüllt und in AsciiDoc übertragen
-| https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/main/docs/product/domain_glossary.adoc[Domain Glossary (GitHub)]
+* Domänen-/ Datenmodell erarbeiten
+a| 
+* https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/main/docs/product/domain_glossary.adoc[Domain Glossary (GitHub)]
+* https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/main/docs/technical/architecture.adoc[Architektur (GitHub)]
 | Einheitliche Sprache im Team ist Grundlage für konsistentes API-Design. Zentrale Begriffe wie _Kündigungsfrist_, _Abrechnungszyklus_ und _Gastmodus_ sind jetzt eindeutig definiert und direkt in API-Modelle übertragbar.
 
 | Technische Spikes durchführen
