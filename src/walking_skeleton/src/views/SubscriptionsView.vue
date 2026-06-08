@@ -3,7 +3,8 @@
 import {
   mdiSpotify,
   mdiDumbbell,
-  mdiControllerClassic
+  mdiControllerClassic,
+  mdiFire,
 } from '@mdi/js'
 
 interface Subscription {
@@ -11,6 +12,7 @@ interface Subscription {
   title: string,
   price: string,
   renewal: string
+  rating: number
 }
 
 const subscriptions: Subscription[] = [
@@ -18,19 +20,22 @@ const subscriptions: Subscription[] = [
     icon: mdiSpotify,
     title: "Spotify Premium",
     price: "35€",
-    renewal: "monatlich"
+    renewal: "monatlich", 
+    rating: 4.5
   },
   {
     icon: mdiDumbbell,
     title: "Fitnessstudio",
     price: "105€",
-    renewal: "aller 3 Monate"
+    renewal: "aller 3 Monate",
+    rating: 4.0
   },
   {
     icon: mdiControllerClassic,
     title: "Xbox Game Pass",
     price: "155€",
-    renewal: "jährlich"
+    renewal: "jährlich",
+    rating: 3.5
   }
 ]
 </script>
@@ -41,11 +46,27 @@ const subscriptions: Subscription[] = [
       v-for="sub in subscriptions"
       :key="sub.title"
       :title="sub.title"
+      :subtitle="`${sub.price} · ${sub.renewal}`"
       :prepend-icon="sub.icon"
 
       variant="outlined"
       rounded="lg"
     >
+      <template #append>
+        <v-rating
+          :model-value="sub.rating"
+          :length="Math.ceil(sub.rating)"
+          half-increments
+          density="compact"
+          color="grey-lighten-1"
+          active-color="orange"
+          size="small"
+          background-color="grey-lighten-1"
+          readonly
+          :empty-icon="mdiFire"
+          :full-icon="mdiFire"
+        />
+      </template>
     </v-list-item>
   </v-list>
 </template>
@@ -56,6 +77,7 @@ const subscriptions: Subscription[] = [
   flex-direction: column;
   gap: 4px;
   padding: 4px var(--horizontal-screen-padding);
+  overflow-x: hidden;
 }
 .v-list-item {
   border-color: gray;
