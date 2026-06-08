@@ -1,8 +1,7 @@
 = Architekturdokument: SubscriptionGuard
-Johannes Meinck <s88889@htw-dresden.de>
-2026-06-03
 include::../_includes/default-attributes.inc.adoc[]
-{authoren}
+
+Johannes Meinck <s88889@htw-dresden.de>
 {localdatetime}
 // Platzhalter für weitere Dokumenten-Attribute
 
