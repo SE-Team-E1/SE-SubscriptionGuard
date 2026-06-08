@@ -1,4 +1,6 @@
-= Architekturdokument: {project-name}
+= Architekturdokument: SubscriptionGuard
+Johannes Meinck <s88889@htw-dresden.de>
+2026-06-03
 include::../_includes/default-attributes.inc.adoc[]
 {authoren}
 {localdatetime}
@@ -15,7 +17,8 @@ Dieses Dokument referenziert sie und dokumentiert ausschließlich die technische
 Konsequenzen, die sich daraus ergeben._
 
 _Detaillierte Beschreibungen der internen Softwarestruktur, z.B. Schichten, Komponenten,
-Datenmodell, Interaktionsflüsse, sind im link:design.adoc[Designdokument] (`design.adoc`)beschrieben._
+Datenmodell, Interaktionsflüsse, sind im link:design.adoc[Designdokument] (`design.adoc`) beschrieben.
+Fachbegriffe und das fachliche Domänenmodell sind im link:domaenenmodell.adoc[Domänenmodell-Dokument] definiert._
 
 ---
 
@@ -30,38 +33,28 @@ _Der Systemkontext zeigt das System als Ganzes in seiner Umgebung: welche extern
 ....
 @startuml
 ' source: https://github.com/plantuml-stdlib/C4-PlantUML
-' C4 Model
 !include <c4/C4_Context.puml>
-
-' Images
 !include <office/Users/user.puml>
 !include <office/Users/mobile_user.puml>
 
 LAYOUT_WITH_LEGEND()
 
-title System Context Diagram – [Systemname]
+title System Context Diagram – SubscriptionGuard
 
-Person(user, "Nutzer:in", "Verwendet das System über Web oder Mobile")
-Person(admin, "Administrator:in", "Verwaltet und konfiguriert das System")
+Person(user, "Nutzer:in", "Verwaltet Abonnements über die PWA (Gast oder mit Account)")
 
-System(system, "[Systemname]", "Kernfunktionalität des Systems")
+System(system, "SubscriptionGuard", "Abo- und Kostenübersicht, Kündigungsfristen, Erinnerungen")
 
-SystemDb(db, "Datenbank", "Persistente Datenhaltung des Systems")
+System_Ext(push, "Web-Push-Dienst\n(FCM / APNS)", "Auslieferung von Push-Benachrichtigungen an Endgeräte (nur registrierte Nutzer)")
 
-System_Ext(ext1, "Externer Dienst\n[z. B. LDAP / SSO]", "Authentifizierung und Identitätsverwaltung")
-System_Ext(ext2, "Externer Dienst\n[z. B. E-Mail-Server]", "Versand von Benachrichtigungen")
-
-Rel(user, system, "nutzt", "Web / Mobile")
-Rel(admin, system, "verwaltet")
-Rel(system, db, "liest / schreibt", "JDBC / SQL")
-Rel(system, ext1, "authentifiziert über", "LDAP / OAuth2")
-Rel(system, ext2, "sendet Benachrichtigungen über", "SMTP")
+Rel(user, system, "nutzt", "HTTPS / PWA")
+Rel(system, push, "sendet Push über", "Web Push Protocol / FCM / APNS")
 
 @enduml
 ....
 
 NOTE: Das Kontextdiagramm zeigt ausschließlich externe Schnittstellen.
-Die interne Struktur des Systems ist im Designdokument beschrieben.
+Die interne Struktur (Vue-PWA, Django-API, Scheduler, Datenbank) ist im Designdokument beschrieben.
 
 *Externe Schnittstellen:*
 
@@ -69,50 +62,94 @@ Die interne Struktur des Systems ist im Designdokument beschrieben.
 |===
 | Schnittstelle | Typ | Beschreibung | Protokoll / Format
 
-| [z. B. Hochschul-LDAP]
+| Web-Push-Dienst (FCM/APNS)
 | Externes System
-| Authentifizierung und Nutzerverwaltung über bestehende Hochschulinfrastruktur
-| LDAP / TLS
+| Auslieferung von Push-Benachrichtigungen (Erinnerungen vor Kündigungsfristen) für registrierte Nutzer. Hinweis: technisch über Google-/Apple-Infrastruktur — Datenschutz-Implikation, siehe ADR-006.
+| Web Push Protocol / HTTPS
 
-| [z. B. SMTP-Server]
+| SMTP-Relay (zurückgestellt)
 | Externes System
-| Versand von Benachrichtigungs-E-Mails an Nutzende
-| SMTP / TLS
+| E-Mail-Versand als möglicher späterer Zusatzkanal. Netzwerkebene geklärt (Port 587 offen, Port 25 blockiert), aber Relay-Wahl und Constraint-/Datenschutz-Frage offen. Nicht Teil der aktuellen Architektur — siehe ADR-006.
+| SMTP / TLS (Port 587)
 
-| [z. B. Nutzer:in via Browser]
+| Nutzer:in via Browser/PWA
 | Menschlicher Akteur
-| Zugriff über Web-Oberfläche
+| Zugriff über installierbare Progressive Web App (Web und Mobile)
 | HTTPS / REST
 
-| [Weitere Schnittstelle]
-| [Typ]
-| [Beschreibung]
-| [Protokoll]
+| Hochschul-VM (Betrieb)
+| Infrastruktur
+| Betrieb der Anwendung auf bereitgestellter HTW-Linux-VM
+| siehe Deployment
 |===
 
 === Laufzeitumgebungen (Container Diagramm)
 //Level 2 im C4-Modell
 Diese Sicht gibt an, welche Umgebungen für den Code vorgesehen sind, z.B. JVM, Node.js, DBMS, Browser, Android Runtime.
 
-[plantuml, "{diagramsdir}/system-context", svg]
+[plantuml, "{diagramsdir}/container", svg]
 ....
 @startuml
 ' source: https://github.com/plantuml-stdlib/C4-PlantUML
-' C4 Model
 !include <c4/C4_Container.puml>
 
-Person(personAlias, "Label", "Optional Description")
+Person(user, "Nutzer:in", "Web / Mobile")
 
-System_Boundary(c1, "Sample System") {
-    Container(containerAlias, "Container Name", "Technology", "Optional Description")
+System_Boundary(c1, "SubscriptionGuard") {
+    Container(pwa, "PWA-Frontend", "Vue.js, Service Worker, IndexedDB", "Bedienoberfläche; Offline-Fähigkeit; lokale Datenhaltung im Gastmodus")
+    Container(api, "Backend-API", "Django / Django REST Framework", "Geschäftslogik, Authentifizierung, REST-Schnittstelle (für registrierte Nutzer)")
+    Container(worker, "Scheduler", "Cron + Django-Management-Command", "Zeitgesteuerte server-seitige Erinnerungen (registrierte Nutzer)")
+    ContainerDb(db, "Datenbank", "PostgreSQL (Container)", "Persistente Datenhaltung (Abos, Fristen, Konten) registrierter Nutzer")
 }
-Rel(personAlias, containerAlias, "Label", "Optional Technology")
+
+System_Ext(push, "FCM / APNS", "Web Push")
+
+Rel(user, pwa, "bedient", "HTTPS")
+Rel(pwa, api, "ruft auf / synchronisiert (nur registriert)", "REST / HTTPS")
+Rel(api, db, "liest / schreibt", "SQL")
+Rel(worker, db, "liest Fristen", "SQL")
+Rel(worker, push, "sendet Push", "Web Push")
 
 @enduml
 ....
 
+NOTE: Im *Gastmodus* werden Daten ausschließlich lokal in der PWA (IndexedDB) gehalten;
+Backend-API, Datenbank und Scheduler werden dann nicht genutzt. Erst mit *Account* erfolgt
+Synchronisation und server-seitige Erinnerung (siehe ADR-004).
+
 === Verteilungsdiagramm (Deployment Diagramm)
-//Beschreibt die physischen Knoten (Rechner) des Systems und Komponenten, die in diesen Knoten ausgeführt werden. 
+//Beschreibt die physischen Knoten (Rechner) des Systems und Komponenten, die in diesen Knoten ausgeführt werden.
+
+// Belegt: HTW-Linux-VM (Spike "HTW VM externe Erreichbarkeit" — Status: Complete;
+// VM ist öffentlich erreichbar, Reverse-Proxy möglich). Alle Container laufen via
+// Docker Compose auf dieser VM.
+
+[plantuml, "{diagramsdir}/deployment", svg]
+....
+@startuml
+!include <c4/C4_Deployment.puml>
+
+Deployment_Node(device, "Endgerät der Nutzer:in", "Browser / installierte PWA") {
+    Container(pwa, "PWA", "Vue.js + Service Worker", "")
+}
+
+Deployment_Node(vm, "HTW-Linux-VM", "Docker Compose") {
+    Container(proxy, "Reverse Proxy", "nginx", "TLS, Routing")
+    Container(api, "Django-API", "Gunicorn/ASGI", "")
+    Container(worker, "Scheduler", "Cron + Django-Management-Command", "")
+    ContainerDb(db, "PostgreSQL", "Container", "")
+}
+
+Rel(pwa, proxy, "HTTPS")
+Rel(proxy, api, "HTTP (intern)")
+@enduml
+....
+
+=== Domänenmodell
+
+NOTE: Das fachliche Domänenmodell und das Glossar werden im link:domaenenmodell.adoc[Domänenmodell-Dokument]
+gepflegt (einzige Quelle). Hier nur als Architekturtreiber referenziert: Die Entitäten bestimmen
+Datenhaltung, Sync-Umfang (ADR-007) und DSGVO-Scope (ADR-004). Bei Abweichungen gilt das Domänenmodell-Dokument.
 
 
 == Technologie-Stack
@@ -128,39 +165,54 @@ sind in <<Architekturentscheidungen>> dokumentiert._
 | Bereich | Technologie | Begründung | Entscheidung
 
 | Frontend
-| [z. B. React 18]
-| [z. B. Teamkenntnisse; große Community; Komponentenmodell]
-| [z. B. ADR-002]
+| Vue.js (als PWA)
+| Geräteunabhängigkeit (Android/iOS/Web) mit einer Codebasis; installierbar; Offline-Fähigkeit über Service Worker + IndexedDB (Grundlage für Gastmodus)
+| ADR-002
 
 | Backend
-| [z. B. Spring Boot 3]
-| [z. B. Vorgabe im Studiengang; gute Dokumentation]
-| [z. B. ADR-001]
+| Django (+ Django REST Framework)
+| Mitgeliefertes Auth- und ORM-System reduziert Eigenentwicklung; gute Doku; trägt den Account-Pfad des Hybrid-Modells
+| ADR-001
 
 | Datenbank
-| [z. B. PostgreSQL 15]
-| [z. B. Relationales Modell passend; auf Hochschulinfrastruktur verfügbar]
-| [z. B. ADR-003]
+| PostgreSQL (Container)
+| Relationales Modell passt zu Abos/Fristen/Konten; reproduzierbar im Container; auf VM betreibbar
+| ADR-003
 
-| Authentifizierung
-| [z. B. OAuth2 / Hochschul-SSO]
-| [z. B. Pflichtintegration; kein eigenes Nutzermanagement nötig]
-| [z. B. ADR-004]
+| Nutzungsmodell / Auth
+| Hybrid: Gastmodus (lokal) + optionaler Django-Auth-Account
+| Vereint Review-Feedback („ohne Account") mit Sync/Erinnerung (nur mit Account)
+| ADR-004
+
+| Synchronisation
+| IndexedDB (Client) <-> Server-DB; Optimistic Concurrency Control (Versionierung)
+| Nur für registrierte Nutzer relevant; Konflikte werden über Versionsstände erkannt und gemeldet
+| ADR-007
+
+| Scheduling
+| Cron + Django-Management-Command
+| Erinnerungen ≥ 2 Tage vor Frist erfordern zeitgesteuerte server-seitige Jobs; einfacher als Broker-basierte Lösung
+| ADR-005
+
+| Benachrichtigungskanal
+| Web Push (Web Push Protocol, VAPID; über FCM/APNS)
+| Erreicht registrierte Nutzende auch bei geschlossener App; kein E-Mail-Relay nötig (constraint-frei). Datenschutz-Trade-off (FCM/APNS) bewusst akzeptiert
+| ADR-006
 
 | Containerisierung
-| [z. B. Docker / Docker Compose]
-| [z. B. Reproduzierbare Umgebung für alle Teammitglieder]
-| [z. B. ADR-005]
+| Docker / Docker Compose
+| Reproduzierbare Umgebung; Betrieb auf HTW-VM; kein Cloud-only
+| ADR-005
+
+| Betrieb
+| HTW-Linux-VM + nginx (Reverse Proxy)
+| Vorgabe „Betrieb auf Hochschulinfrastruktur"; VM-Erreichbarkeit validiert (Spike Complete)
+| ADR-005
 
 | CI/CD
-| [z. B. GitHub Actions]
-| [z. B. Direkte Integration mit Repository; kostenlos für Studierende]
-| [z. B. ADR-006]
-
-| [Weiterer Bereich]
-| [Technologie]
-| [Begründung]
-| [ADR-Referenz oder —]
+| Noch nicht festgelegt
+| —
+| —
 |===
 
 == Architekturrelevante Anforderungen
@@ -170,129 +222,210 @@ Produktkonzept direkte Auswirkungen auf Architekturentscheidungen haben._
 
 IMPORTANT: Qualitätsziele und Einschränkungen werden hier *nicht* neu definiert —
 sie sind im link:../product/product_concept.adoc[Produktkonzept] als einziger Quelle festgelegt.
-Dieser Abschnitt zeigt ausschließlich die technischen Konsequenzen, die sich aus
-diesen Anforderungen ergeben, und verweist auf die zugehörigen Entscheidungen.
+Dieser Abschnitt zeigt ausschließlich die technischen Konsequenzen.
 
 [cols="2,3,2", options="header"]
 |===
 | Anforderung (aus Produktkonzept) | Technische Konsequenz | Entscheidung
 
-| Performanceziel: Seitenladezeit < 2 s
-| Server-Side Rendering für initiales Laden erforderlich;
-  statische Assets über CDN ausliefern
+| Geräteunabhängigkeit (Android, iOS, Web)
+| Eine PWA statt nativer Apps; responsives UI; Service Worker für Installierbarkeit/Offline
 | ADR-002
 
-| DSGVO-Konformität
-| Keine personenbezogenen Daten in Logs; Datensparsamkeit im Datenbankmodell;
-  Recht auf Löschung muss implementierbar sein
-| ADR-003, ADR-004
+| Zeitkritische Erinnerungen (≥ 2 Tage vor Frist)
+| Server-seitiger Scheduler nötig (Client allein unzuverlässig, da Gerät offline sein kann); Zustellung über Web Push. Hinweis: voll nur für registrierte Nutzer; Gastmodus nur lokale, eingeschränkte Erinnerungen
+| ADR-004, ADR-005, ADR-006
 
-| Betrieb auf Hochschulinfrastruktur
-| Keine Cloud-only-Dienste; Containerisierung für Portabilität erforderlich
+| Performance: Seitenladezeit < 2 s
+| Schlanke PWA, lokaler Cache (IndexedDB), Auslieferung statischer Assets über Reverse Proxy
+| ADR-002
+
+| Verfügbarkeit ≥ 99 % (Betriebszeiten 6–24 Uhr)
+| Automatischer Neustart der Container; Monitoring auf der VM
 | ADR-005
 
-| Verfügbarkeit ≥ 99 % während Betriebszeiten
-| Statusüberwachung und automatischer Neustart über Container-Orchestrierung
+| DSGVO-Konformität (Constraint)
+| Datensparsamkeit (Gastmodus speichert nur lokal); keine personenbezogenen Daten in Logs; Recht auf Löschung implementierbar; kritisch: Web Push leitet Tokens über FCM/APNS (Drittland) — Abwägung nötig
+| ADR-004, ADR-006
+
+| Barrierefreiheit (WCAG 2.1, Constraint)
+| Semantisches HTML, Kontraste, Tastatur-/Screenreader-Bedienbarkeit im Vue-Frontend
+| ADR-002
+
+| Betrieb auf Hochschulinfrastruktur (Constraint)
+| Keine Cloud-only-Dienste; Containerisierung für Portabilität; Betrieb auf HTW-VM
 | ADR-005
 
-| [Anforderung]
-| [Technische Konsequenz]
-| [ADR-Referenz oder —]
+| Mehrgerätebetrieb / Datenhoheit
+| Optionale account-basierte Synchronisation; Konfliktstrategie zwischen lokalem und Server-Stand erforderlich
+| ADR-004, ADR-007
 |===
 
 == Architekturentscheidungen
 
-_Architekturentscheidungen (Architecture Decision Records, ADRs) dokumentieren
-wichtige technische Entscheidungen: Was wurde entschieden, warum, welche
-Alternativen wurden verworfen, und welche Konsequenzen hat die Entscheidung._
-
-_Jede Entscheidung, die schwer rückgängig zu machen ist oder das gesamte System
-betrifft, sollte hier festgehalten werden. Kleine, lokale Implementierungsdetails
-gehören nicht hierher._
+_Architekturentscheidungen (ADRs) dokumentieren wichtige technische Entscheidungen:
+Was wurde entschieden, warum, welche Alternativen wurden verworfen, welche Konsequenzen._
 
 NOTE: ADRs werden nicht gelöscht oder überschrieben — sie werden als
-„ersetzt durch ADR-XXX" markiert. So bleibt die Entscheidungshistorie nachvollziehbar.
+„ersetzt durch ADR-XXX" markiert.
 
-=== ADR-001: [Titel der Entscheidung]
-
-[cols="1,3"]
-|===
-| *Status*
-| [Vorgeschlagen \| Akzeptiert \| Abgelehnt \| Ersetzt durch ADR-XXX]
-
-| *Datum*
-| [Datum]
-
-| *Kontext*
-| [Warum musste diese Entscheidung getroffen werden?
-  Welches Problem oder welche Anforderung hat sie ausgelöst?
-  Verweise auf Qualitätsziele oder Einschränkungen aus dem Produktkonzept falls relevant.]
-
-| *Entscheidung*
-| [Was wurde entschieden? Formuliere die Entscheidung als aktiven Satz:
-  „Wir verwenden X, weil..."]
-
-| *Alternativen*
-| [Welche Alternativen wurden in Betracht gezogen und warum verworfen?]
-
-| *Konsequenzen*
-| [Was wird durch diese Entscheidung einfacher? Was wird schwieriger oder teurer?
-  Welche neuen Risiken entstehen?]
-|===
-
-=== ADR-002: [Titel der Entscheidung]
+=== ADR-001: Backend mit Django
 
 [cols="1,3"]
 |===
-| *Status*
-| [Vorgeschlagen \| Akzeptiert \| Abgelehnt \| Ersetzt durch ADR-XXX]
-
-| *Datum*
-| [Datum]
-
+| *Status* | Akzeptiert
+| *Datum* | 2026-06-03
 | *Kontext*
-| [Kontext]
-
+| Es wird ein Backend mit Nutzerkonten, persistenter Datenhaltung und REST-API für den Account-Pfad (siehe ADR-004) benötigt.
 | *Entscheidung*
-| [Entscheidung]
-
+| Wir verwenden Django mit Django REST Framework, weil Auth, ORM und Admin out-of-the-box mitgeliefert werden und so Eigenentwicklung im begrenzten Semesterrahmen reduziert wird.
 | *Alternativen*
-| [Alternativen]
-
+| FastAPI/Flask (schlanker, aber Auth/ORM selbst zu bauen); Node/NestJS (zusätzlicher Tech-Stack neben Vue).
 | *Konsequenzen*
-| [Konsequenzen]
+| Einfacher: Auth, Migrationen, Admin. Schwieriger/teurer: Django ist für klassische Request/Response ausgelegt — Echtzeit-Sync (WebSocket/SSE) erfordert Zusatzaufwand (Channels).
 |===
 
+=== ADR-002: Frontend als Progressive Web App (Vue) statt nativer Apps
 
-NOTE: Weitere ADRs nach demselben Schema hinzufügen. Die Nummerierung ist
-fortlaufend und wird nie wiederverwendet.
+[cols="1,3"]
+|===
+| *Status* | Akzeptiert
+| *Datum* | 2026-06-03
+| *Kontext*
+| Das Produktkonzept fordert Geräteunabhängigkeit (Android, iOS, Web). Das Review stufte native Geräteunabhängigkeit als aufwendig / „nice to have" ein. Die Projektlaufzeit beträgt ein Semester.
+| *Entscheidung*
+| Wir entwickeln eine PWA mit Vue.js, weil eine Codebasis alle drei Plattformen abdeckt und über Service Worker Installierbarkeit und Offline-Fähigkeit bietet — ohne den Aufwand zweier nativer Apps.
+| *Alternativen*
+| Native Apps (iOS+Android): zu hoher Aufwand für ein Semester. Reines responsives Web ohne PWA: keine Push-Benachrichtigungen, keine Installierbarkeit.
+| *Konsequenzen*
+| Einfacher: eine Codebasis, schnelle Iteration. Schwieriger: PWA-Fähigkeiten auf iOS Safari eingeschränkt (Service Worker, Web Push erst ab iOS 16.4 und nur bei „Zum Home-Bildschirm"). Risiko über Spike validiert (siehe Risiken).
+|===
+
+=== ADR-003: PostgreSQL als Datenbank
+
+[cols="1,3"]
+|===
+| *Status* | Akzeptiert
+| *Datum* | 2026-06-03
+| *Kontext*
+| Abos, Zahlungszyklen, Kündigungsfristen und Konten sind stark relational und konsistenzkritisch.
+| *Entscheidung*
+| Wir verwenden PostgreSQL in einem Container, weil das relationale Modell gut passt, die DB reproduzierbar bereitgestellt werden kann und gut mit Djangos ORM zusammenspielt.
+| *Alternativen*
+| SQLite (zu schwach für Mehrbenutzer/Parallelzugriff im Serverbetrieb); NoSQL (kein Vorteil bei stark relationalen Daten).
+| *Konsequenzen*
+| Einfacher: Konsistenz, Transaktionen, Django-Integration. Schwieriger: zusätzlicher Container zu betreiben/sichern.
+|===
+
+=== ADR-004: Hybrides Nutzungsmodell (Gastmodus + optionaler Account)
+
+[cols="1,3"]
+|===
+| *Status* | Akzeptiert
+| *Datum* | 2026-06-03
+| *Kontext*
+| Im Sprint-Review wurde „Nutzung ohne Account" positiv aufgenommen (insb. Persona „Thomas der Skeptische", Datenhoheit/Datensparsamkeit). Zugleich erfordern geräteübergreifende Synchronisation und zuverlässige server-seitige Erinnerungen eine Nutzeridentität. Beide Anforderungen lassen sich nur über ein gestuftes Modell vereinen.
+| *Entscheidung*
+| Wir bieten ein *hybrides Modell*: einen *Gastmodus* (ohne Registrierung, Daten ausschließlich lokal in IndexedDB) und einen *optionalen Account* (Django-Auth), der Synchronisation und server-seitige Erinnerungen freischaltet.
+| *Alternativen*
+| Pflicht-Account: nur ein Datenpfad (technisch einfacher), widerspricht aber Review-Feedback und Privacy-Positionierung — verworfen. Lokal-only ohne jeden Account: maximale Datensparsamkeit, aber keine Sync und keine zuverlässigen Erinnerungen — verworfen.
+| *Konsequenzen*
+| Erfüllt Review-Feedback und Privacy-Positionierung. Schwieriger: *zwei Datenpfade* (lokal vs. server-synchronisiert) erhöhen Implementierungs- und Testaufwand deutlich. Funktionsstufung muss klar kommuniziert werden: Gastmodus bietet nur lokale, eingeschränkte Erinnerungen (an offenes Gerät gebunden) und keine Geräte-Sync (siehe ADR-006, ADR-007). Risiko: Mehraufwand im Semesterrahmen — Gastmodus bewusst schlank halten.
+|===
+
+=== ADR-005: Deployment via Docker Compose auf HTW-VM (nginx, Cron)
+
+[cols="1,3"]
+|===
+| *Status* | Akzeptiert
+| *Datum* | 2026-06-03
+| *Kontext*
+| Constraint „Betrieb auf Hochschulinfrastruktur". Eine HTW-Linux-VM steht bereit; deren externe Erreichbarkeit und Reverse-Proxy-Fähigkeit wurden validiert (Spike: Complete). Erinnerungen erfordern zeitgesteuerte Jobs.
+| *Entscheidung*
+| Wir betreiben alle Komponenten als Container über Docker Compose auf der HTW-VM hinter nginx als Reverse Proxy. Für Erinnerungen verwenden wir Cron + ein Django-Management-Command.
+| *Alternativen*
+| Scheduler: Celery+Beat+Redis (mächtiger, aber zwei zusätzliche Container) — für den einfachen, täglichen Erinnerungslauf nicht nötig, daher Cron gewählt. Reverse Proxy: Caddy (automatisches TLS) — nginx gewählt wegen Team-Vertrautheit. Cloud-Hosting: durch Constraint ausgeschlossen.
+| *Konsequenzen*
+| Einfacher: reproduzierbar, portabel, keine Cloud-Kosten, weniger Container ohne Broker. Schwieriger: Betrieb/Monitoring/Backups liegen beim Team; Verfügbarkeit ≥ 99 % erfordert Auto-Restart-Konfiguration; TLS bei nginx manuell einzurichten.
+|===
+
+=== ADR-006: Benachrichtigung über Web Push
+
+[cols="1,3"]
+|===
+| *Status* | Akzeptiert
+| *Datum* | 2026-06-03
+| *Kontext*
+| Erinnerungen müssen registrierte Nutzende auch bei geschlossener App zuverlässig erreichen (Qualitätsziel: Hinweis ≥ 2 Tage vor Frist). Der Spike „Notification-Delivery" verglich Web Push und E-Mail (SMTP). Belegte Ergebnisse: Web Push auf iOS (PWA, ab iOS 16.4, nach „Zum Home-Bildschirm") und Android erfolgreich getestet; E-Mail wäre über Port 587 (Submission/Relay) technisch möglich, Port 25 (direkte Zustellung) ist auf der HTW-VM blockiert. Web Push setzt technisch auf FCM (Google) bzw. APNS (Apple) auf — Datenschutz-/Datenhoheits-Implikation gegenüber Persona „Thomas der Skeptische".
+| *Entscheidung*
+| Wir verwenden *Web Push* als Benachrichtigungskanal für registrierte Nutzer. Begründung: kein E-Mail-Relay und keine HTW-IT-Freischaltung nötig (vermeidet die offene Relay-/Constraint-Frage), unmittelbare Zustellung, im Spike auf iOS und Android erfolgreich validiert. Der E-Mail-/SMTP-Weg wird *zurückgestellt* (nicht verworfen). Im *Gastmodus* sind nur lokale, eingeschränkte Erinnerungen möglich (an ein offenes/aktives Gerät gebunden, kein server-seitiger Versand).
+| *Alternativen*
+| E-Mail via HTW-Relay: datenschutzfreundlicher (kein Big-Tech-Dienst), aber Relay-Account, Projekt-Domain und SPF/DKIM/DMARC nötig sowie Klärung mit Anke — zurückgestellt. E-Mail via externer Dienst (Gmail/Brevo/SendGrid): kollidiert mit Constraint „keine kommerzielle Cloud" und Datenschutz-Positionierung — nur als dokumentierte Ausnahme. Reiner In-App-Reminder als alleiniger Kanal für registrierte Nutzer: erfüllt das Qualitätsziel nicht (erreicht nicht bei geschlossener App) — verworfen.
+| *Konsequenzen*
+| Einfacher: keine Mailserver-Infrastruktur, kein Relay-Vertrag, constraint-frei. Schwieriger / Risiken: (1) Abhängigkeit von FCM/APNS — Datenschutz-Trade-off, in der Datenschutzerklärung offenzulegen; (2) iOS nur als installierte PWA und ab iOS 16.4; (3) Gastmodus-Nutzer erhalten kein zuverlässiges proaktives Reminder — Funktionsstufung kommunizieren. Push-Subscription-Endpoint je Gerät muss server-seitig gespeichert werden.
+|===
+
+NOTE: Folgeaufgaben: FCM/APNS-Nutzung in der Datenschutzerklärung offenlegen (DSGVO,
+Persona „Thomas der Skeptische"). Der zurückgestellte E-Mail-Kanal kann bei Bedarf
+reaktiviert werden — dann mit Anke HTW-Relay und Projekt-Domain (SPF/DKIM/DMARC) klären.
+
+=== ADR-007: Synchronisationsstrategie (Offline-Client <-> Server)
+
+[cols="1,3"]
+|===
+| *Status* | Akzeptiert
+| *Datum* | 2026-06-03
+| *Kontext*
+| Für registrierte Nutzer hält die PWA Daten offline in IndexedDB; bei Mehrgerätebetrieb müssen lokaler und Server-Stand abgeglichen werden. Es kann zu Konflikten kommen. (Im Gastmodus entfällt die Sync vollständig — keine Server-Persistenz.)
+| *Entscheidung*
+| Wir verwenden *Optimistic Concurrency Control (OCC) mit Versionierung*: Jeder Datensatz trägt einen Versionsstand; beim Schreiben wird gegen die Server-Version geprüft, Konflikte werden erkannt und gemeldet statt stillschweigend überschrieben.
+| *Alternativen*
+| Last-Writer-Wins (LWW): einfachster Ansatz, aber kein Merge und stiller Datenverlust möglich — verworfen. Lease-Modell (Single-Writer-Token): vermeidet Konflikte, schränkt aber parallele Offline-Nutzung ein — verworfen. CRDTs (yjs/pycrdt): automatisches Mergen, aber sehr hohe Komplexität — für den Projektrahmen verworfen.
+| *Konsequenzen*
+| Einfacher: kein Datenverlust durch unbemerktes Überschreiben; moderate Implementierungskomplexität. Schwieriger: Konfliktfälle müssen in der UI behandelt werden (Nutzer-Entscheidung bei kollidierenden Ständen); jeder Datensatz braucht ein Versionsfeld. Gilt nur für den Account-Pfad.
+|===
+
+NOTE: Weitere ADRs nach demselben Schema. Nummerierung fortlaufend, nie wiederverwendet.
 
 == Risiken & technische Schulden
 
-_Dieser Abschnitt dokumentiert bekannte technische Risiken und bewusst eingegangene
-technische Kompromisse (Technical Debt). Transparenz hier verhindert, dass diese
-Punkte in Vergessenheit geraten._
+_Bekannte technische Risiken und bewusst eingegangene Kompromisse._
 
 === Technische Risiken
 
-[cols="2,1,2,2", options="header"]
+[cols="2,1,1,2", options="header"]
 |===
 | Risiko | Auswirkung | Wahrscheinlichkeit | Maßnahme
 
-| [z. B. LDAP-Schnittstelle der Hochschule ist undokumentiert]
+| PWA / Web Push auf iOS Safari eingeschränkt (nur als installierte PWA, ab iOS 16.4)
+| Hoch
+| Niedrig
+| Spike abgeschlossen: Web Push auf iOS und Android erfolgreich getestet. Restrisiko: iOS nur als installierte PWA — Nutzer beim Onboarding zum „Zum Home-Bildschirm" anleiten
+
+| Zwei Datenpfade (Gast lokal / Account server-synchronisiert) erhöhen Komplexität
+| Mittel
+| Mittel
+| Hybrid bewusst gewählt (ADR-004); Gastmodus schlank halten; beide Pfade getrennt testen
+
+| Sync-Konflikte zwischen IndexedDB und Server-DB (kollidierende Stände)
 | Hoch
 | Mittel
-| [z. B. Frühzeitiger Prototyp zur Validierung; Fallback auf lokale Authentifizierung]
+| OCC mit Versionierung gewählt (ADR-007); Konflikte werden erkannt und in der UI zur Auflösung angezeigt
 
-| [z. B. Performance bei > 200 gleichzeitigen Nutzenden unbekannt]
+| Gastmodus-Nutzer erhalten kein zuverlässiges proaktives Reminder
+| Mittel
+| Eingetreten (bewusst akzeptiert)
+| Funktionsstufung kommunizieren; Account als Weg zu zuverlässigen Erinnerungen anbieten (ADR-004, ADR-006)
+
+| FCM/APNS-Abhängigkeit widerspricht Privacy-Positionierung (Persona „Thomas der Skeptische")
+| Mittel
+| Eingetreten (bewusst akzeptiert)
+| Bewusste Entscheidung (ADR-006); Offenlegung in der Datenschutzerklärung; E-Mail-Kanal als datenschutzfreundliche Alternative bleibt zurückgestellt verfügbar
+
+| Verfügbarkeit/Betrieb der HTW-VM liegt beim Team (kein Managed Service)
 | Mittel
 | Niedrig
-| [z. B. Lasttest ab Sprint 4 eingeplant]
-
-| [Weiteres Risiko]
-| [Hoch / Mittel / Niedrig]
-| [Hoch / Mittel / Niedrig]
-| [Maßnahme oder Akzeptanz]
+| Auto-Restart der Container; einfaches Monitoring; Backups einplanen
 |===
 
 === Technische Schulden
@@ -301,15 +434,11 @@ Punkte in Vergessenheit geraten._
 |===
 | Beschreibung | Begründung für Kompromiss | Backlog-Eintrag
 
-| [z. B. Keine Datenbankmigrationen mit Flyway — manuelle Skripte]
-| [z. B. Zeitdruck in Sprint 2; wird in Sprint 5 nachgeholt]
-| [z. B. TECH-42]
+| E-Mail-/SMTP-Benachrichtigung zurückgestellt
+| Web Push deckt das Erinnerungs-Qualitätsziel für registrierte Nutzer ab; E-Mail-Setup (Relay, Domain, SPF/DKIM) vermeidet Aufwand und offene Constraint-Frage mit der HTW
+| Bei Bedarf reaktivieren (ADR-006)
 
-| [z. B. Fehlerbehandlung in API-Endpunkten unvollständig]
-| [z. B. MVP-Fokus; nur Hauptpfade abgedeckt]
-| [z. B. TECH-51]
-
-| [Weitere technische Schuld]
-| [Begründung]
-| [Ticket-Referenz oder "-"]
+| FCM/APNS-Abhängigkeit ohne datenschutzfreundliche Alternative im MVP
+| Web Push ist der einfachste constraint-freie Kanal; datenschutzfreundlicher E-Mail-Weg ist zurückgestellt
+| Datenschutzerklärung ergänzen; E-Mail-Option später (ADR-006)
 |===

@@ -1,10 +1,10 @@
-= Domänenmodell und Glossar: {project-name}
+= Domänenmodell und Glossar: SubscriptionGuard
 include::../_includes/default-attributes.inc.adoc[]
-{authoren}
-{localdatetime}
+Johannes Meinck <s88889@htw-dresden.de>
+2026-06-03
 // Platzhalter für weitere Dokumenten-Attribute
 
-_Dieses Dokument beschreibt die wesentlichen fachlichen Begriffe und ihre  Beziehungen untereinander. Es bildet die gemeinsame Sprache des Teams und aller Stakeholder — unabhängig von technischen Umsetzungsentscheidungen.
+_Dieses Dokument beschreibt die wesentlichen fachlichen Begriffe und ihre Beziehungen untereinander. Es bildet die gemeinsame Sprache des Teams und aller Stakeholder — unabhängig von technischen Umsetzungsentscheidungen.
 Alle Begriffe in User Stories, Personas und Gesprächen mit Stakeholdern sollten hier definiert sein._
 
 ---
@@ -29,7 +29,7 @@ Technische Implementierungsdetails gehören nicht hierher!
 
 | Abo-Überschneidung
 | Zustand, bei dem zwei oder mehr Abonnements ähnliche Leistungen abdecken.
-| 
+|
 
 | Abo-Status
 | Aktueller Zustand eines Abonnements: aktiv, pausiert, gekündigt oder abgelaufen.
@@ -45,7 +45,7 @@ Technische Implementierungsdetails gehören nicht hierher!
 
 | ARIA
 | Accessible Rich Internet Applications — W3C-Standard für barrierefreie Web-Inhalte. Wird in Screenreader-Anforderungen verwendet (vgl. WCAG)
-| 
+|
 
 | Ausgabenübersicht
 | Berechnete Gesamtheit aller aktiven Abo-Kosten eines Nutzers in einem Zeitraum.
@@ -122,10 +122,6 @@ Technische Implementierungsdetails gehören nicht hierher!
 | Zahlungsintervall
 | Häufigkeit der Abrechnung: monatlich, jährlich, wöchentlich o.ä.
 | Abrechnungszyklus, Zahlungsabstand
-
-// | [Begriff]
-// | [Präzise, fachliche Definition in 1–3 Sätzen]
-// | [Synonyme oder Abgrenzungen zu ähnlichen Begriffen]
 |===
 
 
@@ -136,31 +132,52 @@ Es beschreibt die Realität des Problemraums, nicht die Datenbankstruktur._
 
 === Diagramm
 
-//Fügen Sie hier ein Diagramm ein — entweder als eingebettetes PlantUML oder als exportiertes Bild.
-
 [plantuml, domain-model, svg]
 ....
 @startuml
-' Beispiel — bitte durch das echte Domänenmodell ersetzen
+hide circle
+skinparam classAttributeIconSize 0
 
-entity Nutzer {
+class Nutzer {
   Name
   E-Mail
 }
 
-entity Bestellung {
-  Bestellnummer
-  Datum
+class Abonnement {
+  Preis
+  Kündigungsfrist
+  Buchungsdatum
+  Abschlussdatum
   Status
 }
 
-entity Produkt {
+class "Abo-Kategorie" as Kategorie {
   Bezeichnung
-  Preis
 }
 
-Nutzer "1" --> "0..*" Bestellung : gibt auf
-Bestellung "1" --> "1..*" Produkt : enthält
+class Anbieter {
+  Name
+  Website
+}
+
+class Zahlung {
+  Betrag
+  Datum
+  Währung
+}
+
+class Erinnerung {
+  Inhalt
+  Fälligkeit
+  Zustellungsstatus
+}
+
+Nutzer "1" -- "0..*" Abonnement : verwaltet
+Nutzer "1" -- "0..*" Kategorie : legt an
+Abonnement "0..*" -- "0..*" Kategorie : gehört zu
+Abonnement "1..*" -- "1" Anbieter : ist von
+Abonnement "1" -- "0..*" Zahlung : erzeugt
+Abonnement "1" -- "0..*" Erinnerung : erzeugt
 
 @enduml
 ....
@@ -177,16 +194,22 @@ Kurze Erläuterung zu den im Modell enthaltenen Entitäten.
 | Entität | Beschreibung
 
 | Nutzer
-| [Beschreibung der Entität und ihrer Rolle im System]
+| Person, die SubscriptionGuard verwendet. Kann im Gastmodus (Daten nur lokal) oder mit Account agieren; nur mit Account sind Synchronisation und server-seitige Erinnerungen möglich. Es werden nur die für den Account nötigen Daten erhoben (Datensparsamkeit, DSGVO).
 
-| Bestellung
-| [Beschreibung der Entität und ihrer Rolle im System]
+| Abonnement
+| Zentrales Konzept: ein wiederkehrendes Vertragsverhältnis des Nutzers mit einem Anbieter. Hält Preis, Kündigungsfrist, Buchungs- und Abschlussdatum sowie den Abo-Status (aktiv, pausiert, gekündigt, abgelaufen).
 
-| Produkt
-| [Beschreibung der Entität und ihrer Rolle im System]
+| Abo-Kategorie
+| Thematische, vom Nutzer angelegte Gruppe (z.B. Streaming, Fitness) zur Filterung und Übersicht. Rein organisatorisch, kein Vertragsbestandteil.
 
-| [Weitere Entität]
-| [Beschreibung]
+| Anbieter
+| Dienstleister, der die abonnierte Leistung bereitstellt (z.B. Netflix, Spotify). Als eigenständige Entität modelliert, damit mehrere Abonnements denselben Anbieter referenzieren können.
+
+| Zahlung
+| Einzelne, je Abrechnungszyklus angefallene Zahlung eines Abonnements (Betrag, Datum, Währung). Bildet die Historie für die Ausgabenübersicht.
+
+| Erinnerung
+| Automatische Benachrichtigung zu einem bevorstehenden Ereignis (z.B. Ablauf der Kündigungsfrist). Trägt Inhalt, Fälligkeit und Zustellungsstatus. Server-seitige Zustellung (Web Push) nur für registrierte Nutzer; im Gastmodus nur lokal/eingeschränkt.
 |===
 
 === Beschreibung der Beziehungen
@@ -198,20 +221,43 @@ Beschreibung der wichtigsten Beziehungen zwischen den Entitäten, sofern diese b
 | Von | Zu | Kardinalität | Bedeutung
 
 | Nutzer
-| Bestellung
+| Abonnement
 | 1 zu 0..*
-| Ein Nutzer kann keine oder mehrere Bestellungen aufgeben.
+| Ein Nutzer verwaltet keine oder mehrere Abonnements. Ein Abonnement gehört genau einem Nutzer.
 
-| Bestellung
-| Produkt
-| 1 zu 1..*
-| Eine Bestellung enthält mindestens ein Produkt.
+| Nutzer
+| Abo-Kategorie
+| 1 zu 0..*
+| Ein Nutzer legt seine eigenen Kategorien an (nutzerdefiniert).
 
-| [Entität]
-| [Entität]
-| [z. B. 0..* zu 1]
-| [Beschreibung der Beziehung in natürlicher Sprache]
+| Abonnement
+| Abo-Kategorie
+| 0..* zu 0..*
+| Ein Abonnement kann keiner, einer oder mehreren Kategorien zugeordnet sein; eine Kategorie kann mehrere Abonnements umfassen. Die Untergrenze 0 erlaubt frisch angelegte, noch nicht kategorisierte Abonnements.
+
+| Abonnement
+| Anbieter
+| 1..* zu 1
+| Jedes Abonnement bezieht sich auf genau einen Anbieter; ein Anbieter kann von mehreren Abonnements referenziert werden.
+
+| Abonnement
+| Zahlung
+| 1 zu 0..*
+| Ein Abonnement erzeugt über die Zeit keine oder mehrere Zahlungen.
+
+| Abonnement
+| Erinnerung
+| 1 zu 0..*
+| Ein Abonnement kann keine oder mehrere Erinnerungen erzeugen (z.B. vor Kündigungsfrist).
 |===
+
+== Offene Punkte
+
+_Im Team noch zu klärende fachliche Fragen, die das Modell betreffen:_
+
+* *Nutzer-Löschung (DSGVO):* Verhalten der abhängigen Abonnements, Zahlungen und Erinnerungen bei Konto-Löschung festlegen (Recht auf Löschung).
+* *Kostenlose Abos:* Ist ein Abonnement mit `Preis = 0` (z.B. Gratis-Tarif) zulässig und wie wird es behandelt?
+* *Probeabo / Geteiltes Abo / Budget:* Im Glossar definiert, aber noch nicht als Entität/Attribut modelliert — bei Bedarf ergänzen, sobald die zugehörigen Features eingeplant sind.
 
 _Dieses Dokument wird kontinuierlich gepflegt. Änderungen an Fachbegriffen oder Beziehungen
 müssen hier nachgezogen werden, bevor sie in User Stories oder Code einfließen._
