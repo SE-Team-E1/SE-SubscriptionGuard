@@ -1,7 +1,7 @@
 = Produktkonzept: {project-name}
-Vorname Nachname <email@domain.org>; Vorname2 Nachname2 <email2@domain.org>; Vorname3 Nachname3 <email3@domain.org>
-{localdatetime}
 include::../_includes/default-attributes.inc.adoc[]
+{authoren}
+{localdatetime}
 // Platzhalter für weitere Dokumenten-Attribute
 
 
@@ -19,10 +19,10 @@ _Warum wird dieses Produkt gebaut? Welches Problem existiert heute, und warum is
 Dieser Abschnitt beschreibt den Ausgangszustand und den Handlungsbedarf — ohne bereits eine
 Lösung zu nennen. 3–5 Sätze genügen._
 
-[Hier die Ausgangssituation und den Handlungsbedarf beschreiben. Beispiel:
-„Studierende an der Hochschule haben heute keinen zentralen Überblick über verfügbare
-Lernräume. Die Suche nach freien Plätzen kostet täglich wertvolle Zeit und führt zu Frust.
-Eine einfache, mobil nutzbare Lösung fehlt bisher."]
+// [Hier die Ausgangssituation und den Handlungsbedarf beschreiben. Beispiel:
+// „Studierende an der Hochschule haben heute keinen zentralen Überblick über verfügbare
+// Lernräume. Die Suche nach freien Plätzen kostet täglich wertvolle Zeit und führt zu Frust.
+// Eine einfache, mobil nutzbare Lösung fehlt bisher."]
 
 Nahezu jeder Mensch sieht sich heutzutage zunehmend mit Abomodellen konfrontiert. Doch Abonnements erschweren, besonders in der Menge, ein bewusstes, transparentes und verantwortungsvolles Finanzmanagement, da sie von Natur aus unübersichtlich und unberechnbar sind. Es fehlt der Überblick und spezialisierte, einfach gehaltene Tools.
 
@@ -60,11 +60,11 @@ _Wer sind die Zielgruppen, und wie positioniert sich das Produkt im Vergleich zu
 | Studierende
 | Technisch erfahren mit einer Vielzahl digitaler Abonnements in einer vergleichsweise schwierigen? finanziellen Situation.
 
-| junge Leute allgemein
+| Junge Leute allgemein
 | 20 - 50 Jahre mit vielen Abonnements
 
-| [Weitere Zielgruppe]
-| [Kurzbeschreibung]
+// | [Weitere Zielgruppe]
+// | [Kurzbeschreibung]
 |===
 
 NOTE: Ausführliche Beschreibungen der Nutzenden — Personas, Nutzungskontext,
@@ -76,31 +76,28 @@ typische Aufgaben — sind im link:ux_concept.adoc[UX-Konzept] dokumentiert.
 |===
 | Alternative | Beschreibung | Warum unser Produkt besser passt
 
-| Multibanking-App mit Abo-Erkennung 
-
-Bsp.: Finanzguru, Outbank, teils N26, Revolut
-| Studierende scrollen in unregelmäßigen Abständen durch Banking-App oder Kontoauszug, versuchen wiederkehrende Zahlungen selbst zu identifizieren und Kündigungsfristen im Kopf zu behalten.
-| [Worin liegt unser Vorteil?]
+| Multibanking-App mit Abo-Erkennung
+| App erkennt Abos automatisch via Bankverbindung — komplex, datensensitiv und finanzlastig. +
+    Bsp.: Finanzguru, Outbank, teils N26, Revolut
+| Kein Bankzugang nötig; reiner Abo-Fokus ohne Banking-Komplexität.
 
 | Abo-Tracker
-
-Bsp.: Bobby, Subby, Subscriptions
-| Manuell gepflegte Abo-Liste in einer dedizierten App, meist mit Erinnerungen und Visualisierung der Kosten.
-| [Unterschied]
+| Manuell gepflegte Abo-Liste in einer dedizierten App, meist mit Erinnerungen und Visualisierung der Kosten. +
+    Bsp.: Bobby, Subby, Subscriptions
+| Keine Freemium-Barriere; einfachere UX ohne Funktionsüberladung.
 
 | Eigene Liste
-
-Bsp.: Excel, Notion, Notizen-App
-| Selbst angelegte Tabelle oder Notiz mit Anbieter, Betrag und nächster Abbuchung – manuell gepflegt.
-| [Unterschied]
+| Selbst angelegte Tabelle oder Notiz mit Anbieter, Betrag und nächster Abbuchung – manuell gepflegt. +
+    Bsp.: Excel, Notion, Notizen-App
+| Automatische Erinnerungen und Kostenkalkulation ohne manuellen Pflegeaufwand.
 
 | Nichts tun / Aus dem Gedächtnis
 | Status quo der meisten Studierenden: man "weiß ungefähr", was man zahlt, vergisst aber Kündigungsfristen und Verlängerungen.
-|
+| Proaktive Erinnerungen verhindern vergessene Kündigungen und Mehrkosten.
 
 | Manueller Kontoauszug-Check
-| Studierende scrollen in unregelmäßigen Abständen durch Banking-App oder Kontoauszug, versuchen wiederkehrende Zahlungen selbst zu identifizieren und Kündigungsfristen im Kopf zu behalten.
-|
+| Manuelles Durchsuchen von Transaktionen — keine Automatisierung, keine Erinnerungen.
+| Proaktiv statt reaktiv — Erinnerung kommt vor der Abbuchung, nicht danach.
 
 |===
 
@@ -116,21 +113,21 @@ erklärt, warum bestimmte Entscheidungen getroffen wurden.
 
 | Studenten
 | Hauptnutzer; wollen Abo-Konditionen überblicken und optimieren
-a| 
-* Übersichtlichkeit, einfache Bediernung, möglichst wenig manuelle Arbeit
-* Einfaches Abo-Management
-* Hilfe Abo-Nutzen zu bewerten
-* geräteunabhängige Benutzung
-* vertrauliche Behandlung von Finanzdaten
+| 
+- Übersichtlichkeit, einfache Bediernung, möglichst wenig manuelle Arbeit +
+- Einfaches Abo-Management +
+- Hilfe Abo-Nutzen zu bewerten +
+- geräteunabhängige Benutzung +
+- vertrauliche Behandlung von Finanzdaten +
 | Hoch
 
 | Entwicklerteam
 | Betreiben, Warten, Anpassen der Plattform
-a|
-* Umsetzung im Rahmen der Fähigkeiten
-* Komplexität gering halten
-* möglichst viele Bibliotheken verwenden
-* rechtlichen Aufwand gering halten
+|
+- Umsetzung im Rahmen der Fähigkeiten +
+- Komplexität gering halten +
+- möglichst viele Bibliotheken verwenden + 
+- rechtlichen Aufwand gering halten +
 | Hoch
 
 | Anbieter von Abomodellen
@@ -143,7 +140,7 @@ a|
 | Interesse an Werbung auf der Platform, Bewerben von ihren günstigeren Abos, Nutzer ergänzende Abos vorschlagen
 | niedrig
 
-[.not-really]
+// [.not-really]
 | Produktgegner
 | Anbieter Abomodelle, Produkt bedrohen Geschäftsinteressen
 | Das Produkt offenbart ggf. Geschäftsmodelle die auf der Unübersichtlichkeit von Abomodellen beruhen
@@ -169,14 +166,13 @@ Diese Hauptfunktionen sollten als Epics im Product Backlog für die Gruppierung 
 | Hoch
 
 | Nutzer wollen Abos rechtzeitig kündigen
-| Erinnerung Kündigungsfrist (Mitteilungen)
-
-Abo zentral kündigen (so zentral wie möglich)
+| Erinnerung Kündigungsfrist (Mitteilungen) +
+    Abo zentral kündigen (so zentral wie möglich)
 | Mittel
 
-| [Nutzerbedarf]
-| [Hauptfunktion]
-| [Hoch / Mittel / Niedrig]
+// | [Nutzerbedarf]
+// | [Hauptfunktion]
+// | [Hoch / Mittel / Niedrig]
 |===
 
 NOTE: Die Reihenfolge entspricht einer ersten groben Priorisierung und wird im Rahmen
@@ -197,41 +193,46 @@ NOTE: Dieses Dokument ist die einzige Quelle für Qualitätsziele und Einschrän
 Das link:../technical/architecture.adoc[Architektur]-Dokument referenziert diese Anforderungen und dokumentiert die
 technischen Entscheidungen, die sich daraus ergeben — ohne sie hier zu wiederholen.
 
-[cols="1,3,2", options="header"]
+[cols="1,3,2,1", options="header"]
 |===
-| Qualitätsziel | Beschreibung | Messkriterium
+// Inspiriert aus dem ISO-25010
+| Qualitätsziel | Beschreibung | Messkriterium | Priorität
 
 | Benutzbarkeit
 | Das Produkt ist ohne Einarbeitung nutzbar.
-| Neue Nutzer:innen finden die Kernfunktion innerhalb von 2 Minuten ohne Hilfe.
-
-| Performance
-| Das Produkt reagiert schnell auf Nutzerinteraktionen.
-| Seitenladezeit unter 2 Sekunden bei normaler Netzwerkverbindung.
-
-| Verfügbarkeit
-| Das Produkt ist von 6-24 Uhr ganzwöchig zuverlässig erreichbar
-| Verfügbarkeit ≥ 99 % während Betriebszeiten.
-
-| Verfügbarkeit
-| Zeitkritische Erinnerungen erreichen den User rechtzeitig
-| Kündigungsfrist - Erinnerungen erreichen den Nutzer mindestens 2 Tage vor Ablauf
-
-| Bedienbarkeit
-| Viele Funktionen sollten auf dem Smartphone einhändig erreichbar sein?
-| Alle Hauptfunktionen sollten mit einer Hand erreicht werden können
-
-| Geräteunabhängigkeit
-| Anwendung ist auf allen gängigen Geräten und Plattformen nutzbar
-| Anwendung vollständig nutzbar auf Android, iOS, Web (gängige Browser)
+| Kernfunktion innerhalb von 2 Minuten ohne Hilfe gefunden.
+| Must have
 
 | Benutzbarkeit
-| Die App sollte auch einfacher benutzbarer für Menschen sein, die der deutschen Sprache nicht mächtig sind
-| Nutzen der leichten Sprachen
+| Die App ist ohne Registrierung nutzbar; ein Account ist optional für Sync.
+| Kernfunktionen im Gastmodus vollständig verfügbar.
+| Must have
 
-| [Qualitätsziel]
-| [Beschreibung]
-| [Messkriterium]
+| Leistungseffizienz
+| Das Produkt reagiert schnell auf Nutzerinteraktionen.
+| Seitenladezeit unter 2 Sekunden bei normaler Netzwerkverbindung.
+| Must have
+
+| Zuverlässigkeit
+| Das Produkt ist von 6–24 Uhr ganzwöchig zuverlässig erreichbar.
+| Verfügbarkeit ≥ 99 % während Betriebszeiten.
+| Must have
+
+| Bedienbarkeit
+| Hauptfunktionen sind auf dem Smartphone einhändig erreichbar.
+| Alle Hauptfunktionen mit einer Hand erreichbar (Daumenzone).
+| Nice to have
+
+| Verfügbarkeit
+| Zeitkritische Erinnerungen erreichen den Nutzer rechtzeitig.
+| Kündigungsfrist-Erinnerungen mind. 2 Tage vor Ablauf.
+| Nice to have
+
+| Übertragbarkeit
+| Die Anwendung ist auf allen gängigen Geräten und Plattformen nutzbar.
+| Vollständig nutzbar auf Android, iOS und Web (gängige Browser).
+| Nice to have
+
 |===
 
 === Einschränkungen
@@ -255,8 +256,8 @@ organisatorische, rechtliche oder zeitliche Vorgaben._
 | Das Produkt muss innerhalb eines Semesters (ca. 4 Monate) lieferbar sein.
 | Zeitlich
 
-| Resourcen
-| Das Geld ist begrenzt
+| Ressourcen
+| Kein Budget für kostenpflichtige Dienste.
 | Technisch
 |===
 
@@ -273,7 +274,11 @@ organisatorische, rechtliche oder zeitliche Vorgaben._
 
 | 2.0
 | 11.05.2026
-| Übertagen der Ergebnisse aus dem Miro
+| Übertragen der Ergebnisse aus dem Miro
+
+| 3.0
+| 20.05.2026
+| Update nach dem ersten Sprint-Review
 
 |===
 

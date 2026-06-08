@@ -1,0 +1,194 @@
+:text-align: left
+
+= Sprint-2-Report: Technischer Ansatz und agile Arbeitsweise
+
+Team:: E1
+Projektname:: SubscriptionGuard
+Datum:: 04.06.2026
+Repository-Link:: https://github.com/SE-Team-E1/SE-SubscriptionGuard
+
+== 1. Sprintziel und zentrale Fragestellung
+[cols="1,3", options="header"]
+|===
+| Kriterium | Ihre Antwort
+
+| Sprintziel
+a|
+Ziel des zweiten Sprints war es, den technischen Ansatz für SubscriptionGuard zu testen, die Machbarkeit nachzuweisen, dass das Produkt mit dem gewählten Tech-Stack (Django + REST API + Docker + nginx) umsetzbar ist. Konkret sollte ein lauffähiges Walking Skeleton entstehen und wichtige Architekturentscheidungen durch Spikes und Domänenarbeit begründet werden.
+
+| Zentrale technische Unsicherheit / Annahme
+a|
+Die zentrale Unsicherheit war, ob ein Django-Backend mit REST-API-Architektur die Kernfunktionen des Abo-Managements reproduzierbar und containerisiert abdecken kann. Eine weitere offene Frage war, wie mit dem Anforderungskonflikt zwischen Offline-Nutzung (Gastmodus), Multi-Device-Synchronisation und DSGVO-Konformität umzugehen ist — konkret: welche Synchronisationsstrategie das Produkt tragfähig macht.
+|===
+
+
+== 2. Erwartete Praktiken in Sprint 2
+[cols="1,2,2,2", options="header"]
+|===
+| Praktik
+| Konkrete Anwendung in unserem Sprint
+| Nachweis / Artefakt (Link einfügen)
+| Nutzen, Erkenntnis oder Anpassung
+
+| Domänenmodell erstellen
+a|
+* Glossar-Kandidaten asynchron im Miro-Board gesammelt (24 Begriffe, kollaborativ)
+* Terminologische Abgrenzungen erarbeitet (z. B. Abo vs. Vertrag, Abrechnungszyklus vs. Zahlungsintervall)
+* Domain Glossary mit projektspezifischen Begriffen befüllt und in AsciiDoc übertragen
+| https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/main/docs/product/domain_glossary.adoc[Domain Glossary (GitHub)]
+| Einheitliche Sprache im Team ist Grundlage für konsistentes API-Design. Zentrale Begriffe wie _Kündigungsfrist_, _Abrechnungszyklus_ und _Gastmodus_ sind jetzt eindeutig definiert und direkt in API-Modelle übertragbar.
+
+| Technische Spikes durchführen
+a|
+* Spike zu vier Synchronisationsstrategien: LWW, OCC, Lease Model, CRDTs
+* Vergleich nach Komplexität, Offline-Fähigkeit, Multi-Device-Unterstützung und Auto-Merge
+* Ergebnisse im Miro-Board dokumentiert und im Team diskutiert
+* Spike zur Umsetzung eines Testprojekts mit Django, docker und nginx auf der VM. Außerdem wurde eine Automatisierung mithilfe von GitHub Actions getestet.
+| https://miro.com/app/board/uXjVHdouxH8=[Syncstrategien-Frame (Miro)]
+https://github.com/SE-Team-E1/DjangoTest[GitHub Testprojekt Django]
+| Erkenntnis: CRDTs bieten vollständiges Auto-Merge (Komplexität 10/10, unrealistisch im Projektzeitraum); LWW überschreibt Daten stillschweigend (Datenverlustrisiko). OCC als realistischer Kandidat identifiziert — noch kein formales ADR.
+
+| Walking Skeleton aufbauen
+a|
+* Django REST API für Abonnement-Verwaltung implementiert (`/abos` endpoint)
+* Datenbankmigrationen und Requirements aufgesetzt
+* Docker-Image und CI/CD-Pipeline (GitHub Actions → Docker Hub) eingerichtet
+* Reproduzierbare lokale Ausführbarkeit geprüft (Tags v0.0.1–v0.0.5)
+* Im Frontend wurde Grundlegene Struktur gebaut um einen Klickdummy zu bauen, z.b. das Formular um ein neues Abo anzulegen.
+| https://github.com/SE-Team-E1/SE-SubscriptionGuard/releases/tag/v0.0.5[Release v0.0.5 (GitHub)],
+https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/feature/70-aufgabe-backend-api-endpunkt-zur-erfassung-eines-neuen-abos-implementieren/.github/workflows/[CI/CD Workflow],
+https://github.com/SE-Team-E1/SE-SubscriptionGuard/tree/feature/71_walking_skeleton_vuejs/src/walking_skeleton[Walking Skeleton Frontend (GitHub)]
+| Das Walking Skeleton zeigt, dass Django-Backend + REST-API + Docker lokal und reproduzierbar ausführbar sind. Jeder Push löst automatisch einen Docker-Build aus. Die technische Grundstruktur ist damit beweisbar tragfähig.
+
+| Architekturtreiber ableiten
+a|
+* Qualitätsanforderungen aus Sprint 1 (DSGVO, Benutzbarkeit, Gastmodus, Projektlaufzeit) neu bewertet
+* Technische Konsequenzen aus Domänenmodell und UX-Konzept identifiziert
+* Treiber nach technischem Risiko und Umkehrbarkeit priorisiert
+| https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/main/docs/technical/architecture.adoc[architecture.adoc (GitHub)],
+https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/main/docs/product/product_concept.adoc[product_concept.adoc (GitHub)]
+| Offline-Verfügbarkeit (Gastmodus) und DSGVO-Konformität wurden als stärkste und schwer umkehrbare Treiber für Architekturentscheidungen identifiziert — insbesondere für das Datenbankdesign und die Authentifizierungslösung.
+
+| Technologie-Stack auswählen und begründen
+a|
+* Django als Backend-Framework gewählt (Teamkenntnisse, ORM, schnelle REST-API-Entwicklung)
+* Docker für Containerisierung, GitHub Actions für CI/CD
+* REST API als Architekturstil für Frontend-Backend-Trennung
+* Build-Kontext und Dockerfile-Struktur präzisiert
+* Vue.js als Frontend-Framework für spätere PWA-Entwicklung ausgewählt, da hier auch bereits Erfahrung im Team vorhanden ist.
+| https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/main/docs/technical/architecture.adoc[architecture.adoc (GitHub)]
+| Technologie-Stack entspricht Teamfähigkeiten und ermöglicht reproduzierbare lokale Entwicklung. Docker CI/CD verhindert "works on my machine"-Probleme frühzeitig; Dockerfile-Korrekturen (v0.0.2, v0.0.5) stabilisierten den Build-Prozess.
+
+|===
+
+
+== 3. Wichtigste technische Lernergebnisse aus Sprint 2
+[cols="1,3", options="header"]
+|===
+| Kriterium | Ihre Antwort
+
+| Walking Skeleton bestätigt technische Machbarkeit
+| Django + REST API können Kern-Abo-Daten verarbeiten. Die Tags v0.0.1–v0.0.5 belegen einen voll funktionierenden CI/CD-Prozess: Jeder Push löst automatisch einen Docker-Build aus und erzeugt ein lauffähiges Image. Die technische Grundstruktur ist damit beweisbar und reproduzierbar.
+
+| Synchronisationsstrategie erfordert bewusste Entscheidung
+| Der Spike hat gezeigt: LWW ist zu riskant (stille Überschreibung), CRDTs zu komplex für den Projektzeitraum (Komplexität 10/10). OCC (Optimistic Concurrency Control) ist der realistischste Kandidat. Diese Entscheidung muss noch als ADR formal dokumentiert werden und bleibt das wichtigste verbleibende technische Risiko des Projekts.
+
+| Domänensprache stabilisiert den Projektrahmen
+| Durch die kollaborative Arbeit am Miro-Glossar (24 Kandidatenbegriffe) und die anschließende Befüllung des Domain Glossary entstand eine einheitliche Projektsprache. Begriffe wie _Kündigungsfrist_, _Abrechnungszyklus_ und _Gastmodus_ sind eindeutig definiert und direkt in API-Modelle und User Stories übertragbar.
+
+| Einheitliches Designkonzept
+| Die wichtigsten Screens und deren Elemente wurden ausgearbeitet, um die in Sprint 1 erarbeitet Funktionen umzusetzen. Das Konzept wurde in Figma ausgearbeitet.
+|===
+
+== 4. Änderungen am technischen Ansatz
+[cols="2,2,2", options="header"]
+|===
+| Ursprüngliche Annahme / Option
+| Neue Erkenntnis oder Evidenz
+| Anpassung am technischen Ansatz, an der Architektur oder am Backlog
+
+a|
+* Nachrichten werden per E-Mail an User gesendet.
+a|
+* Einrichtung eines E-Mail-Servers, auf der VM erwies sich aufgrund der gesperrten Ports als zu Schwierig.
+a|
+* Benachrichtigungen werden als Push-Benachrichtigungen in der App realisiert.
+
+a|
+* CRDTs wurden als mögliche Lösung für Offline-Synchronisation diskutiert
+a|
+* Spike zeigt: Komplexität (10/10) ist im Projektzeitraum nicht vertretbar; LWW überschreibt Daten stillschweigend ohne Nutzerwarnung
+a|
+* OCC (Optimistic Concurrency Control) als realistischer Kandidat für Sprint 3+ vorgemerkt; formales ADR steht noch aus
+
+a|
+* Dockerfile referenzierte initial falschen Projektnamen; Build-Kontext war nicht präzise definiert
+a|
+* CI/CD-Pipeline schlug wiederholt fehl — Fehler durch Build-Logs in GitHub Actions aufgedeckt und lokalisiert
+a|
+* Dockerfile korrigiert (v0.0.5); Docker Build Context präzisiert (v0.0.2); CI/CD-Pipeline läuft seitdem fehlerfrei und stabil
+
+|===
+
+
+== 5. Architekturtreiber, Entscheidungen und technische Evidenz
+[cols="1,3", options="header"]
+|===
+| Kriterium | Ihre Antwort
+
+| Wichtigste Architekturtreiber
+a|
+* *DSGVO-Konformität*: Datensparsamkeit, kein PII in Logs, Recht auf Löschung → bestimmt Datenbankdesign und Authentifizierungsansatz
+* *Gastmodus / Offline-Nutzung*: Nutzer sollen ohne Account und ohne Netzwerk Abos verwalten können → begründet lokale Datenhaltung als eigenständige Schicht
+* *Benutzbarkeit*: Kernfunktion in unter 2 Minuten ohne Einarbeitung nutzbar → schlankes API-Design, kein unnötiger Overhead in der Datenstruktur
+* *Projektlaufzeit* (1 Semester): kein Over-Engineering; Fokus auf tragfähiges Walking Skeleton + klar abgrenzbaren MVP-Ausschnitt für Sprint 3
+
+| Wichtigste Entscheidungen / ADRs
+a|
+* *Django + REST API* als Backend-Kern: Teamkenntnisse, ORM-Unterstützung, schnelle API-Entwicklung; REST-Architektur ermöglicht spätere Frontend-Flexibilität (Web, Mobile)
+* *Docker + GitHub Actions CI/CD*: reproduzierbare Builds ab Tag v0.0.1; Push-Trigger-Pipeline läuft stabil; verhindert Umgebungsunterschiede zwischen Teammitgliedern
+* *OCC als Sync-Kandidat*: noch kein formales ADR — wird am Anfang von Sprint 3 entschieden, um Frontend-Anbindung zu ermöglichen
+
+| Technische Evidenz
+a|
+* Tags v0.0.1–v0.0.5 im GitHub Repository: nachvollziehbarer Aufbau des Walking Skeleton mit korrekter Docker-Konfiguration
+* Funktionierende CI/CD-Pipeline: Docker-Images werden automatisch gebaut und in Docker Hub gepusht
+* Django REST API `/abos`-Endpoint: Abo-Daten können erfasst, gespeichert und abgefragt werden
+* Datenbankmigrationen laufen ohne Fehler; saubere Projektstruktur ohne überflüssige Initialisierungsskripte
+
+| Verbleibende Risiken / offene Fragen
+a|
+* ADR zur Synchronisationsstrategie (OCC vs. LWW) steht noch aus
+* Authentifizierung / Nutzerverwaltung noch nicht im Walking Skeleton integriert
+* Frontend-Anbindung an Backend noch nicht realisiert
+* Kein automatisiertes Testkonzept; keine Test-Coverage vorhanden
+* Kein Deployment-Konzept für Produktivumgebung definiert
+
+|===
+
+
+== 6. Anpassung der Arbeitsweise für Sprint 3
+[cols="1,3", options="header"]
+|===
+| Kriterium | Ihre Antwort
+
+| Beibehalten
+a|
+* Asynchrone Spike-Arbeit in Miro + synchrone Entscheidungsrunden im Team
+* Regelmäßige Mittwoch-Meetings + optionale Sessions am Wochenende
+* CI/CD-Pipeline als fester Bestandteil des Workflows (kein manuelles Deployment)
+* Kollaboratives Glossar-Arbeiten für Domänenbegriffe
+* Timeboxing für Diskussionen: max. 15 Min. pro Thema in Meetings; Scrum Master unterbricht aktiv
+* Jedes Teammitglied präsentiert eigene Aufgaben im Meeting (mehr Beteiligung, weniger Sprecherdominanz)
+| Ändern / verbessern
+a|
+* Formale Aufgabenverteilung konsequent über GitHub Issues — Zuweisung nicht nur mündlich
+* ADR-Prozess für offene Entscheidungen (Sync-Strategie) zu Beginn Sprint 3 abschließen
+* Ausreichend Vorlaufzeit für Sprint Review schaffen — Ergebnisse nicht erst am letzten Tag fertigstellen
+
+| Kandidat für Sprint 3
+a|
+* *Erste nützliche Funktionalität*: Nutzer kann ein Abonnement manuell anlegen und in einer Liste einsehen (Abo-Übersicht MVP) — deckt die wichtigste User Story von Otto Normal ab
+* Konkrete Ziele: Backend-Endpunkt `/abos` mit Frontend-Anbindung (einfache Listenansicht), Gastmodus oder einfache Authentifizierung, erste End-to-End-Nutzbarkeit
+
+|===

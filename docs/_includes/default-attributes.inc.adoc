@@ -1,6 +1,7 @@
 // Meta
 :project-name: SubscriptionGuard (E1)
 :project-system-name: subscription-guard
+:authoren: Jannik Thiele; Niels Wiesner; Quôc Dat Nguyên; Juan Ramiro Groh Fili <s88773@htw-dresden.de>; Johannes Meinck; Franz Rehschuh; Lennox Schmollny
 // Settings:
 :toc:
 :toc-title: Inhaltsverzeichnis

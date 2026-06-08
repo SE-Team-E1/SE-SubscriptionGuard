@@ -1,7 +1,8 @@
 = Teamcharta: SubscriptionGuard (E1)
-Jannik Thiele; Niels Wiesner; Quôc Dat Nguyên; Juan Ramiro Groh Fili; Johannes Meinck; Franz Rehschuh; Lennox Schmollny;
-{localdatetime}
 include::../_includes/default-attributes.inc.adoc[]
+{authoren}
+{localdatetime}
+
 :version: 1.0
 
 == Über uns
