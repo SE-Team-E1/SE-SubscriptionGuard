@@ -1,4 +1,10 @@
-type RenewalPeriodUnit = "days" | "weeks" | "months" | "years";
+export enum RenewalPeriodUnitEnum {
+  DAYS = "days",
+  WEEKS = "weeks",
+  MONTHS = "months",
+  YEARS = "years"
+}
+export type RenewalPeriodUnit = RenewalPeriodUnitEnum | "days" | "weeks" | "months" | "years";
 
 export interface RenewalPeriod {
   amount: number;
