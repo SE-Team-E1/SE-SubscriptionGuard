@@ -17,4 +17,13 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  server: {
+    proxy: {
+      '/abos': {
+        target: 'http://iseproject05.informatik.htw-dresden.de:8001',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })
