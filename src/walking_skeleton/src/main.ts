@@ -13,6 +13,10 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 
 import App from './App.vue'
 import router from './router'
+import {
+  RestSubscriptionRepository,
+  type SubscriptionRepository
+} from "@/repository/SubscriptionRepository.ts";
 
 const vuetify = createVuetify({
   components,
@@ -27,6 +31,8 @@ const vuetify = createVuetify({
 })
 
 const app = createApp(App)
+
+app.provide<SubscriptionRepository, string>("subscriptionRepository", new RestSubscriptionRepository());
 
 app.use(vuetify)
 app.use(createPinia())
