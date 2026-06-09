@@ -1,5 +1,6 @@
-import type {CreateSubscriptionDTO, SubscriptionListItemDTO} from "@/feature/list/dto/ListDTO.ts";
-import {Currency} from "@/domain/domain.ts";
+import type {SubscriptionListItemDTO} from "@/feature/list/dto/ListDTO.ts";
+import {Currency, RenewalPeriodUnitEnum} from "@/domain/domain.ts";
+import type {CreateSubscriptionDTO} from "@/feature/add/AddDTO.ts";
 
 export interface TempSubscriptionResponse{
   "id": number,
@@ -40,6 +41,7 @@ export interface SubscriptionRepository{
 
 export class RestSubscriptionRepository implements SubscriptionRepository{
   createSubscription(dto: CreateSubscriptionDTO): Promise<SubscriptionListItemDTO> {
+    console.log(dto);
     return Promise.resolve({
       id: 'temp-' + Math.random(),
       name: dto.name,
@@ -88,7 +90,7 @@ export class DummySubscriptionRepository implements SubscriptionRepository{
         },
         renewalPeriod: {
           amount: 1,
-          unit: "months"
+          unit: RenewalPeriodUnitEnum.MONTHS
         },
         rating: {
           value: 4.5
@@ -99,7 +101,7 @@ export class DummySubscriptionRepository implements SubscriptionRepository{
         provider: "Fitnessstudio Heinze",
         renewalPeriod: {
           amount: 3,
-          unit: "months"
+          unit: RenewalPeriodUnitEnum.MONTHS
         },
         name: "Fitnessstudio",
         price: {
@@ -115,7 +117,7 @@ export class DummySubscriptionRepository implements SubscriptionRepository{
         provider: "Xbox",
         renewalPeriod: {
           amount: 1,
-          unit: "years"
+          unit: RenewalPeriodUnitEnum.YEARS
         },
         name: "Game Pass",
         price: {
