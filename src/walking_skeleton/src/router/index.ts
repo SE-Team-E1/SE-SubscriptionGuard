@@ -18,7 +18,7 @@ const router = createRouter({
     {
       path: '/list',
       name: 'list',
-      component: () => import('../views/SubscriptionsView.vue'),
+      component: () => import('../feature/list/view/ListView.vue'),
       meta: { pageTitle: 'Subscriptions' },
     }
   ],
