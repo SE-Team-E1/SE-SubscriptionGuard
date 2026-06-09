@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import {computed, reactive, ref, watch} from 'vue'
+import useSubscriptionCreation from "@/feature/add/useSubscriptionCreation.ts";
+import {Currency, RenewalPeriodUnitEnum} from "@/domain/domain.ts";
 
 const form = reactive({
   name: '',
@@ -13,6 +15,40 @@ const form = reactive({
   intervalUnit: 'Monate',
   category: ''
 })
+
+const {newSubscription, submitSubscription} = useSubscriptionCreation();
+const date = reactive({
+  day: "",
+  month: "",
+  year: "",
+})
+const category = ref("");
+
+// update dto, when date input has changed
+watch(
+  () => [date.day, date.month, date.year],
+  ([day, month, year]) => {
+    if (day && month && year) {
+      const y = year.toString().padStart(4, '0');
+      const m = month.toString().padStart(2, '0');
+      const d = day.toString().padStart(2, '0');
+      newSubscription.value.startDate = `${d}-${m}-${y}`;
+    } else {
+      // optional: leer setzen, falls nicht komplett
+      newSubscription.value.startDate = '';
+    }
+  },
+  { immediate: true })
+watch(
+  category,
+  value => {
+    if(newSubscription.value.categories.length>0) {
+      newSubscription.value.categories[0] = value;
+    }else {
+      newSubscription.value.categories.push(value);
+    }
+  }
+)
 </script>
 
 
@@ -32,24 +68,24 @@ const form = reactive({
     </div>
 
     <!-- form card -->
-    <form class="form-card" @submit.prevent="onSubmit">
+    <form class="form-card" @submit.prevent="submitSubscription">
       <!-- Name -->
       <label class="field">
         <div class="field-label">Name</div>
-        <input v-model="form.name" type="text" placeholder="Name" />
+        <input v-model="newSubscription.name" type="text" placeholder="Name" />
       </label>
 
       <!-- Costs + currency -->
       <label class="field horizontal">
         <div class="left">
           <div class="field-label">Kosten</div>
-          <input class="input-100" v-model="form.cost" type="number" step="0.01" placeholder="0.00" />
+          <input class="input-100" v-model="newSubscription.price.amount" type="number" step="0.01" placeholder="0.00" />
         </div>
         <div class="right">
-          <select class="input-100 select" v-model="form.currency" aria-label="currency">
-            <option value="€">€</option>
-            <option value="$">$</option>
-            <option value="£">£</option>
+          <select class="input-100 select" v-model="newSubscription.price.currency" aria-label="currency">
+            <option :value="Currency.EUR" >€</option>
+            <option :value="Currency.USD">$</option>
+            <option :value="Currency.GBP">£</option>
           </select>
         </div>
       </label>
@@ -58,29 +94,30 @@ const form = reactive({
       <div class="field date-row">
         <div class="field-label">Date</div>
         <div class="date-inputs">
-          <input v-model="form.day" maxlength="2" placeholder="DD" />
-          <input v-model="form.month" maxlength="2" placeholder="MM" />
-          <input v-model="form.year" maxlength="4" placeholder="YYYY" />
+          <input v-model="date.day" maxlength="2" placeholder="DD" />
+          <input v-model="date.month" maxlength="2" placeholder="MM" />
+          <input v-model="date.year" maxlength="4" placeholder="YYYY" />
         </div>
       </div>
 
       <!-- Contract partner -->
       <label class="field">
         <div class="field-label">Vertragspartner</div>
-        <input v-model="form.partner" type="text" placeholder="Name" />
+        <input v-model="newSubscription.provider" type="text" placeholder="Name" />
       </label>
 
       <!-- Interval + unit -->
       <label class="field horizontal">
         <div class="left">
           <div class="field-label">Intervall</div>
-          <input class="input-100" v-model="form.interval" type="number" min="1" placeholder="1" />
+          <input class="input-100" v-model="newSubscription.renewalPeriod.amount" type="number" min="1" placeholder="1" />
         </div>
         <div class="right">
-          <select class="input-100 select" v-model="form.intervalUnit" aria-label="interval unit">
-            <option value="Monate">Monate</option>
-            <option value="Wochen">Wochen</option>
-            <option value="Jahre">Jahre</option>
+          <select class="input-100 select" v-model="newSubscription.renewalPeriod.unit" aria-label="interval unit">
+            <option :value="RenewalPeriodUnitEnum.DAYS">Tage</option>
+            <option :value="RenewalPeriodUnitEnum.WEEKS">Wochen</option>
+            <option :value="RenewalPeriodUnitEnum.MONTHS">Monate</option>
+            <option :value="RenewalPeriodUnitEnum.YEARS">Jahre</option>
           </select>
         </div>
       </label>
@@ -88,7 +125,7 @@ const form = reactive({
       <!-- Category -->
       <label class="field">
         <div class="field-label">Kategorie</div>
-        <input v-model="form.category" type="text" placeholder="Kategorie" />
+        <input v-model="category" type="text" placeholder="Kategorie" />
       </label>
 
       <!-- Submit -->
