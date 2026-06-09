@@ -2,7 +2,7 @@
 
 import DefaultAppBar from "@/components/DefaultAppBar.vue";
 import {mdiFilterOutline, mdiPlus} from "@mdi/js";
-import type {DefaultAppBarProps} from "@/components/types";
+import type {DefaultAppBarProps} from "@/components/types.d";
 
 
 const props = defineProps<DefaultAppBarProps>()
