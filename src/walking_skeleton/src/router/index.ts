@@ -12,7 +12,7 @@ const router = createRouter({
     {
       path: '/add',
       name: 'add',
-      component: () => import('../views/AddSubscriptionView.vue'),
+      component: () => import('../feature/add/AddSubscriptionView.vue'),
       meta: { pageTitle: 'Add Subscription' },
     },
     {
