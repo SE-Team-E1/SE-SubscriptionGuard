@@ -1,8 +1,4 @@
-export enum Currency {
-    EUR = "EUR",
-    USD = "USD",
-    GBP = "GBP",
-}
+import type {Currency} from "@/domain/domain.ts";
 
 export interface Payment {
     id: string,
