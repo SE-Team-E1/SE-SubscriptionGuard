@@ -11,9 +11,6 @@ services:
       - .env
 
   frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
     image: ghcr.io/se-team-e1/se-subscriptionguard/frontend:0.0.9
     expose:
       - "8001"
