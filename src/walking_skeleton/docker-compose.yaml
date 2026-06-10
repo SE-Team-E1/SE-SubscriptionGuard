@@ -1,6 +1,7 @@
 services:
   web:
-    image: ghcr.io/se-team-e1/se-subscriptionguard/backend:v1.0.0
+    #image: ghcr.io/se-team-e1/se-subscriptionguard/backend:v1.0.0
+    image: ghcr.io/se-team-e1/se-subscriptionguard:0.0.7
     expose:
       - "8000"
     depends_on:
@@ -13,7 +14,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ghcr.io/se-team-e1/se-subscriptionguard/frontend:v1.0.0
+    image: ghcr.io/se-team-e1/se-subscriptionguard/frontend:0.0.2
     expose:
       - "8001"
     depends_on:
