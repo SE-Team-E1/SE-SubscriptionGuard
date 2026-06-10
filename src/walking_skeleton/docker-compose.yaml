@@ -11,7 +11,7 @@ services:
       - .env
 
   frontend:
-    image: ghcr.io/se-team-e1/se-subscriptionguard/frontend:0.0.9
+    image: ghcr.io/se-team-e1/se-subscriptionguard/frontend:0.0.10
     expose:
       - "8001"
     depends_on:
