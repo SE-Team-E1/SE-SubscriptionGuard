@@ -14,6 +14,17 @@ export interface TempSubscriptionResponse{
   "buchungsdatum"?: number,
   "abschlussdatum": string
 }
+export interface TempSubscriptionRequest{
+  "anbieter": string,
+  "preis": {
+    "amount": string,
+    "currency": "EUR"
+  },
+  "kündigungsfrist_amount"?: number,
+  "kündigungsfrist_unit": "days" | "weeks" | "months" | "years"
+  "buchungsdatum"?: number,
+  "abschlussdatum": string
+}
 
 function mapResponseToDTO(response: TempSubscriptionResponse): SubscriptionListItemDTO{
   return {
@@ -34,28 +45,52 @@ function mapResponseToDTO(response: TempSubscriptionResponse): SubscriptionListI
   }
 }
 
+function mapDTOToRequest(dto: CreateSubscriptionDTO): TempSubscriptionRequest{
+  return {
+    anbieter: dto.provider,
+    preis: {
+      amount: dto.price.amount.toString(),
+      currency: "EUR"//dto.price.currency.
+    },
+    kündigungsfrist_amount: dto.renewalPeriod.amount,
+    kündigungsfrist_unit: dto.renewalPeriod.unit,
+    buchungsdatum: undefined,
+    abschlussdatum: dto.startDate
+  }
+}
+
 export interface SubscriptionRepository{
   getSubscriptionList(): Promise<SubscriptionListItemDTO[]>;
   createSubscription(dto: CreateSubscriptionDTO): Promise<SubscriptionListItemDTO>;
 }
 
 export class RestSubscriptionRepository implements SubscriptionRepository{
-  createSubscription(dto: CreateSubscriptionDTO): Promise<SubscriptionListItemDTO> {
+  async createSubscription(dto: CreateSubscriptionDTO): Promise<SubscriptionListItemDTO> {
     console.log(dto);
-    return Promise.resolve({
-      id: 'temp-' + Math.random(),
-      name: dto.name,
-      price: dto.price,
-      renewalPeriod: dto.renewalPeriod,
-      provider: dto.provider,
-    });
+    try {
+      const response = await fetch("/abos/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(mapDTOToRequest(dto)),
+      });
+      if(!response.ok){
+        throw new Error(`Could not create new Subscription. Request status: ${response.status}`);
+      }
+      const result: TempSubscriptionResponse = await response.json();
+      return mapResponseToDTO(result);
+    }catch(error: any) {
+      console.error(error.message);
+      return Promise.reject(error.message);
+    }
   }
 
   async getSubscriptionList(): Promise<SubscriptionListItemDTO[]> {
     try {
       const response = await fetch("/abos/?format=json")
       if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
+        throw new Error(`Could not fetch subscription list. Response status: ${response.status}`);
       }
 
       const result: TempSubscriptionResponse[] = await response.json();
