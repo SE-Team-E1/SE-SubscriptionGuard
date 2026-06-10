@@ -1,6 +1,6 @@
 import type {Price, Rating, RenewalPeriod} from "@/domain/domain.ts";
 
-export interface CreateSubscriptionDTO {
+export interface CreateSubscriptionRequestDTO {
   name: string;
   price: Price;
   /**

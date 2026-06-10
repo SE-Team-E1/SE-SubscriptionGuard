@@ -1,6 +1,6 @@
-import type {SubscriptionListItemDTO} from "@/feature/list/dto/ListDTO.ts";
+import type {SubscriptionListItemReponseDTO} from "@/feature/list/dto/ListDTO.ts";
 import {Currency, RenewalPeriodUnitEnum} from "@/domain/domain.ts";
-import type {CreateSubscriptionDTO} from "@/feature/add/AddDTO.ts";
+import type {CreateSubscriptionRequestDTO} from "@/feature/add/AddDTO.ts";
 
 export interface TempSubscriptionResponse{
   "id": number,
@@ -24,7 +24,7 @@ export interface TempSubscriptionRequest{
   "abschlussdatum": string
 }
 
-function mapResponseToDTO(response: TempSubscriptionResponse): SubscriptionListItemDTO{
+function mapResponseToDTO(response: TempSubscriptionResponse): SubscriptionListItemReponseDTO{
   return {
     id: response.id.toString(),
     name: response.anbieter, // gibt kein name
@@ -43,7 +43,7 @@ function mapResponseToDTO(response: TempSubscriptionResponse): SubscriptionListI
   }
 }
 
-function mapDTOToRequest(dto: CreateSubscriptionDTO): TempSubscriptionRequest{
+function mapDTOToRequest(dto: CreateSubscriptionRequestDTO): TempSubscriptionRequest{
   return {
     anbieter: dto.provider,
     preis_amount: dto.price.amount.toString(),
@@ -56,12 +56,12 @@ function mapDTOToRequest(dto: CreateSubscriptionDTO): TempSubscriptionRequest{
 }
 
 export interface SubscriptionRepository{
-  getSubscriptionList(): Promise<SubscriptionListItemDTO[]>;
-  createSubscription(dto: CreateSubscriptionDTO): Promise<SubscriptionListItemDTO>;
+  getSubscriptionList(): Promise<SubscriptionListItemReponseDTO[]>;
+  createSubscription(dto: CreateSubscriptionRequestDTO): Promise<SubscriptionListItemReponseDTO>;
 }
 
 export class RestSubscriptionRepository implements SubscriptionRepository{
-  async createSubscription(dto: CreateSubscriptionDTO): Promise<SubscriptionListItemDTO> {
+  async createSubscription(dto: CreateSubscriptionRequestDTO): Promise<SubscriptionListItemReponseDTO> {
     console.log(dto);
     try {
       const response = await fetch("/abos/", {
@@ -82,7 +82,7 @@ export class RestSubscriptionRepository implements SubscriptionRepository{
     }
   }
 
-  async getSubscriptionList(): Promise<SubscriptionListItemDTO[]> {
+  async getSubscriptionList(): Promise<SubscriptionListItemReponseDTO[]> {
     try {
       const response = await fetch("/abos/?format=json")
       if (!response.ok) {
@@ -99,7 +99,7 @@ export class RestSubscriptionRepository implements SubscriptionRepository{
 }
 
 export class DummySubscriptionRepository implements SubscriptionRepository{
-  createSubscription(dto: CreateSubscriptionDTO): Promise<SubscriptionListItemDTO> {
+  createSubscription(dto: CreateSubscriptionRequestDTO): Promise<SubscriptionListItemReponseDTO> {
     return Promise.resolve({
       id: 'temp-' + Math.random(),
       name: dto.name,
@@ -109,7 +109,7 @@ export class DummySubscriptionRepository implements SubscriptionRepository{
     });
   }
 
-  getSubscriptionList(): Promise<SubscriptionListItemDTO[]> {
+  getSubscriptionList(): Promise<SubscriptionListItemReponseDTO[]> {
     return Promise.resolve([
       {
         id: "0",
@@ -164,7 +164,7 @@ export class DummySubscriptionRepository implements SubscriptionRepository{
 }
 
 export class IndexedDBSubscriptionRepository implements SubscriptionRepository{
-  createSubscription(dto: CreateSubscriptionDTO): Promise<SubscriptionListItemDTO> {
+  createSubscription(dto: CreateSubscriptionRequestDTO): Promise<SubscriptionListItemReponseDTO> {
     return Promise.resolve({
       id: 'temp-' + Math.random(),
       name: dto.name,
@@ -174,7 +174,7 @@ export class IndexedDBSubscriptionRepository implements SubscriptionRepository{
     });
   }
 
-  getSubscriptionList(): Promise<SubscriptionListItemDTO[]> {
+  getSubscriptionList(): Promise<SubscriptionListItemReponseDTO[]> {
     return Promise.resolve([]);
   }
 }

@@ -1,7 +1,7 @@
 import type {Price, Rating, RenewalPeriod} from "@/domain/domain.ts";
 
 
-export interface SubscriptionListItemDTO {
+export interface SubscriptionListItemReponseDTO {
   id: string,
   name: string,
   provider: string,
