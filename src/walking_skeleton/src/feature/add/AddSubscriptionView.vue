@@ -32,7 +32,7 @@ watch(
       const y = year.toString().padStart(4, '0');
       const m = month.toString().padStart(2, '0');
       const d = day.toString().padStart(2, '0');
-      newSubscription.value.startDate = `${d}-${m}-${y}`;
+      newSubscription.value.startDate = `${y}-${m}-${d}`;
     } else {
       // optional: leer setzen, falls nicht komplett
       newSubscription.value.startDate = '';
