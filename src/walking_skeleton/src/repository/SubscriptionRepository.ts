@@ -16,10 +16,8 @@ export interface TempSubscriptionResponse{
 }
 export interface TempSubscriptionRequest{
   "anbieter": string,
-  "preis": {
-    "amount": string,
-    "currency": "EUR"
-  },
+  "preis_amount": string,
+  "preis_currency": "EUR"
   "kündigungsfrist_amount"?: number,
   "kündigungsfrist_unit": "days" | "weeks" | "months" | "years"
   "buchungsdatum"?: number,
@@ -48,10 +46,8 @@ function mapResponseToDTO(response: TempSubscriptionResponse): SubscriptionListI
 function mapDTOToRequest(dto: CreateSubscriptionDTO): TempSubscriptionRequest{
   return {
     anbieter: dto.provider,
-    preis: {
-      amount: dto.price.amount.toString(),
-      currency: "EUR"//dto.price.currency.
-    },
+    preis_amount: dto.price.amount.toString(),
+    preis_currency: "EUR",//dto.price.currency.
     kündigungsfrist_amount: dto.renewalPeriod.amount,
     kündigungsfrist_unit: dto.renewalPeriod.unit,
     buchungsdatum: undefined,
