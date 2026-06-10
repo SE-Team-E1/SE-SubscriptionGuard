@@ -64,7 +64,7 @@ export class RestSubscriptionRepository implements SubscriptionRepository{
   async createSubscription(dto: CreateSubscriptionRequestDTO): Promise<SubscriptionListItemReponseDTO> {
     console.log(dto);
     try {
-      const response = await fetch("/abos/", {
+      const response = await fetch("/api/abos/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +84,7 @@ export class RestSubscriptionRepository implements SubscriptionRepository{
 
   async getSubscriptionList(): Promise<SubscriptionListItemReponseDTO[]> {
     try {
-      const response = await fetch("/abos/?format=json")
+      const response = await fetch("/api/abos/?format=json")
       if (!response.ok) {
         throw new Error(`Could not fetch subscription list. Response status: ${response.status}`);
       }
