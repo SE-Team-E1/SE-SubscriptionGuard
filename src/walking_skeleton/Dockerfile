@@ -38,6 +38,6 @@ COPY --chown=nginx:nginx --from=builder /app/dist /usr/share/nginx/html
 
 # Expose port 8080 to allow HTTP traffic
 # Note: The default Nginx container now listens on port 8080 instead of 80
-EXPOSE 8001
+EXPOSE 8080
 
 CMD ["nginx", "-g", "daemon off;"]
