@@ -14,9 +14,9 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 import App from './App.vue'
 import router from './router'
 import {
-  RestSubscriptionRepository,
   type SubscriptionRepository
-} from "@/repository/SubscriptionRepository.ts";
+} from "./repository/subscriptions/repositories.ts";
+import {RestSubscriptionRepository} from "@/repository/subscriptions/restRepositories.ts";
 
 const vuetify = createVuetify({
   components,
