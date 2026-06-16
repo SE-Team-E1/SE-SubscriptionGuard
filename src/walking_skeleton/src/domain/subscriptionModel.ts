@@ -1,9 +1,12 @@
 import {type Price, type RenewalPeriod} from "./domain.ts";
 
-class ProviderId {
+export class ProviderId {
   private constructor(readonly value: string) {}
   static new(): ProviderId {
     return new ProviderId(crypto.randomUUID());
+  }
+  static fromString(value: string): ProviderId {
+    return new ProviderId(value);
   }
 }
 
@@ -33,11 +36,14 @@ export class Provider {
 
 export type CategoryIcon = string
 
-class CategoryId {
+export class CategoryId {
   private constructor(readonly value: string) {}
 
   static new(): CategoryId {
     return new CategoryId(crypto.randomUUID());
+  }
+  static fromString(value: string): CategoryId {
+    return new CategoryId(value);
   }
 }
 
@@ -82,10 +88,10 @@ export class SubscriptionId {
   static new(): SubscriptionId {
     return new SubscriptionId(crypto.randomUUID());
   }
-}
-
-interface BookingDate {
-
+  static fromString(value: string): SubscriptionId {
+    //TODO checks necessary?
+    return new SubscriptionId(value);
+  }
 }
 
 export class Subscription {
@@ -96,7 +102,7 @@ export class Subscription {
   readonly categories: readonly Category[];
   readonly price: Price;
   readonly renewal: RenewalPeriod;
-  readonly bookingDate: BookingDate;
+  readonly bookingDate: Date;
 
   private constructor(props: {
     id: SubscriptionId;
@@ -108,7 +114,7 @@ export class Subscription {
 
     price: Price;
     renewal: RenewalPeriod;
-    bookingDate: BookingDate;
+    bookingDate: Date;
   }) {
     this.id = props.id;
     this.createdAt = props.createdAt;
@@ -130,7 +136,7 @@ export class Subscription {
     categories: Category[];
     price: Price;
     renewal: RenewalPeriod;
-    bookingDate: BookingDate;
+    bookingDate: Date;
   }): Subscription {
     return new Subscription({
       id: SubscriptionId.new(),
@@ -151,7 +157,7 @@ export class Subscription {
     categories: Category[];
     price: Price;
     renewal: RenewalPeriod;
-    bookingDate: BookingDate;
+    bookingDate: Date;
   }): Subscription {
     return new Subscription(params);
   }
