@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type {DefaultAppBarProps} from "@/components/types";
+import type {DefaultAppBarProps} from "@/feature/types.d";
 
 const props = defineProps<DefaultAppBarProps>()
 

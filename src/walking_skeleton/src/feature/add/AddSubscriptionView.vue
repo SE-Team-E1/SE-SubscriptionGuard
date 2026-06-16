@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {computed, reactive, ref, watch} from 'vue'
 import useSubscriptionCreation from "@/feature/add/useSubscriptionCreation.ts";
-import {Currency, RenewalPeriodUnitEnum} from "@/domain/domain.ts";
+import {Currency, RenewalPeriodUnitEnum} from "@/domain/domain";
 
 const form = reactive({
   name: '',

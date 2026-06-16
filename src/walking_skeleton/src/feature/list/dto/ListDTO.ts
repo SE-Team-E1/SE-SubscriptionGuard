@@ -1,4 +1,4 @@
-import type {Price, Rating, RenewalPeriod} from "@/domain/domain.ts";
+import type {Price, Rating, RenewalPeriod} from "../../../domain/domain.ts";
 
 
 export interface SubscriptionListItemReponseDTO {

@@ -8,7 +8,7 @@ import {
 } from '@mdi/js'
 import useSubscriptionList from "@/feature/list/composables/useSubscriptionList.ts";
 import {computed, onMounted} from "vue";
-import type {Price, RenewalPeriod} from "@/domain/domain.ts";
+import type {Price, RenewalPeriod} from "@/domain/domain";
 
 const {list, loadList} = useSubscriptionList();
 const renewalToString = (renewal: RenewalPeriod) => {

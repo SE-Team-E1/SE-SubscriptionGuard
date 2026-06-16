@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {RouterView, useRoute} from 'vue-router'
 import {mdiHome, mdiListBoxOutline, mdiPlusCircleOutline} from "@mdi/js";
-import DefaultAppBar from "@/components/DefaultAppBar.vue";
+import DefaultAppBar from "@/feature/DefaultAppBar.vue";
 import ListAppBar from "@/feature/list/components/ListAppBar.vue";
 
 const route = useRoute();
