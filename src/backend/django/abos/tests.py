@@ -35,7 +35,7 @@ class SubscriptionSerializerTest(TestCase):
         return request
 
     # -------------------------
-    # Валидierung
+    # Validierung
     # -------------------------
 
     def test_valid_data_is_valid(self):
