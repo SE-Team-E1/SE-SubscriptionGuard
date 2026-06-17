@@ -5,7 +5,7 @@ from . import views
 app_name = "abos"
 
 router = DefaultRouter()
-router.register(r'', views.VertragViewSet, basename='vertrag')
+router.register(r'', views.SubscriptionViewSet, basename='subscription')
 
 urlpatterns = [
     path('', include(router.urls)),

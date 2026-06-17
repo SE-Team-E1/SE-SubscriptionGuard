@@ -1,39 +1,84 @@
 from rest_framework import serializers
-from .models import Vertrag
+from .models import Subscription, Provider, Category
 from decimal import Decimal
 
-class VertragSerializer(serializers.ModelSerializer):
-    # wir exponieren Preis als Menge + Currency, weil djmoney-Feld nicht automatisch gemappt wird
-    preis_amount = serializers.DecimalField(max_digits=12, decimal_places=2, write_only=True)
-    preis_currency = serializers.CharField(max_length=8, default='EUR', write_only=True)
-    preis = serializers.SerializerMethodField(read_only=True)
 
-    class Meta:
-        model = Vertrag
-        fields = [
-            'id', 'anbieter', 'preis', 'preis_amount', 'preis_currency',
-            'kündigungsfrist_amount', 'kündigungsfrist_unit',
-            'buchungsdatum', 'abschlussdatum',
-        ]
+class PriceSerializer(serializers.Serializer):
+  amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+  currency = serializers.ChoiceField(choices=["EUR", "USD", "GBP"])
 
-    def get_preis(self, obj):
-      """Gibt Preis mit amount und currency-Code zurück (JSON-serialisierbar)."""
-      if obj.preis is None:
-        return None
-      return {
-        "amount": str(obj.preis.amount),
-        "currency": str(obj.preis.currency.code)  # ← .code macht es zu einem String
-      }
 
-    def create(self, validated_data):
-        # entnehme price-Teile und setze djmoney-Feld manuell
-        price_amount = validated_data.pop('preis_amount', None)
-        price_currency = validated_data.pop('preis_currency', None)
-        vertrag = Vertrag(**validated_data)
-        if price_amount is not None:
-            setattr(vertrag, 'preis', Decimal(price_amount))
-            if price_currency:
-                setattr(vertrag, 'preis_currency', price_currency)
-        vertrag.full_clean()
-        vertrag.save()
-        return vertrag
+class RenewalSerializer(serializers.Serializer):
+  amount = serializers.IntegerField(min_value=1)
+  unit = serializers.ChoiceField(choices=["days", "weeks", "months", "years"])
+class SubscriptionSerializer(serializers.ModelSerializer):
+  price = PriceSerializer()
+  renewal = RenewalSerializer()
+  categoriesId = serializers.PrimaryKeyRelatedField(
+    many=True,
+    queryset=Category.objects.all(),
+    source="categoryIds"
+  )
+  providerId = serializers.PrimaryKeyRelatedField(
+    queryset=Provider.objects.all(),
+  )
+  createdAt = serializers.DateTimeField()
+  bookingDate = serializers.DateField()
+
+
+  class Meta:
+    model = Subscription
+    fields = [
+      "id",
+      "createdAt",
+      "name",
+      "providerId",
+      "categoriesId",
+      "price",
+      "renewal",
+      "bookingDate",
+    ]
+
+  def create(self, validated_data):
+    price_data = validated_data.pop("price")
+    renewal_data = validated_data.pop("renewal")
+    category_ids = validated_data.pop("categoryIds", [])
+    provider = validated_data.pop("providerId")
+    subscription = Subscription.objects.create(
+      user=self.context["request"].user,  # aus dem Request-Kontext
+      price=price_data["amount"],
+      price_currency=price_data["currency"],
+      renewal_amount=renewal_data["amount"],
+      renewal_unit=renewal_data["unit"],
+      providerId=provider,
+      **validated_data
+    )
+    subscription.categoryIds.set(category_ids)
+    return subscription
+
+
+  def update(self, instance, validated_data):
+    price_data = validated_data.pop("price", None)
+    renewal_data = validated_data.pop("renewal", None)
+    category_ids = validated_data.pop("categoryIds", None)
+    provider = validated_data.pop("providerId", None)
+
+    if price_data:
+      instance.price = price_data["amount"]
+      instance.price_currency = price_data["currency"]
+
+    if provider:
+      instance.providerId = provider
+
+    if renewal_data:
+      instance.renewal_amount = renewal_data["amount"]
+      instance.renewal_unit = renewal_data["unit"]
+
+    if category_ids is not None:
+      instance.categoryIds.set(category_ids)
+
+    for attr, value in validated_data.items():
+      setattr(instance, attr, value)
+
+    instance.save()
+    return instance

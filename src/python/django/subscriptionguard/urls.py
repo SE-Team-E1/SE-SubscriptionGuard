@@ -18,9 +18,9 @@ from django.contrib import admin
 from django.db import router
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from abos.views import VertragViewSet
+from abos.views import SubscriptionViewSet
 router = DefaultRouter()
-router.register(r'abos', VertragViewSet, basename='vertrag')
+router.register(r'abos', SubscriptionViewSet, basename='vertrag')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls))
