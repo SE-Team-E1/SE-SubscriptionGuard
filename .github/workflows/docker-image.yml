@@ -80,8 +80,8 @@ jobs:
       - name: Build and push frontend Docker image
         uses: docker/build-push-action@v5
         with:
-          context: src/walking_skeleton
-          file: src/walking_skeleton/Dockerfile
+          context: src/frontend
+          file: src/frontend/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
