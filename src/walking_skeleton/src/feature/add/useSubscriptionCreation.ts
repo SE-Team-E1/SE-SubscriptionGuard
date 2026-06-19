@@ -1,4 +1,3 @@
-import type {CreateSubscriptionRequestDTO} from "@/feature/add/AddDTO.ts";
 import {inject, ref} from "vue";
 import {
   Currency,

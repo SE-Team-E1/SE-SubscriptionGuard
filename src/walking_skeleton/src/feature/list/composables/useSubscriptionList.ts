@@ -9,7 +9,7 @@ import {ListSubscriptionService} from "@/services/subscriptionServices.ts";
 
 function useListSubscriptionService() {
   const subRepo: SubscriptionRepository = inject("subscriptionRepository") as SubscriptionRepository;
-  const catRepo: CategoryRepository = inject("categoryRepo") as CategoryRepository;
+  const catRepo: CategoryRepository = inject("categoryRepository") as CategoryRepository;
   const providerRepo: ProviderRepository = inject("providerRepository") as ProviderRepository;
 
   return {service: new ListSubscriptionService(subRepo, catRepo, providerRepo)};
