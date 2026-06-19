@@ -25,15 +25,15 @@ Ziel der Arbeit an diesem Projekt ist für uns Grundprinzipien der agilen Softwa
 | Rolle | Person | Verantwortlichkeiten
 
 | Product Owner
-| Juan 
+| Juan
 | Kontakt zu Stakeholdern, Priorisierung des Backlogs
 
 | Scrum Master
-| Jannik 
+| Jannik
 | Sicherstellen das Scrum-Prozesse eingehalten werden, Moderation der Meetings
 
 | Tech Lead footnote:[optionale Rolle, aber empfohlen, um technische Entscheidungen zu koordinieren]
-| Johannes 
+| Johannes
 | Einarbeiten in Technologien, Endgültige Entscheidung bei technischen Fragen, Dokumentation technischer Entscheidung
 
 | Entwickler:innen
@@ -41,35 +41,57 @@ Ziel der Arbeit an diesem Projekt ist für uns Grundprinzipien der agilen Softwa
 | Technische Umsetzung der Anforderungen
 
 | Stakeholder (Hauptansprechpartner)
-| 
-| 
+|
+|
 |===
 
 
 == Meetings
 
-[cols="2,1,1,2", options="header"]
+[cols="1,1,2, 1", options="header"]
 |===
-| Ereignis | Wann | Dauer | Moderation
+| Ereignis / Dauer| Wann | Inhalt | Moderation
 
-| Standup (Daily / Weekly)
-| wöchentlich mittwochs ab 19 Uhr
-| 15 min
-| Scrum Meeting
+| Weekly / maximal 1h
+| wöchentlich mittwochs ab 20 Uhr
+a|
+Pro Teammitglied:
 
-| Sprint Planning
-| freitags nach Retro
-| 90 min
+* Vorstellung der Ergebnisse der letzten Woche
+* Plan für die nächste Woche
+* Rückfragen / Hindernisse
+
+ggf. Anschlusstermine wie Vorbereitung Sprint-Review oder weitere Abstimmungen
+| Scrum Master
+
+| Sprint Planning / 90 min
+| flexibel, idealerweise nach dem Sprint Review
+a|
+* Erarbeitung Sprint-Ziel
+* Auswahl von relevanten Stories
+* Prüfen von Akzeptanzkriterien und Definition of Ready
+* Schätzen der Stories
+* Auswahl der Stories für den Sprint
+* Ableitung und Zuweisung von Tasks
 | Scrum Master / Product Owner
 
-| Sprint Review
-| freitags
+| Sprint Review / 45 min
+| flexibel, abhängig von Feedbackgebern
 | 45 min
 | Product Owner
 
-| Retrospektive
-| freitags nach Review
-| 30 min
+| Sprint Review Vorbereitung / max 30 min
+| flexibel, spätestens 3 Tage vor Sprint Review
+a|
+* Erfassung der zu präsentierenden Ergebnisse
+* Wichtige offene Fragen für den nächsten Sprint identifizieren
+| Product Owner
+
+| Retrospektive / 30 min
+| Sprintende
+a|
+* Reflektion über den vergangenen Sprint in einem geeigneten Format
+* Ableitung von konkreten Maßnahmen für den nächsten Sprint
 | Scrum Master
 
 | Backlog Refinement
@@ -141,7 +163,11 @@ _Eine User Story gilt als fertig, wenn:_
 | Thema | Vereinbarung
 
 | Branching-Strategie
-| Ein main branch; Entwicklung auf Feature-Branches (aus Issues erstellen); Merge-Requests + Reviews
+a|
+* Ein main branch
+* Entwicklung auf Feature-Branches (aus Issues erstellen)
+* Merge-Requests + Reviews
+* Löschen von Branches nach erfolgreichem Merge
 
 | PR-Review-Regeln
 | mind. 1 Approval, kein Merge ohne grüne Pipeline
@@ -156,6 +182,13 @@ _Eine User Story gilt als fertig, wenn:_
 Commit-Kategorien (siehe https://www.conventionalcommits.org/en/v1.0.0/[conventional commits]):
 
 image::conventional-categories.png[]
+
+=== Nutzung von Github Issues
+. Alle Aufgaben abseits von der Implementierung von User Stories werden als **project-task**, **technical-story** oder **spike** als Github issue getracked
+. Der Bearbeiter legt die Issues selbst an und dokumentiert Anforderungen und erwartete Ergebnisse gemäß der vorhandenen Templates
+. Die Issues werden im Sprint Planning in Absprache mit dem Team in den Sprint eingeplant
+. Der Status der Aufgaben wird regelmäßig aktualisiert (siehe Project Board "Current Sprint") um Aufgabenstatus transparent zu halten
+
 == Teamvereinbarungen
 
 _Diese Vereinbarungen haben wir gemeinsam getroffen:_
@@ -173,5 +206,6 @@ _Diese Vereinbarungen haben wir gemeinsam getroffen:_
 . [z. B. Meetings beginnen pünktlich; wer verhindert ist, gibt rechtzeitig Bescheid.]
 . [z. B. Entscheidungen werden dort dokumentiert, wo alle sie finden können.]
 
+_Version 2.0 [19.06.2026 / Sprint 2] - Erfassung der Maßnahmen des Retros am Ende von Sprint 2_
 
 _Nächste Überprüfung: [Datum / Sprint] — Diese Charta wird regelmäßig in der Retrospektive aktualisiert._
