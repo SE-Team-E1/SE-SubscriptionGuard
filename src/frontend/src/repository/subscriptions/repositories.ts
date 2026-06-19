@@ -1,4 +1,3 @@
-import {type Category, Provider, Subscription} from "@/domain/subscriptionModel.ts";
 import type {
   RestCategoryDTO, RestProviderDTO,
   RestSubscriptionDTO

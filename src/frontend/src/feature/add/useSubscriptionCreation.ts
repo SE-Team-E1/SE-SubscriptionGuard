@@ -4,11 +4,11 @@ import {
   type Price,
   type RenewalPeriod,
   RenewalPeriodUnitEnum
-} from "../../domain/domain.ts";
+} from "@/domain/domain";
 import type {
   ProviderRepository,
   SubscriptionRepository
-} from "../../repository/subscriptions/repositories.ts";
+} from "@/repository/subscriptions/repositories.ts";
 import {
   CreateProviderService,
   CreateSubscriptionService
