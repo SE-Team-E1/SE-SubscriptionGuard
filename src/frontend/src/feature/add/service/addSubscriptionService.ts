@@ -56,8 +56,8 @@ export class AddSubscriptionService {
         return mapProviderDTOtoEntity(insertedProvider);
     }
 
-    async addSubscription(subscriptionAddDto: SubscriptionAddDto, providerAddDto: ProviderAddDto): Promise<Subscription> {
-        const providerEntity = await this.addProvider(providerAddDto);
+    async addSubscription(subscriptionAddDto: SubscriptionAddDto): Promise<Subscription> {
+        const providerEntity = await this.addProvider(subscriptionAddDto.provider);
         const subscriptionEntity = Subscription.create({
             name: subscriptionAddDto.name,
             provider: providerEntity,
