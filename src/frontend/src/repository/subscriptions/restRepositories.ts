@@ -2,7 +2,7 @@ import {
   type CategoryRepository, type ProviderRepository,
   type SubscriptionRepository,
 } from "@/repository/subscriptions/repositories.ts";
-import {Category, Provider, Subscription, SubscriptionId} from "@/domain/subscriptionModel.ts";
+import {Category, Provider, Subscription, EntityId} from "@/domain/subscriptionModel.ts";
 import type {Price, RenewalPeriod} from "@/domain/domain.ts";
 
 export interface RestSubscriptionDTO {
@@ -29,7 +29,7 @@ export interface RestProviderDTO {
 
 function mapSubscriptionDTOtoEntity(dto: RestSubscriptionDTO, provider: Provider, categories: Category[]): Subscription {
   return Subscription.rehydrate({
-    id: SubscriptionId.fromString(dto.id),
+    id: EntityId.fromString(dto.id),
     createdAt: new Date(dto.createdAt), // TODO discuss usage of Date type and which standard the response string follows
 
     name: dto.name,
