@@ -4,9 +4,11 @@ import {
 } from "@/repository/subscriptions/repositories.ts";
 import {Category, Provider, Subscription, EntityId} from "@/domain/subscriptionModel.ts";
 import type {Price, RenewalPeriod} from "@/domain/domain.ts";
+import { tags } from "typia";
+import { parseRestSubscriptionDTO, parseRestSubscriptionDTOs, parseRestCategoryDTO, parseRestCategoryDTOs, parseRestProviderDTO, parseRestProviderDTOs } from "./restDtoValidation.ts";
 
 export interface RestSubscriptionDTO {
-  id: string;
+  id: string & tags.Format<'uuid'>,
   createdAt: string; // Datumsformat ISO-8601
   name: string;
   providerId: string
@@ -17,13 +19,13 @@ export interface RestSubscriptionDTO {
 }
 
 export interface RestCategoryDTO {
-  id: string,
+  id: string & tags.Format<'uuid'>,
   name: string,
   icon: string
 }
 
 export interface RestProviderDTO {
-  id: string,
+  id: string & tags.Format<'uuid'>,
   name: string
 }
 
@@ -83,11 +85,13 @@ export class RestSubscriptionRepository implements SubscriptionRepository {
         throw new Error(`HTTP ${response.status}`);
       }
 
-      dtos = await response.json();
+      const jsonResponse: unknown = await response.json();
+      dtos = parseRestSubscriptionDTOs(jsonResponse);
+      return dtos;
+
     } catch (error: any) {
       throw new Error(`Could not fetch subscriptions}`, {cause: error});
     }
-    return dtos;
   }
 
   async insert(newSubscription: RestSubscriptionDTO): Promise<RestSubscriptionDTO> {
@@ -102,7 +106,10 @@ export class RestSubscriptionRepository implements SubscriptionRepository {
       if(!response.ok){
         throw new Error(`Could not create new Subscription. Request status: ${response.status}`);
       }
-      const dtoResult: RestSubscriptionDTO = await response.json();
+
+      const jsonResponse: unknown = await response.json();
+      const dtoResult: RestSubscriptionDTO = parseRestSubscriptionDTO(jsonResponse);
+
       return dtoResult;
 
 
@@ -138,11 +145,14 @@ export class RestCategoryRepository implements CategoryRepository {
         throw new Error(`HTTP ${response.status}`);
       }
 
-      dtos = await response.json();
+      const jsonResponse: unknown = await response.json();
+      dtos = parseRestCategoryDTOs(jsonResponse);
+
+      return dtos;
+
     } catch (error: any) {
       throw new Error(`Could not fetch subscriptions}`, {cause: error});
     }
-    return dtos;
   }
 
   findByIds(id: string[]): Promise<RestCategoryDTO[]> {
@@ -166,11 +176,13 @@ export class RestProviderRepository implements ProviderRepository {
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
-      dtos = await response.json();
+
+      const jsonResponse: unknown = await response.json();
+      dtos = parseRestProviderDTOs(jsonResponse);
+      return dtos;
     } catch (error: any) {
       throw new Error(`Could not fetch providers`, {cause: error});
     }
-    return dtos;
   }
 
   findByIds(id: string[]): Promise<RestProviderDTO[]> {
