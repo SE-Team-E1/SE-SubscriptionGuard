@@ -1,9 +1,8 @@
 import {
-  Category, CategoryId,
+  Category,
   Provider,
-  ProviderId,
   Subscription,
-  SubscriptionId
+  EntityId
 } from "@/domain/subscriptionModel.ts";
 import type {
   CategoryRepository, ProviderRepository,
@@ -14,9 +13,9 @@ import type {
   RestSubscriptionDTO
 } from "@/repository/subscriptions/restRepositories.ts";
 
-function mapSubscriptionDTOtoEntity(dto: RestSubscriptionDTO, provider: Provider, categories: Category[]): Subscription {
+export function mapSubscriptionDTOtoEntity(dto: RestSubscriptionDTO, provider: Provider, categories: Category[]): Subscription {
   return Subscription.rehydrate({
-    id: SubscriptionId.fromString(dto.id),
+    id: EntityId.fromString(dto.id),
     createdAt: new Date(dto.createdAt), // TODO discuss usage of Date type and which standard the response string follows
 
     name: dto.name,
@@ -29,7 +28,7 @@ function mapSubscriptionDTOtoEntity(dto: RestSubscriptionDTO, provider: Provider
   })
 }
 
-function mapSubscriptionEntityToDTO(subscription: Subscription): RestSubscriptionDTO {
+export function mapSubscriptionEntityToDTO(subscription: Subscription): RestSubscriptionDTO {
   return {
     id: subscription.id.value,
     createdAt: subscription.createdAt.toISOString(),
@@ -51,7 +50,7 @@ function mapProviderEntityToDTO(provider: Provider): RestProviderDTO {
 
 function mapProviderDTOtoEntity(dto: RestProviderDTO): Provider {
   return Provider.rehydrate({
-    id: ProviderId.fromString(dto.id),
+    id: EntityId.fromString(dto.id),
     name: dto.name
   })
 }
@@ -77,10 +76,10 @@ export class ListSubscriptionService {
       ]);
 
       const providerMap = new Map<string, Provider>(
-        providers.map(p => [p.id, Provider.rehydrate({id: ProviderId.fromString(p.id), name: p.name})])
+        providers.map(p => [p.id, Provider.rehydrate({id: EntityId.fromString(p.id), name: p.name})])
       );
       const categoryMap = new Map<string, Category>(
-        categories.map(c => [c.id, Category.rehydrate({id: CategoryId.fromString(c.id), name: c.name, icon: c.icon})])
+        categories.map(c => [c.id, Category.rehydrate({id: EntityId.fromString(c.id), name: c.name, icon: c.icon})])
       );
 
       return dtos.map(dto => {
@@ -96,43 +95,6 @@ export class ListSubscriptionService {
     }
     catch(error) {
       throw new Error(`Could not list subscriptions`, { cause: error });
-    }
-  }
-}
-
-export class CreateSubscriptionService {
-  constructor(
-    private subscriptionRepository: SubscriptionRepository,
-  ) {
-  }
-  async execute(subscription: Subscription): Promise<Subscription> {
-    try{
-      const createdSubscription = await this.subscriptionRepository.insert(mapSubscriptionEntityToDTO(subscription));
-      return mapSubscriptionDTOtoEntity(
-        createdSubscription,
-        subscription.provider,
-        [...subscription.categories]
-      );
-    }
-    catch(error) {
-      throw new Error(`Could not create subscription`, { cause: error });
-    }
-  }
-}
-
-export class CreateProviderService {
-  constructor(
-    private providerRepository: ProviderRepository,
-  ) {
-  }
-
-  async execute(provider: Provider): Promise<Provider> {
-    try {
-      const createdProvider = await this.providerRepository.insert(mapProviderEntityToDTO(provider));
-      return mapProviderDTOtoEntity(createdProvider);
-    }
-    catch (error) {
-      throw new Error(`Could not create Provider`, { cause: error });
     }
   }
 }
