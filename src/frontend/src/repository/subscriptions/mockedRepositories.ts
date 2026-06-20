@@ -8,6 +8,7 @@ import type { RestCategoryDTO } from "./dto/categoryDto";
 import type { RestProviderDTO } from "./dto/providerDto";
 import type { RestSubscriptionDTO } from "./dto/subscriptionDto";
 import {id} from "vuetify/locale";
+import { mdiMovie, mdiMusic, mdiHeartPulse } from "@mdi/js";
 
 export class MockedSubscriptionRepository implements SubscriptionRepository{
   private subscriptions: RestSubscriptionDTO[] = [];
@@ -34,9 +35,9 @@ export class MockedSubscriptionRepository implements SubscriptionRepository{
 
 export class MockedCategoryRepository implements CategoryRepository {
   private categories : RestCategoryDTO[] = [
-    Category.create({name: "Entertainment", icon:""}),
-    Category.create({name: "Music", icon:""}),
-    Category.create({name: "Health", icon: ""})
+    Category.create({name: "Entertainment", icon:mdiMovie}),
+    Category.create({name: "Music", icon:mdiMusic}),
+    Category.create({name: "Health", icon:mdiHeartPulse})
   ].map(c => ({id: c.id.value, name: c.name, icon: c.icon}));
 
   findAll(): Promise<RestCategoryDTO[]> {
