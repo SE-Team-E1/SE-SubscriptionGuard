@@ -5,9 +5,6 @@ import {
 import {Category, Provider, Subscription, SubscriptionId} from "@/domain/subscriptionModel.ts";
 import type {Price, RenewalPeriod} from "@/domain/domain.ts";
 
-class BookingDate {
-}
-
 export interface RestSubscriptionDTO {
   id: string;
   createdAt: string; // Datumsformat ISO-8601
@@ -160,3 +157,32 @@ export class RestCategoryRepository implements CategoryRepository {
     return Promise.reject("not yet implemented");
   }
 }
+
+export class RestProviderRepository implements ProviderRepository {
+  async findAll(): Promise<RestProviderDTO[]> {
+    let dtos: RestProviderDTO[];
+    try {
+      const response = await fetch("/api/providers/?format=json")
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      dtos = await response.json();
+    } catch (error: any) {
+      throw new Error(`Could not fetch providers`, {cause: error});
+    }
+    return dtos;
+  }
+
+  findByIds(id: string[]): Promise<RestProviderDTO[]> {
+    return Promise.resolve([]);
+  }
+
+  insert(newProvider: RestProviderDTO): Promise<RestProviderDTO> {
+    return Promise.reject("not yet implemented");
+  }
+
+  update(provider: RestProviderDTO): Promise<RestProviderDTO> {
+    return Promise.reject("not yet implemented");
+  }
+}
+
