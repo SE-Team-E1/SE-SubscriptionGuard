@@ -29,9 +29,9 @@ onMounted(() => {
   <v-list lines="two" density="default">
     <v-list-item
       v-for="sub in list"
-      :key="sub.id"
+      :key="sub.id.value"
       :title="sub.name"
-      :subtitle="`${priceToString(sub.price)} · ${renewalToString(sub.renewalPeriod)}`"
+      :subtitle="`${priceToString(sub.price)} · ${renewalToString(sub.renewal)}`"
       :prepend-icon="mdiSpotify"
 
       variant="outlined"
@@ -39,7 +39,7 @@ onMounted(() => {
     >
       <template #append>
         <v-rating
-          :model-value="sub.rating ? sub.rating.value : 0"
+          :model-value="5"
           :length="5"
           half-increments
           density="compact"
