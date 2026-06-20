@@ -65,7 +65,6 @@ export class ListSubscriptionService {
   async execute(): Promise<Subscription[]> {
     try{
       let dtos: RestSubscriptionDTO[] = await this.subscriptionRepository.findAll();
-      const subscriptions: Subscription[] = [];
 
       const providerIds = [...new Set(dtos.map(dto => dto.providerId))];
       const categoryIds = [...new Set(dtos.map(dto => dto.categoriesId).flat())];

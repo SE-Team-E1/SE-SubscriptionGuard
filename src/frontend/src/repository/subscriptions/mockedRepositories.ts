@@ -3,12 +3,10 @@ import type {
   ProviderRepository,
   SubscriptionRepository
 } from "./repositories.ts";
-import {Category, Provider, type Subscription} from "@/domain/subscriptionModel.ts";
+import {Category} from "@/domain/subscriptionModel.ts";
 import {
-  type RestCategoryDTO, type RestProviderDTO, RestProviderRepository,
-  type RestSubscriptionDTO
+  type RestCategoryDTO, type RestProviderDTO, type RestSubscriptionDTO
 } from "@/repository/subscriptions/restRepositories.ts";
-import {id} from "vuetify/locale";
 
 export class MockedSubscriptionRepository implements SubscriptionRepository{
   private subscriptions: RestSubscriptionDTO[] = [];
