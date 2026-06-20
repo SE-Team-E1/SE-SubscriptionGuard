@@ -13,8 +13,8 @@ Lösche keine Abschnitte — auch wenn sie kurz bleiben.
 
 WAS IST EIN FEATURE?
   Ein Feature ist eine Hauptfunktion aus Nutzerperspektive — größer als eine einzelne
-  User Story, aber kleiner als ein Epic. Es entspricht einer Aktivität im User Story Map
-  (A1–A9) und bündelt alle Stories, die zusammen diese Aktivität ermöglichen.
+  User Story, aber kleiner als ein Epic. Es bündelt alle Stories, die zusammen eine
+  Aktivität im User Story Map ermöglichen.
 
   Größenordnung laut Beneken et al.:
     Epic   → Monate, mehrere Releases
@@ -28,52 +28,31 @@ ABLAUF:
   Abschluss:  Feature schließen, wenn alle zugehörigen Stories abgenommen wurden.
 -->
 
-## Beschreibung
+## Feature
 
-<!--
-Was soll der Nutzer mit diesem Feature insgesamt erreichen können?
-Beschreibe das Ziel aus Nutzerperspektive — nicht die technische Umsetzung.
--->
-
-[Kurze Beschreibung: Was ermöglicht dieses Feature dem Nutzer? Welches Ziel erreicht er damit?]
+[Beschreibe aus Nutzerperspektive, was dieses Feature ermöglicht und für wen es relevant ist.]
 
 ---
 
 ## Zuordnung
 
-**Epic:**
-[#2 Überblicken abgeschlossener Abos / #15 Verwalten abgeschlossener Abos / #16 Abo-Nutzung optimieren — zutreffendes behalten]
-
-**Aktivität im Story Map:**
-[A? — Name der Aktivität, z. B. „A3: Erfasste Abos ansehen"]
+**Zugehöriger Epic:**
+- #[Nummer]
 
 ---
 
 ## User Stories
 
-<!--
-Liste alle Stories, die zu diesem Feature gehören.
-Checkboxen können in GitHub mit einem Klick in verknüpfte Sub-Issues umgewandelt werden.
-Noch nicht existierende Stories zunächst als Text eintragen und später als Issue anlegen.
--->
-
-- [ ] #[Nummer] [Titel der Story]
-- [ ] #[Nummer] [Titel der Story]
-- [ ] #[Nummer] [Titel der Story]
+- [ ] #[Nummer]
+- [ ] #[Nummer]
+- [ ] #[Nummer]
 
 ---
 
-## Abhängigkeiten
+## Weitere Informationen
 
-<!--
-Andere Features oder technische Voraussetzungen, die vor diesem Feature
-umgesetzt oder geklärt sein müssen. Oder „keine".
--->
+**Abhängigkeiten:**
+keine
 
-[Abhängigkeiten — oder „keine"]
-
----
-
-## Offene Fragen
-
-[Dinge, die vor der Entwicklung dieses Features geklärt werden müssen — oder „keine"]
+**Offene Fragen:**
+keine
