@@ -5,6 +5,9 @@ import {
 import {Category, Provider, Subscription, EntityId} from "@/domain/subscriptionModel.ts";
 import type {Price, RenewalPeriod} from "@/domain/domain.ts";
 import { tags } from "typia";
+import type { RestSubscriptionDTO } from "./dto/subscriptionDto";
+import type { RestCategoryDTO } from "./dto/categoryDto";
+import type { RestProviderDTO } from "./dto/providerDto";
 import { parseRestSubscriptionDTO, parseRestSubscriptionDTOs, parseRestCategoryDTO, parseRestCategoryDTOs, parseRestProviderDTO, parseRestProviderDTOs } from "./restDtoValidation.ts";
 
 export class RestSubscriptionRepository implements SubscriptionRepository {
