@@ -2,7 +2,7 @@ import type { CategoryRepository, ProviderRepository, SubscriptionRepository } f
 import { Category, Provider, Subscription } from "@/domain/subscriptionModel";
 import { mapCategoryDTOtoEntity, mapCategoryEntityToDTO } from "@/repository/subscriptions/mapper/categoryMapper";
 import { mapProviderDTOtoEntity, mapProviderEntityToDTO } from "@/repository/subscriptions/mapper/providerMapper";
-import { mapSubscriptionEntityToDTO } from "@/repository/subscriptions/mapper/subscriptionMapper";
+import { mapSubscriptionDTOtoEntity, mapSubscriptionEntityToDTO } from "@/repository/subscriptions/mapper/subscriptionMapper";
 import type { CategoryAddDto } from "../dto/categoryAddDto";
 import type { ProviderAddDto } from "../dto/providerAddDto";
 import type { SubscriptionAddDto } from "../dto/subscriptionAddDto";
@@ -39,7 +39,8 @@ export class AddSubscriptionService {
 
         const categoryEntity = Category.create(categoryAddDto);
         const categoryRepoDto = mapCategoryEntityToDTO(categoryEntity);
-        return this.categoryRepository.insert(categoryRepoDto);
+        const insertedCategory = await this.categoryRepository.insert(categoryRepoDto);
+        return mapCategoryDTOtoEntity(insertedCategory);
     }
 
     async addProvider(providerAddDto: ProviderAddDto): Promise<Provider> {
@@ -51,7 +52,8 @@ export class AddSubscriptionService {
 
         const providerEntity = Provider.create(providerAddDto.name);
         const providerRepoDto = mapProviderEntityToDTO(providerEntity);
-        return this.providerRepository.insert(providerRepoDto);
+        const insertedProvider = await this.providerRepository.insert(providerRepoDto);
+        return mapProviderDTOtoEntity(insertedProvider);
     }
 
     async addSubscription(subscriptionAddDto: SubscriptionAddDto, providerAddDto: ProviderAddDto): Promise<Subscription> {
@@ -66,6 +68,7 @@ export class AddSubscriptionService {
         })
 
         const subscriptionRepoDto = mapSubscriptionEntityToDTO(subscriptionEntity);
-        return this.subscriptionRepository.insert(subscriptionRepoDto);
+        await this.subscriptionRepository.insert(subscriptionRepoDto);
+        return mapSubscriptionDTOtoEntity(subscriptionRepoDto, providerEntity, subscriptionAddDto.categories);
     }
 }
