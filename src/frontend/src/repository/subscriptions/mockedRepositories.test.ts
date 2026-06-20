@@ -4,11 +4,9 @@ import {
   MockedProviderRepository,
   MockedSubscriptionRepository
 } from "@/repository/subscriptions/mockedRepositories.ts";
-import type {
-  RestCategoryDTO,
-  RestProviderDTO,
-  RestSubscriptionDTO
-} from "@/repository/subscriptions/restRepositories.ts";
+import type { RestCategoryDTO } from "./dto/categoryDto";
+import type { RestProviderDTO } from "./dto/providerDto";
+import type { RestSubscriptionDTO } from "./dto/subscriptionDto";
 import {Currency, RenewalPeriodUnitEnum} from "@/domain/domain.ts";
 
 function createTestSubscriptionDTO(amount: number): RestSubscriptionDTO[] {

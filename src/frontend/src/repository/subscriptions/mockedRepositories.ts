@@ -4,10 +4,9 @@ import type {
   SubscriptionRepository
 } from "./repositories.ts";
 import {Category, Provider, type Subscription} from "@/domain/subscriptionModel.ts";
-import type {
-  RestCategoryDTO, RestProviderDTO,
-  RestSubscriptionDTO
-} from "@/repository/subscriptions/restRepositories.ts";
+import type { RestCategoryDTO } from "./dto/categoryDto";
+import type { RestProviderDTO } from "./dto/providerDto";
+import type { RestSubscriptionDTO } from "./dto/subscriptionDto";
 import {id} from "vuetify/locale";
 
 export class MockedSubscriptionRepository implements SubscriptionRepository{
@@ -45,7 +44,8 @@ export class MockedCategoryRepository implements CategoryRepository {
   }
 
   insert(newCategory: RestCategoryDTO): Promise<RestCategoryDTO> {
-    return Promise.reject("not yet supported");
+    this.categories.push(newCategory);
+    return Promise.resolve(newCategory);
   }
 
   update(category: RestCategoryDTO): Promise<RestCategoryDTO> {
