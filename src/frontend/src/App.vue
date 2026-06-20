@@ -1,17 +1,12 @@
 <script setup lang="ts">
 import {RouterView, useRoute} from 'vue-router'
 import {mdiHome, mdiListBoxOutline, mdiPlusCircleOutline} from "@mdi/js";
-import DefaultAppBar from "@/feature/DefaultAppBar.vue";
-import ListAppBar from "@/feature/list/components/ListAppBar.vue";
 
 const route = useRoute();
 </script>
 
 <template>
   <v-app>
-    <ListAppBar v-if="route.name === 'list'" :title="route.meta.pageTitle" />
-    <DefaultAppBar v-else :title="route.meta.pageTitle">
-    </DefaultAppBar>
     <v-main>
       <RouterView/>
     </v-main>
