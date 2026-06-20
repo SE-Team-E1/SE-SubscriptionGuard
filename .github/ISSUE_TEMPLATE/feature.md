@@ -47,9 +47,6 @@ Beschreibe das Ziel aus Nutzerperspektive — nicht die technische Umsetzung.
 **Aktivität im Story Map:**
 [A? — Name der Aktivität, z. B. „A3: Erfasste Abos ansehen"]
 
-**Persona(s):**
-[Otto Normal / Maximilian Fortschritt / beide]
-
 ---
 
 ## User Stories
