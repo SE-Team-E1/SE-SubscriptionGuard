@@ -4,14 +4,20 @@ import type {
   SubscriptionRepository
 } from "./repositories.ts";
 import {Category, Provider, type Subscription} from "@/domain/subscriptionModel.ts";
-import type {
-  RestCategoryDTO, RestProviderDTO,
-  RestSubscriptionDTO
+import {
+  type RestCategoryDTO, type RestProviderDTO, RestProviderRepository,
+  type RestSubscriptionDTO
 } from "@/repository/subscriptions/restRepositories.ts";
 import {id} from "vuetify/locale";
 
 export class MockedSubscriptionRepository implements SubscriptionRepository{
   private subscriptions: RestSubscriptionDTO[] = [];
+
+  constructor(initSubscriptions?: RestSubscriptionDTO[]) {
+    if(initSubscriptions) {
+      this.subscriptions = [...initSubscriptions];
+    }
+  }
 
   findAll(): Promise<RestSubscriptionDTO[]> {
     return Promise.resolve([...this.subscriptions]);
@@ -39,6 +45,12 @@ export class MockedCategoryRepository implements CategoryRepository {
     Category.create({name: "Music", icon:""}),
     Category.create({name: "Health", icon: ""})
   ].map(c => ({id: c.id.value, name: c.name, icon: c.icon}));
+
+  constructor(initCategories?: RestCategoryDTO[]) {
+    if(initCategories) {
+      this.categories.push(...initCategories);
+    }
+  }
 
   findAll(): Promise<RestCategoryDTO[]> {
     return Promise.resolve([...this.categories]);
@@ -70,6 +82,12 @@ export class MockedCategoryRepository implements CategoryRepository {
 
 export class MockedProviderRepository implements ProviderRepository {
   private providers : RestProviderDTO[] = []
+
+  constructor(initProviders?: RestProviderDTO[]) {
+    if(initProviders) {
+      this.providers.push(...initProviders);
+    }
+  }
 
   findAll(): Promise<RestProviderDTO[]> {
     return Promise.resolve([...this.providers]);
