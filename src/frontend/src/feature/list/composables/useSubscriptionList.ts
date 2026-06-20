@@ -1,5 +1,4 @@
 import {inject, ref} from "vue";
-import type {SubscriptionListItemReponseDTO} from "@/feature/list/dto/ListDTO.ts";
 import type {
   CategoryRepository, ProviderRepository,
   SubscriptionRepository
