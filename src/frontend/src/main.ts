@@ -21,7 +21,6 @@ import {
   type RestCategoryDTO,
   type RestProviderDTO,
   type RestSubscriptionDTO,
-  RestSubscriptionRepository
 } from "@/repository/subscriptions/restRepositories.ts";
 import {
   MockedCategoryRepository, MockedProviderRepository,
