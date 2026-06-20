@@ -2,11 +2,8 @@ import {
   type CategoryRepository, type ProviderRepository,
   type SubscriptionRepository,
 } from "@/repository/subscriptions/repositories.ts";
-import {Category, Provider, Subscription, SubscriptionId} from "@/domain/subscriptionModel.ts";
+import {Category, Provider, Subscription, EntityId} from "@/domain/subscriptionModel.ts";
 import type {Price, RenewalPeriod} from "@/domain/domain.ts";
-
-class BookingDate {
-}
 
 export interface RestSubscriptionDTO {
   id: string;
@@ -32,7 +29,7 @@ export interface RestProviderDTO {
 
 function mapSubscriptionDTOtoEntity(dto: RestSubscriptionDTO, provider: Provider, categories: Category[]): Subscription {
   return Subscription.rehydrate({
-    id: SubscriptionId.fromString(dto.id),
+    id: EntityId.fromString(dto.id),
     createdAt: new Date(dto.createdAt), // TODO discuss usage of Date type and which standard the response string follows
 
     name: dto.name,
@@ -160,3 +157,32 @@ export class RestCategoryRepository implements CategoryRepository {
     return Promise.reject("not yet implemented");
   }
 }
+
+export class RestProviderRepository implements ProviderRepository {
+  async findAll(): Promise<RestProviderDTO[]> {
+    let dtos: RestProviderDTO[];
+    try {
+      const response = await fetch("/api/providers/?format=json")
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      dtos = await response.json();
+    } catch (error: any) {
+      throw new Error(`Could not fetch providers`, {cause: error});
+    }
+    return dtos;
+  }
+
+  findByIds(id: string[]): Promise<RestProviderDTO[]> {
+    return Promise.resolve([]);
+  }
+
+  insert(newProvider: RestProviderDTO): Promise<RestProviderDTO> {
+    return Promise.reject("not yet implemented");
+  }
+
+  update(provider: RestProviderDTO): Promise<RestProviderDTO> {
+    return Promise.reject("not yet implemented");
+  }
+}
+

@@ -1,18 +1,27 @@
 import {type Price, type RenewalPeriod} from "./domain.ts";
 
-export class ProviderId {
-  private constructor(readonly value: string) {}
-  static new(): ProviderId {
-    return new ProviderId(crypto.randomUUID());
+export class EntityId {
+  private constructor(readonly value: string) {
+    if (!EntityId.isValidUuid(value)) {
+      throw new Error(`Invalid id: ${value}`)
+    }
   }
-  static fromString(value: string): ProviderId {
-    return new ProviderId(value);
+  static new(): EntityId {
+    return new EntityId(crypto.randomUUID());
+  }
+  private static isValidUuid(value: string): boolean {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
+  }
+
+  static fromString(value: string): EntityId {
+    return new EntityId(value);
   }
 }
 
+
 export class Provider {
   constructor(
-    readonly id: ProviderId,
+    readonly id: EntityId,
     readonly name: string,
   ) {
   }
@@ -22,37 +31,26 @@ export class Provider {
    * @param name
    */
   static create(name: string): Provider {
-    return new Provider(ProviderId.new(), name);
+    return new Provider(EntityId.new(), name);
   }
 
   /**
    * Create a new Provider object from persisted data.
    * @param props
    */
-  static rehydrate(props: {id: ProviderId, name: string}) {
+  static rehydrate(props: {id: EntityId, name: string}) {
     return new Provider(props.id, props.name);
   }
 }
 
 export type CategoryIcon = string
 
-export class CategoryId {
-  private constructor(readonly value: string) {}
-
-  static new(): CategoryId {
-    return new CategoryId(crypto.randomUUID());
-  }
-  static fromString(value: string): CategoryId {
-    return new CategoryId(value);
-  }
-}
-
 export class Category {
-  readonly id: CategoryId;
+  readonly id: EntityId;
   readonly name: string;
   readonly icon: CategoryIcon;
 
-  private constructor(id: CategoryId, name: string, icon: CategoryIcon) {
+  private constructor(id: EntityId, name: string, icon: CategoryIcon) {
     if (!name.trim()) {
       throw new Error("Category name cannot be empty");
     }
@@ -66,36 +64,20 @@ export class Category {
    * @param props
    */
   static create(props: {name: string, icon: CategoryIcon}): Category {
-    return new Category(CategoryId.new(), props.name, props.icon);
+    return new Category(EntityId.new(), props.name, props.icon);
   }
 
   /**
    * Create a new Category object from persisted data.
    * @param props
    */
-  static rehydrate(props: {id: CategoryId, name: string, icon: CategoryIcon}): Category {
+  static rehydrate(props: {id: EntityId, name: string, icon: CategoryIcon}): Category {
     return new Category(props.id, props.name, props.icon);
   }
 }
 
-/*
-Subscription
- */
-
-export class SubscriptionId {
-  private constructor(readonly value: string) {}
-
-  static new(): SubscriptionId {
-    return new SubscriptionId(crypto.randomUUID());
-  }
-  static fromString(value: string): SubscriptionId {
-    //TODO checks necessary?
-    return new SubscriptionId(value);
-  }
-}
-
 export class Subscription {
-  readonly id: SubscriptionId;
+  readonly id: EntityId;
   readonly name: string;
   readonly createdAt: Date;
   readonly provider: Provider;
@@ -105,7 +87,7 @@ export class Subscription {
   readonly bookingDate: Date;
 
   private constructor(props: {
-    id: SubscriptionId;
+    id: EntityId;
     createdAt: Date;
 
     name: string
@@ -139,7 +121,7 @@ export class Subscription {
     bookingDate: Date;
   }): Subscription {
     return new Subscription({
-      id: SubscriptionId.new(),
+      id: EntityId.new(),
       createdAt: new Date(),
       ...params,
     });
@@ -150,7 +132,7 @@ export class Subscription {
    * @param params
    */
   static rehydrate(params: {
-    id: SubscriptionId;
+    id: EntityId;
     createdAt: Date;
     name: string
     provider: Provider;
