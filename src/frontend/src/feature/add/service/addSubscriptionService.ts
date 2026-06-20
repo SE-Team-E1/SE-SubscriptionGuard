@@ -53,6 +53,7 @@ export class AddSubscriptionService {
         const providerEntity = Provider.create(providerAddDto.name);
         const providerRepoDto = mapProviderEntityToDTO(providerEntity);
         const insertedProvider = await this.providerRepository.insert(providerRepoDto);
+
         return mapProviderDTOtoEntity(insertedProvider);
     }
 
