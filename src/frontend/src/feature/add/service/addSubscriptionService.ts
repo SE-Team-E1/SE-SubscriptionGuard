@@ -27,12 +27,28 @@ export class AddSubscriptionService {
     }
 
     async addCategory(categoryAddDto: CategoryAddDto): Promise<Category> {
+
+        const allCategories = await this.getAvailableCategories();
+        const existingCategory = allCategories.find(category => 
+            category.name === categoryAddDto.name && 
+            category.icon === categoryAddDto.icon
+        );
+        if(existingCategory) {
+            return existingCategory;
+        }
+
         const categoryEntity = Category.create(categoryAddDto);
         const categoryRepoDto = mapCategoryEntityToDTO(categoryEntity);
         return this.categoryRepository.insert(categoryRepoDto);
     }
 
     async addProvider(providerAddDto: ProviderAddDto): Promise<Provider> {
+        const allProviders = await this.getAvailableProviders();
+        const existingProvider = allProviders.find(provider => provider.name === providerAddDto.name);
+        if(existingProvider) {
+            return existingProvider;
+        }
+
         const providerEntity = Provider.create(providerAddDto.name);
         const providerRepoDto = mapProviderEntityToDTO(providerEntity);
         return this.providerRepository.insert(providerRepoDto);
