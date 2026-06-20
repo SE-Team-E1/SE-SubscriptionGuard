@@ -56,8 +56,3 @@ keine
 
 **Offene Fragen:**
 keine
-
----
-
-> **Definition of Ready** prüfen, bevor diese Story in einen Sprint aufgenommen wird:
-> [Team-Charta - Definition of Ready](https://github.com/SE-Team-E1/SE-SubscriptionGuard/blob/main/docs/team/team_charter.adoc)
