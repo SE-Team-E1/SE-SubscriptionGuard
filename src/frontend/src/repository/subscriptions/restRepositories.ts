@@ -7,56 +7,6 @@ import type {Price, RenewalPeriod} from "@/domain/domain.ts";
 import { tags } from "typia";
 import { parseRestSubscriptionDTO, parseRestSubscriptionDTOs, parseRestCategoryDTO, parseRestCategoryDTOs, parseRestProviderDTO, parseRestProviderDTOs } from "./restDtoValidation.ts";
 
-export interface RestSubscriptionDTO {
-  id: string & tags.Format<'uuid'>,
-  createdAt: string; // Datumsformat ISO-8601
-  name: string;
-  providerId: string
-  categoriesId: string[];
-  price: Price;
-  renewal: RenewalPeriod;
-  bookingDate: string; // Datumsformat ISO-8601
-}
-
-export interface RestCategoryDTO {
-  id: string & tags.Format<'uuid'>,
-  name: string,
-  icon: string
-}
-
-export interface RestProviderDTO {
-  id: string & tags.Format<'uuid'>,
-  name: string
-}
-
-function mapSubscriptionDTOtoEntity(dto: RestSubscriptionDTO, provider: Provider, categories: Category[]): Subscription {
-  return Subscription.rehydrate({
-    id: EntityId.fromString(dto.id),
-    createdAt: new Date(dto.createdAt), // TODO discuss usage of Date type and which standard the response string follows
-
-    name: dto.name,
-    provider: provider,
-    categories: categories,
-
-    price: dto.price,
-    bookingDate: new Date(dto.bookingDate),
-    renewal: dto.renewal
-  })
-}
-
-function mapSubscriptionEntityToDTO(subscription: Subscription): RestSubscriptionDTO {
-  return {
-    id: subscription.id.value,
-    createdAt: subscription.createdAt.toISOString(),
-    name: subscription.name,
-    providerId: subscription.provider.id.value,
-    categoriesId: subscription.categories.map(c => c.id.value),
-    price: subscription.price,
-    renewal: subscription.renewal,
-    bookingDate: subscription.bookingDate.toISOString()
-  }
-}
-
 export class RestSubscriptionRepository implements SubscriptionRepository {
   constructor (
     // private providerRepository: ProviderRepository,
@@ -68,7 +18,7 @@ export class RestSubscriptionRepository implements SubscriptionRepository {
   //   let categories: Category[];
   //
   //   try {
-  //     provider = await this.providerRepository.findById(dto.providerId);
+  //     provider = await this.providerRepository.findByIdategory));(dto.providerId);
   //     categories = await this.categoryRepository.findByIds(dto.categoriesId);
   //   } catch (error) {
   //     throw new Error(`Failed to hydrate subscription ${dto.id}: ${(error as Error).message}`);
