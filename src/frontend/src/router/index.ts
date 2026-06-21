@@ -8,7 +8,12 @@ const router = createRouter({
       name: 'login',
       component: () => import('../feature/login/view/LoginView.vue'),
       meta: { pageTitle: 'Login' },
-
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: () => import('../feature/login/view/RegisterView.vue'),
+      meta: { pageTitle: 'Registrieren' },
     }
   ],
 })
