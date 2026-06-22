@@ -1,4 +1,4 @@
-= UX-Konzept: {project-name}
+= UX-Konzept: SubscriptionGuard
 include::../_includes/default-attributes.inc.adoc[]
 {authoren}
 {localdatetime}
@@ -34,10 +34,11 @@ _Hinweis: Im link:product_concept.adoc[Produktkonzept] werden Zielgruppen nur be
 | "Ich will einfach meine Abos in den Griff bekommen"
 
 | *Ziele*
-a| 
-* einfacher, schneller Überblick über Abos
+a|
+* Einfacher, schneller Überblick über Abos
 * Verwaltung seiner Abos schnell und zentral
-* einfache Handlungsempfehlungen, Kennzahlen, Analysen
+* Einfache Handlungsempfehlungen, Kennzahlen und Analysen
+* Über nahende Kündigungsfristen informiert werden
 
 | *Frustrationen*
 a|
@@ -45,17 +46,24 @@ a|
 * Übersehen von Kostenänderungen
 * Abschätzung Abo-Gesamtkosten schwierig
 * Vergisst Abos zu kündigen, obwohl er es sich vorgenommen hat
+* Schätzt Gesamtkosten der Abos in der Zukunft schwierig ein
+* Hat keine Lust auf jede Plattform einzeln zu gehen
 
 | *Verhalten & Kontext*
 a|
-* tendenziell faul
-** aufwendige manuelle Abo-Erfassung unattraktiv
-** zentrale Plattform zur Abokündigung von Vorteil
-* nutzt gern Test-Abos
+* Tendenziell faul
+* Aufwendige manuelle Abo-Erfassung unattraktiv
+* Nicht stolz darauf, digitale Produkte zu nutzen, die er nicht zwingend benötigt
+* Nutzt die App nicht täglich — eher beim monatlichen Überblick oder bei Bedarf
+* Zentrale Plattform zur Abokündigung von Vorteil
+* Nutzt gern Test-Abos
+* Eher Smartphone-Nutzung, unterwegs oder zu Hause auf dem Sofa
 
 | *Bezug zum Produkt*
 // | [Warum ist dieses Produkt für sie relevant? Was ist ihr primärer Nutzen?]
-| Proaktive Erinnerungen verhindern vergessene Kündigungen und somit ist sein Hauptproblem direkt gelöst.
+a|
+* Proaktive Erinnerungen verhindern vergessene Kündigungen und somit ist sein Hauptproblem direkt gelöst.
+* Einfache, simple Übersicht seiner Abos
 |===
 
 === Persona 2: Thomas der Skeptische
@@ -72,26 +80,30 @@ a|
 | _„Ich will wissen, wo meine Daten landen — und ob ich dem wirklich vertrauen kann."_
 
 | *Ziele*
-a| 
+a|
 * Will keinesfalls zu abhängig sein von technischen Unternehmen
 * Will möglichst wenig Geld in digitale Dienste investieren
 * Will sich nicht verarschen lassen
+
 | *Frustrationen*
-a| 
+a|
 * Hat das Gefühl er wird von digitalen Produkten, Abomodellen bspw. wegen dark patterns ausgebeutet
-* Bekommt Bauchschmerzen, wenn er daran denkt, seine persönlichen / finanziellen Daten digital gespeichert zu sehen
+* Bekommt Bauchschmerzen, wenn er daran denkt, seine persönlichen / finanziellen Daten digital gespeichert zu sehen (Bankzugang vor allem)
 
 | *Verhalten & Kontext*
 a|
-* Befasst sich mit Finanzen nur Samstag abend am PC / Laptop
+* Befasst sich mit Finanzen nur samstags abends am PC / Laptop
 nutzt die digitalen Produkte die er zwingend benötigt, aber ist nicht stolz darauf
-* Achtet sehr darauf welche Daten er von sich preisgibt
-* ist äußerst skeptisch gegenüber aller Art von digitalen Finanzen, sieht aber ein, dass er nicht drumherum kommt
-* Schätzt vertrauenswürdige, transparente Dienstleister sehr
+* Achtet sehr darauf welche Daten er von sich preisgibt (datenschutzkonform)
+* Er is st äußerst skeptisch gegenüber aller Art von digitalen Finanzen, sieht aber ein, dass er nicht drumherum kommt
+* Schätzt vertrauenswürdige, transparente Dienstleister sehr (Gastmodus verfügbar)
 
 | *Bezug zum Produkt*
-| Kein Bankzugang, Gastmodus verfügbar +
-  Es muss datenschutzkonform nutzbar.
+a|
+* Einsparpotenziale entdecken
+* Gibt Thomas klare Kontrolle über seine eigenen finanziellen Abhängigkeiten
+* Freigabe/Berechtigung von Daten detailliert einstellbar
+* Transparente Datenpolitik (Privacydashboard?)
 |===
 
 === Persona 3: Maximilian der Fortschrittliche
@@ -100,6 +112,7 @@ nutzt die digitalen Produkte die er zwingend benötigt, aber ist nicht stolz dar
 |===
 | *Rolle*
 | Technikaffiner Studierender / Early Adopter (Edge Case)
+
 | *Alter*
 | 20-30 Jahre
 
@@ -107,28 +120,30 @@ nutzt die digitalen Produkte die er zwingend benötigt, aber ist nicht stolz dar
 | _„Ich will nicht nur tracken — ich will verstehen, was meine Abos wirklich wert sind."_
 
 | *Ziele*
-a| 
+a|
 * Einsparpotenziale entdecken
 * Will langfristig seine Nutzung analysieren
 * Unterstützung bei Abo-Vergleich / Notwendigkeit
 * Visualisierung / Statistiken Ausgaben, Einsparung
+
 | *Frustrationen*
-a| 
-* fehlende aussagekräftige Informationen/Statistiken über Nutzung/Wert von Abodiensten
-* bisher manuelle Erfassung von Abodiensten
-* fehlende Handlungsempfehlungen
+a|
+* Fehlende aussagekräftige Informationen/Statistiken über Nutzung/Wert von Abodiensten
+* Bisher manuelle Erfassung von Abodiensten
+* Fehlende Handlungsempfehlungen
 
 | *Verhalten & Kontext*
 a|
 * Für 95% digitaler Dienste nutzt er sein Handy
 nutzt immer die neuesten Tools insbesondere KI (Early Adopter)
 * Besitzt gern sehr viele Abos und Tools
-* engagiert und straightforward
-* gutes finanzielles Verständnis
+* Engagiert und straightforward
+* Gutes finanzielles Verständnis
 
 | *Bezug zum Produkt*
-| Kostenkennzahlen und Übersicht sprechen ihn an +
- Statistik-Features sind für ihn wichtiger als die Kernfunktion.
+a|
+* Kostenkennzahlen und Übersicht sprechen ihn an
+* Statistik-Features sind für ihn wichtiger als die Kernfunktion.
 |===
 
 NOTE: Für jedes Projekt sind 2–4 Personas ausreichend. Mehr Personas verwässern
@@ -141,29 +156,29 @@ _Der Nutzungskontext gemäß DIN EN ISO 9241-11 beschreibt die Lebenswirklichkei
 [cols="1,3", options="header"]
 |===
 | Aspekt | Beschreibung
- 
+
 | Benutzer
 | Studierende und junge Berufstätige, 20–50 Jahre; 5–10 aktive Abos; technisch vertraut; teils datenschutzbewusst.
 Siehe Personas: Otto Normal, Thomas der Skeptische, Maximilian der Fortschrittliche.
- 
+
 | Ziele & Aufgaben
 a|
 * Alle aktiven Abos auf einen Blick überblicken
 * Kündigungsfristen rechtzeitig im Blick behalten
 * Abos erfassen, bearbeiten und kündigen
 * Gesamtkosten und Einsparpotenziale erkennen
- 
+
 | Ressourcen
-a| 
-* Smartphone (primär); PC/Laptop (gelegentlich). 
-* Android, iOS oder Web-Browser. 
+a|
+* Smartphone (primär); PC/Laptop (gelegentlich).
+* Android, iOS oder Web-Browser.
 * Standard-Internetverbindung.
 | Umgebung
 a|
 * *Technisch:* Android / iOS / Web; mobile Nutzung dominant
 * *Physisch:* spontan unterwegs; gezielt zu Hause am PC
 * *Sozial/rechtlich:* individuelle Nutzung; DSGVO-Rahmenbedingungen relevant
- 
+
 |===
 
 === Aktuelle Situation (ohne das Produkt)
@@ -245,30 +260,130 @@ stop
 | Zeigt direkt die wichtigste Funktion — keine unnötige Zwischenseite
 |===
 
----
+=== Onboarding-Flow (Erstzugang)
 
-=== [Weiterer Fluss, z. B. Buchungsabbruch & Fehlerbehandlung]
+_Dieser Fluss zeigt, wie eine neue Nutzer:in die App zum ersten Mal öffnet und sich
+  in das System einarbeitet. Es gibt zwei parallele Pfade: Registrierung mit Konto oder Gastmodus ohne Konto. Der Fluss endet mit Zugang zur Übersicht._
 
-_Beschreibe den Fluss und ergänze ein Diagramm nach demselben Muster._
-
-[plantuml, error-flow, svg]
+[plantuml, onboarding-flow, svg]
 ....
 @startuml
 skinparam monochrome true
+skinparam defaultFontSize 13
 
 start
-:Buchung starten;
-if (Raum noch verfügbar?) then (ja)
-  :Buchung bestätigen;
-  :Bestätigung anzeigen;
+:App öffnen;
+if (Bereits registriert?) then (ja)
+  :Login;
 else (nein)
-  :Fehlermeldung anzeigen;
-  :Alternative Räume vorschlagen;
+  if (Registrieren oder Gastmodus?) then (Registrieren)
+    :Registrierung (E-Mail, Passwort);
+    :Bestätigungs-E-Mail;
+    :Konto aktiviert;
+  else (Gastmodus)
+    :Ohne Konto fortfahren;
+    :Daten nur lokal (Browser/Gerät);
+  endif
 endif
+:Abonnement-Übersicht / Dashboard;
 stop
 
 @enduml
 ....
+
+[cols="1,1,2", options="header"]
+|===
+| Schritt | Beteiligte Persona(s) | Anmerkung
+
+| App öffnen
+| Alle (Otto, Thomas, Maximilian)
+| Erster Einstiegspunkt; muss sofort klar sein, was die App tut
+
+| Login / Registrierung
+| Alle
+| Registrierung nur beim ersten Besuch; danach automatischer Login (falls Konto vorhanden)
+
+| Gastmodus (Alternative)
+| Thomas der Skeptische (Datenschutz-bewusst); alle Nutzer:innen
+| Für Nutzer:innen, die keine Registrierung mögen oder nur lokal arbeiten möchten (ohne Konto, ohne Synchronisation)
+
+| Abonnement-Übersicht
+| Alle
+| Zeigt direkt die wichtigste Funktion — Übersicht über alle Abos; keine unnötige Zwischenseite
+|===
+
+---
+
+=== Kern-Flow: Abo erfassen und verwalten
+
+_Dieser Fluss zeigt den zentralen Use Case: Wie Nutzer:innen ihre Abonnements in der App verwalten — von der Erfassung über die Anzeige bis zur (eventuellen) Kündigung. Dieser Fluss ist für alle Personas zentral und wird mehrmals pro Nutzer:innen-Session durchlaufen._
+
+[plantuml, abo-flow, svg]
+....
+@startuml
+skinparam monochrome true
+skinparam defaultFontSize 13
+
+start
+:Abonnement-Übersicht öffnen;
+:Liste aller erfassten Abos anzeigen;
+if (Neues Abo erfassen?) then (ja)
+  :Abo manuell erfassen\n(Name, Betrag, Intervall, Startdatum, Vertragsende);
+  :Kategorie und Notizen hinzufügen (optional);
+  :Speichern;
+else (nein)
+  :Bestehendes Abo auswählen;
+  :Details anzeigen / bearbeiten;
+endif
+if (Kündigen?) then (ja)
+  :Kündigungsweg wählen\n(direkt / Weiterleitung / Brief);
+  :Bestätigung;
+else (nein)
+  :Erinnerung für Kündigungsfrist einstellen (optional);
+endif
+:Zurück zur Übersicht;
+stop
+
+@enduml
+....
+
+[cols="1,1,2", options="header"]
+|===
+| Schritt | Beteiligte Persona(s) | Anmerkung
+
+| Abonnement-Übersicht öffnen
+| Alle
+| Zentrale Anzeige; muss auf einen Blick zeigen: Abo-Name, Betrag, nächste Abrechnung, Kündigungsfrist
+
+| Liste aller Abos
+| Alle
+| Sortierung nach Kündigungsfrist oder Kategorie; Suchfunktion für viele Abos
+
+| Abo erfassen (manuell)
+| Alle
+| Pflichtfelder: Name, Betrag, Intervall, Startdatum. Optionale Felder: ...
+
+| Kategorie & Notizen
+| Alle
+| Optional; ermöglicht spätere Filterung und Kategorisierung
+
+| Abo bearbeiten
+| Alle
+| Erlaubt Eigenschaften eines Abos ändern. Warnung, wenn Änderungen das Kündigungsdatum beeinflussen
+
+| Kündigen-Workflow
+| Alle
+| Drei Wege: +
+- (1) direkt kündigen + Bestätigung, +
+- (2) Weiterleitung zur Website des Anbieters, +
+- (3) Kündigungsbrief-Template exportieren. +
+Erinnerung basiert auf Kündigungsfrist
+
+| Zurück zur Übersicht
+| Alle
+| Konsistente Navigation; bestätigt Speicherung
+|===
+
 
 == Designsystem & Interaktionsprinzipien
 
@@ -306,6 +421,9 @@ wird begründet, damit sie nicht aus Unwissenheit verletzt wird._
 |===
 | Prinzip | Beschreibung & Begründung
 
+| Einfachheit vor Vollständigkeit.
+| Die Kernfunktion (Abo erfassen und überblicken) muss ohne Einarbeitung nutzbar sein. Erweiterte Funktionen (Analysen, Datenschutzeinstellungen) sind zugänglich, aber nicht im Weg.
+
 | Destruktive Aktionen werden immer bestätigt.
 | Lösch- oder Stornieraktionen erfordern eine explizite Bestätigung durch die Nutzenden.
   Verhindert unbeabsichtigte Datenverluste.
@@ -317,6 +435,9 @@ wird begründet, damit sie nicht aus Unwissenheit verletzt wird._
 | Fehlermeldungen sind verständlich und handlungsorientiert.
 | Fehlermeldungen nennen die Ursache in einfacher Sprache und schlagen einen
   nächsten Schritt vor. Kein technischer Jargon für Endnutzer:innen.
+
+| Datenschutz ist sichtbar und kontrollierbar.
+| Nutzer sehen jederzeit, welche Daten gespeichert werden. Datenschutzeinstellungen sind leicht zugänglich (nicht versteckt in tiefen Menüs).
 
 | Kernfunktionen sind mit einer Hand erreichbar.
 | Primäre Aktionen befinden sich im unteren Bildschirmbereich (Daumenzone).
