@@ -218,48 +218,6 @@ _Dieser Abschnitt beschreibt Abläufe, die mehrere Features oder Bereiche des Pr
 umfassen. Einzelne Feature-Wireframes werden in den jeweiligen User Stories gepflegt.
 Hier dokumentieren wir nur Flüsse auf Systemebene, z.B. mit UML-Aktivitätsdiagrammen._
 
-=== [Flussname, z. B. Onboarding-Flow]
-
-_Beschreibe kurz, was dieser Fluss abdeckt und welche Personas er betrifft._
-
-[plantuml, onboarding-flow, svg]
-....
-@startuml
-skinparam monochrome true
-skinparam defaultFontSize 13
-
-start
-:App öffnen;
-if (Bereits registriert?) then (ja)
-  :Login;
-else (nein)
-  :Registrierung;
-  :Bestätigungs-E-Mail;
-  :E-Mail bestätigen;
-endif
-:Startseite;
-stop
-
-@enduml
-....
-
-[cols="1,1,2", options="header"]
-|===
-| Schritt | Beteiligte Persona | Anmerkung
-
-| App öffnen
-| Maria (Studierende)
-| Erster Einstiegspunkt; muss sofort orientieren
-
-| Login / Registrierung
-| Alle Personas
-| Registrierung nur beim ersten Besuch; danach automatischer Login
-
-| Startseite
-| Alle Personas
-| Zeigt direkt die wichtigste Funktion — keine unnötige Zwischenseite
-|===
-
 === Onboarding-Flow (Erstzugang)
 
 _Dieser Fluss zeigt, wie eine neue Nutzer:in die App zum ersten Mal öffnet und sich
