@@ -21,12 +21,21 @@ Technische Implementierungsdetails gehören nicht hierher!
 | Begriff / Abkürzung | Definition | Synonyme / Abgrenzungen
 
 | Abonnement
-| Wiederkehrendes Vertragsverhältnis: Nutzer zahlt regelmäßig und erhält Zugang zu einem Dienst.
+| Wiederkehrendes Vertragsverhältnis zwischen einem Nutzer und einem Anbieter, bei der der Nutzer in regelmäßigen Abständen einen Betrag zahlt und dafür Zugang zu einem Dienst oder Produkt erhält.
 | Abo, Vertrag, Subscription; abzugrenzen von Einmalkauf
+
+| Abo-Details
+| Die Gesamtheit der relevanten Informationen zu einem Abo.
+| Abo-Informationen, Abo-Konditionen, Abo-Eigenschaften
+
+| Abomodell
+| Das Geschäftsmodell eines Anbieters, das auf wiederkehrenden Zahlungen statt Einmalkäufen basiert. Abomodelle umfassen Streaming-Dienste, Gym-Mitgliedschaften, Software-Lizenzen, Cloud-Speicher u. ä.
+| Subscription Model; abzugrenzen von Einzelkauf/Lizenz
+
 
 | Abo-Kategorie
 | Thematische Gruppe eines Abonnements, z.B. Streaming, Software, Gaming, Fitness.
-| Gruppe, Tag; dient der Filterung und Übersicht — kein eigener Vertragsbestandteil
+| Kategorie, Gruppe, Tag; dient der Filterung und Übersicht — kein eigener Vertragsbestandteil
 
 | Abo-Überschneidung
 | Zustand, bei dem zwei oder mehr Abonnements ähnliche Leistungen abdecken.
@@ -39,6 +48,10 @@ Technische Implementierungsdetails gehören nicht hierher!
 | Abrechnungszyklus
 | Zeitraum zwischen zwei aufeinanderfolgenden Zahlungen eines Abonnements.
 | Zahlungsrhythmus; vgl. Zahlungsintervall
+
+| Abschlussdatum
+| Das Datum, an dem ein Abo ursprünglich abgeschlossen bzw. begonnen wurde.
+| Startdatum, Vertragsbeginn; abzugrenzen vom Verlängerungsdatum
 
 | Anbieter
 | Unternehmen oder Person, die einen Dienst im Rahmen eines Abonnements bereitstellt.
@@ -60,9 +73,17 @@ Technische Implementierungsdetails gehören nicht hierher!
 | Nutzer-definiertes monatliches Ausgabenlimit für Abonnements.
 |
 
+| Datenschutz / Datenhoheit
+| Das Recht des Nutzers, zu kontrollieren, welche seiner persönlichen Daten wie und wo gespeichert und weitergegeben werden.
+| Privacy, DSGVO-Konformität
+
 | DSGVO
 | Datenschutz-Grundverordnung — EU-Recht zum Schutz personenbezogener Daten. Bindende Einschränkung für Datenspeicherung und -verarbeitung
 | GDPR (englisch)
+
+| Einsparpotenzial
+| Eine identifizierbare Möglichkeit, Abokosten zu reduzieren — z. B. durch Kündigung ungenutzter Abos, Wechsel zu günstigeren Alternativen oder Zusammenlegung ähnlicher Abos.
+| Sparpotenzial, Optimierungspotenzial
 
 | Erinnerung
 | Automatische Benachrichtigung auf ein bevorstehendes Ereignis, z.B. Ablauf der Kündigungsfrist.
@@ -72,9 +93,17 @@ Technische Implementierungsdetails gehören nicht hierher!
 | Nutzungsmodus ohne Registrierung; Daten werden ausschließlich lokal gespeichert.
 | Offline-Modus; abzugrenzen von registriertem Account
 
+| Gesamtkosten
+| Die Summe aller aktiven Abo-Zahlungsbeträge bezogen auf ein gemeinsames Intervall.
+| Monatliche Gesamtausgaben; abzugrenzen von den Kosten eines einzelnen Abos
+
 | Geteiltes Abo
 | Ein Abonnement, das mehrere Personen (z.B. Familie, WG) gemeinsam nutzen.
 | Familienabo, Gruppenabo
+
+| Handlungsempfehlung
+| Ein konkreter Vorschlag, wie ein Nutzer seine Abo-Situation verbessern kann.
+| Empfehlung, Suggestion
 
 | KI
 | Künstliche Intelligenz — im Kontext des Projekts: KI-gestützte Empfehlungen oder Abo-Erkennung.
@@ -112,9 +141,21 @@ Technische Implementierungsdetails gehören nicht hierher!
 | User Experience — das Gesamterlebnis der Nutzenden bei der Interaktion mit dem Produkt.
 | Nutzererlebnis; umfasst UI, Abläufe, Emotionen und wahrgenommene Qualität
 
+| Vertragsende
+| Das Datum, an dem ein Abo ausläuft.
+| Ablaufdatum, Vertragsenddatum; abzugrenzen vom Abschlussdatum (Beginn des Vertrags) und der Kündigungsfrist (Zeitraum vor dem Vertragsende)
+
+| Vertragspartner
+| Das Unternehmen oder die Organisation, mit der der Nutzer das Abo-Vertragsverhältnis eingegangen ist (z. B. Netflix, Spotify, Gym XY).
+| Anbieter, Dienstleister
+
 | WCAG
 | Web Content Accessibility Guidelines — W3C-Standard für barrierefreie Webinhalte.
 | Ziel: WCAG 2.1 Level AA; bindende Einschränkung laut Produktkonzept (vgl. ARIA)
+
+| Zahlungsabstand
+| Synonym für Zahlungsintervall — der Abstand in Tagen/Monaten/Jahren zwischen zwei Zahlungen.
+| Zahlungsintervall
 
 | Zahlungsbetrag
 | Der konkrete Geldbetrag, der pro Abrechnungszyklus für ein Abonnement fällig wird.
