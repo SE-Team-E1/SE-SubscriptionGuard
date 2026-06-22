@@ -1,13 +1,12 @@
-from rest_framework import viewsets, status
-from rest_framework.response import Response
+from rest_framework import viewsets
 from .models import Subscription
 from .serializers import SubscriptionSerializer
-from rest_framework.permissions import AllowAny, IsAuthenticated  # oder IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
   serializer_class = SubscriptionSerializer
-  permission_classes = [IsAuthenticated]  # unauthentifizierte Requests blockieren
+  permission_classes = [IsAuthenticated]
 
   def get_queryset(self):
     # Nutzer sieht nur seine eigenen Subscriptions
