@@ -1,7 +1,9 @@
 import { computed, inject, onMounted, reactive, ref, watch } from 'vue'
 import { AddSubscriptionService } from '@/feature/add/service/addSubscriptionService'
 import type { CategoryAddDto } from '@/feature/add/dto/categoryAddDto'
+import type { ProviderAddDto } from '@/feature/add/dto/providerAddDto'
 import type { CategoryRepository, ProviderRepository, SubscriptionRepository } from '@/repository/subscriptions/repositories'
+import type { Price, RenewalPeriod } from '@/domain/domain'
 import { Currency, RenewalPeriodUnitEnum } from '@/domain/domain'
 import type { Category, Provider } from '@/domain/subscriptionModel'
 
@@ -73,8 +75,8 @@ export default function useSubscriptionCreation() {
   )
 
   const name = ref('')
-  const price = ref({ amount: 0, currency: Currency.EUR })
-  const renewal = ref({ amount: 1, unit: RenewalPeriodUnitEnum.MONTHS })
+  const price = ref<Price>({ amount: 0, currency: Currency.EUR })
+  const renewal = ref<RenewalPeriod>({ amount: 1, unit: RenewalPeriodUnitEnum.MONTHS })
   const bookingDate = ref('')
   const dateParts = reactive({ day: '', month: '', year: '' })
 
@@ -182,6 +184,8 @@ export default function useSubscriptionCreation() {
   }
 
   async function reloadCatalogs() {
+    isLoading.value = true
+
     const [categories, providers] = await Promise.all([
       service.getAvailableCategories(),
       service.getAvailableProviders(),
@@ -226,7 +230,7 @@ export default function useSubscriptionCreation() {
       await service.addSubscription(
         {
           name: name.value.trim(),
-          provider: { name: providerName.value.trim() },
+          provider: { name: providerName.value.trim() } as ProviderAddDto,
           categories: selectedCategories.value,
           price: price.value,
           renewal: renewal.value,
