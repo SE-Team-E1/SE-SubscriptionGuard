@@ -1,23 +1,17 @@
 = Softwaredesign: {project-name}
-include::../_includes/default-attributes.inc.adoc[]
 {authoren}
 {localdatetime}
-// Platzhalter für weitere Dokumenten-Attribute
+include::../_includes/default-attributes.inc.adoc[]
 
-_Dieses Dokument beschreibt die interne Struktur des Systems, wie der Code organisiert ist,
-aus welchen Komponenten das System besteht, wie diese zusammenarbeiten, und welche
-Designmuster eingesetzt werden. Der Fokus liegt auf dem *Wie* der Implementierung._
+_Dieses Dokument beschreibt die interne Struktur des Systems: wie der Code organisiert ist, aus welchen Komponenten das System besteht, wie diese zusammenarbeiten und welche Designmuster eingesetzt werden. Der Fokus liegt auf dem *Wie* der Implementierung._
 
-_Das Systemkontext-Diagramm und die Architekturentscheidungen (ADRs) sind im
-link:architecture.adoc[Architekturdokument] (`architecture.adoc`) beschrieben. Dieses Dokument vertieft die interne Sicht. Das Datenmodell hier beschreibt die technische Struktur der Persistenz. Die fachliche Bedeutung der Entitäten ist im link:domain_glossary.adoc[Domänenmodell] (`domain_glossary.adoc`) definiert._
+_Das Systemkontext-Diagramm und die Architekturentscheidungen (ADRs) sind im link:architecture.adoc[Architekturdokument] beschrieben. Die fachliche Bedeutung der Entitäten ist im link:domain_glossary.adoc[Domänenmodell] definiert._
 
 ---
 
 == Systemübersicht & Schichtenarchitektur
 
-_Dieser Abschnitt beschreibt, in welche Schichten oder Bereiche das System aufgeteilt ist
-und welche Verantwortung jede Schicht trägt. Eine klare Schichtentrennung verhindert,
-dass Geschäftslogik, Datenzugriff und Präsentation unkontrolliert vermischt werden._
+Das System besteht aus zwei getrennten Deployment-Einheiten: einer Vue.js-SPA, die im Browser läuft, und einem Django-Backend auf dem Server. Beide Einheiten haben eigene interne Schichten. Die Kommunikation zwischen SPA und Backend erfolgt über HTTP/REST, vermittelt durch einen Nginx-Reverse-Proxy.
 
 === Schichtendiagramm
 
@@ -25,117 +19,160 @@ dass Geschäftslogik, Datenzugriff und Präsentation unkontrolliert vermischt we
 ....
 @startuml
 skinparam monochrome true
-skinparam defaultFontSize 13
+skinparam defaultFontSize 12
 skinparam rectangleBorderThickness 1
 
-rectangle "Präsentationsschicht\n(Frontend / API-Controller)" as presentation
-rectangle "Anwendungsschicht\n(Services / Use Cases)" as application
-rectangle "Domänenschicht\n(Entitäten / Geschäftslogik)" as domain
-rectangle "Persistenzschicht\n(Repositories / Datenbank)" as persistence
+package "Browser (Vue.js SPA)" {
+  rectangle "View-Schicht\n(Vue Components, Vue Router, Vuetify)" as view
+  rectangle "Anwendungsschicht\n(Composables, Service-Klassen)" as app
+  rectangle "Domänenschicht\n(TypeScript Entities, Value Objects)" as domain
+  rectangle "Infrastrukturschicht\n(REST Repositories, DTO Mapper)" as infra
 
-presentation -down-> application : ruft auf
-application -down-> domain : verwendet
-application -down-> persistence : liest / schreibt
-domain -[hidden]down- persistence
+  view -down-> app : verwendet
+  app -down-> domain : verwendet
+  app -right-> infra : liest / schreibt
+}
 
-note right of presentation : HTTP-Anfragen,\nSerialisierung, Routing
-note right of application : Koordination,\nTransaktionen
-note right of domain : Fachliche Regeln,\nValidierung
-note right of persistence : Datenbankzugriff,\nMapping
+package "Server (Django)" {
+  rectangle "API-Schicht\n(DRF ViewSets, Auth-Views)" as api
+  rectangle "Serialisierungsschicht\n(DRF Serializers)" as serial
+  rectangle "ORM-Schicht\n(Django Models)" as orm
+  database "PostgreSQL" as db
+
+  api -down-> serial : delegiert
+  serial -down-> orm : mappt
+  orm -down-> db : SQL
+}
+
+infra -right-> api : HTTPS / REST\n(via Nginx /api/*)
 
 @enduml
 ....
 
 === Beschreibung der Schichten
 
-[cols="1,2,2", options="header"]
+[cols="1,1,3,2", options="header"]
 |===
-| Schicht | Verantwortung | Darf abhängen von
+| Einheit | Schicht | Verantwortung | Darf abhängen von
 
-| Präsentationsschicht
-| HTTP-Anfragen entgegennehmen und beantworten;
-  Eingaben validieren; Antworten serialisieren;
-  Routing und Fehlerbehandlung auf API-Ebene
+| Frontend
+| View-Schicht
+| Vue-Komponenten rendern; Nutzereingaben entgegennehmen; Zustände anzeigen; Navigation via Vue Router; UI-Komponenten aus Vuetify
 | Anwendungsschicht
 
+| Frontend
 | Anwendungsschicht
-| Fachliche Abläufe koordinieren (Use Cases);
-  Transaktionen verwalten; externe Dienste aufrufen;
-  zwischen Schichten vermitteln
-| Domänenschicht, Persistenzschicht
+| Fachliche Abläufe koordinieren (Use Cases); Validierung von Eingaben; Formularzustand verwalten; Fehlerbehandlung gegenüber der View; Kataloge (Provider, Kategorien) laden
+| Domänenschicht, Infrastrukturschicht
 
+| Frontend
 | Domänenschicht
-| Fachliche Entitäten und Regeln kapseln;
-  Invarianten sicherstellen;
-  Kernlogik unabhängig von Infrastruktur halten
+| Fachliche Entitäten als unveränderliche TypeScript-Klassen kapseln; Invarianten bei der Erstellung prüfen; keine Abhängigkeit auf Netzwerk oder Framework
 | Keine äußeren Schichten
 
-| Persistenzschicht
-| Datenbankzugriff abstrahieren;
-  Entitäten auf Datenbankstrukturen mappen;
-  Abfragelogik kapseln
-| Domänenschicht (Entitäten)
+| Frontend
+| Infrastrukturschicht
+| HTTP-Anfragen an das Backend senden; REST-DTOs auf Domänenentitäten abbilden und zurück; DTO-Validierung zur Laufzeit
+| Domänenschicht (Entities)
+
+| Backend
+| API-Schicht
+| HTTP-Anfragen entgegennehmen; Authentifizierung via JWT prüfen; Antworten serialisieren; DRF DefaultRouter registriert CRUD-Endpunkte automatisch
+| Serialisierungsschicht
+
+| Backend
+| Serialisierungsschicht
+| Eingehende JSON-Payloads validieren und auf Django-Modelle mappen; Ausgabe-Darstellung steuern; verschachtelte Felder (price, renewal) auflösen
+| ORM-Schicht
+
+| Backend
+| ORM-Schicht
+| Datenbankzugriff über Django ORM abstrahieren; Beziehungen zwischen Entitäten (FK, M2M) verwalten; Migrationen verwalten
+| PostgreSQL
 |===
 
-NOTE: Die Domänenschicht darf *nicht* von Persistenz- oder Präsentationsschicht
-abhängen. Diese Regel ist der häufigste Architekturverstoss in Studentenprojekten
-und sollte in Code Reviews explizit geprüft werden.
+NOTE: Die TypeScript-Domänenschicht im Frontend darf *nicht* von Repositories oder Vue-Komponenten abhängen. Diese Trennung ist Voraussetzung dafür, dass dieselben Entitäten später auch für clientseitige Offline-Persistenz (IndexedDB) genutzt werden können.
+
+---
 
 == Komponentenübersicht
 
-_Dieser Abschnitt beschreibt die wichtigsten Komponenten des Systems — Module,
-Pakete oder Services — und ihre Verantwortlichkeiten. Eine Komponente ist eine
-zusammengehörige Einheit von Code mit einer klar definierten Aufgabe._
-
 === Komponentendiagramm
 
-//Beipielhaftes Komponentendiagramm, das die Hauptkomponenten und ihre Schnittstellen zeigt
-//Die tatsächlichen Komponenten müssen auf das konkrete Projekt zugeschnitten sein
 [plantuml, component-diagram, svg]
 ....
 @startuml
-
-' source: https://github.com/plantuml-stdlib/C4-PlantUML
-' C4 Model
 !include <c4/C4_Component.puml>
-
 LAYOUT_WITH_LEGEND()
 
-title Component Diagram – [Systemname]
+title Komponentendiagramm – SubscriptionGuard
 
-Container_Boundary(frontend, "Frontend") {
-  Component(booking_ui, "Buchungskomponente", "z. B. React / Angular", "Ermöglicht Nutzern das Erstellen und Verwalten von Buchungen")
-  Component(auth_ui, "Authentifizierungskomponente", "z. B. React / Angular", "Handhabt Login, Logout und Session-Management")
-  Component(shared_ui, "Gemeinsame UI-Komponenten", "z. B. Design System", "Wiederverwendbare UI-Elemente wie Buttons, Formulare, Navigation")
+Container_Boundary(spa, "Vue.js SPA (Browser)") {
+
+  Container_Boundary(feature_add, "Feature: Abo erfassen") {
+    Component(add_view, "AddSubscriptionView", "Vue Component / Vuetify", "Formular zur Erfassung eines neuen Abos; enthält CategoryPicker")
+    Component(category_picker, "CategoryPicker", "Vue Component / Vuetify", "Auswahl und Anlage von Kategorien direkt im Formular")
+    Component(add_composable, "useSubscriptionCreation", "Vue Composable", "Orchestriert Formularzustand, Validierung und Service-Aufrufe")
+    Component(add_service, "AddSubscriptionService", "TypeScript Class", "Koordiniert Anlegen von Provider, Kategorien und Abo; prüft auf Duplikate")
+  }
+
+  Container_Boundary(feature_list, "Feature: Abo-Liste") {
+    Component(list_view, "ListView", "Vue Component / Vuetify", "Zeigt alle Abonnements des Nutzers an")
+    Component(list_composable, "useSubscriptionList", "Vue Composable", "Delegiert an ListSubscriptionService; hält reaktive Liste der Subscription-Entitäten")
+    Component(list_service, "ListSubscriptionService", "TypeScript Class", "Lädt Abo-DTOs; hydratiert Provider und Kategorien parallel; gibt Subscription-Entitäten zurück")
+  }
+
+  Container_Boundary(infra, "Infrastruktur") {
+    Component(sub_repo, "RestSubscriptionRepository", "TypeScript Class", "CRUD-Operationen für Abos via /api/abos/")
+    Component(cat_repo, "RestCategoryRepository", "TypeScript Class", "Kategorien laden und anlegen via /api/categories/")
+    Component(prov_repo, "RestProviderRepository", "TypeScript Class", "Provider laden und anlegen via /api/providers/")
+    Component(mock_repos, "MockedRepositories", "TypeScript Classes", "In-Memory-Implementierungen aller Repositories; aktuell in main.ts bereitgestellt")
+  }
+
+  Container_Boundary(domain_layer, "Domäne") {
+    Component(sub_entity, "Subscription / Provider / Category", "TypeScript Classes", "Unveränderliche Domänenentitäten mit create() und rehydrate() Factories")
+  }
 }
 
-Container_Boundary(backend, "Backend") {
-  Component(booking_ctrl, "Buchungs-Controller", "z. B. REST Controller", "Nimmt eingehende Buchungsanfragen entgegen und delegiert an den Service")
-  Component(booking_svc, "Buchungs-Service", "z. B. Spring Service", "Enthält die Buchungslogik und orchestriert Repository und Benachrichtigung")
-  Component(user_svc, "Nutzer-Service", "z. B. Spring Service", "Verwaltung von Nutzerdaten und Authentifizierungslogik")
-  Component(notification_svc, "Benachrichtigungs-Service", "z. B. Spring Service", "Erstellt und versendet Benachrichtigungen an Nutzer:innen")
+Container_Boundary(django, "Django Backend (Server)") {
+  Component(sub_viewset, "SubscriptionViewSet", "DRF ModelViewSet", "CRUD-Endpunkte für Abos; filtert auf den angemeldeten Nutzer")
+  Component(sub_serializer, "SubscriptionSerializer", "DRF Serializer", "Validiert und mappt JSON zu Django-Model und zurück")
+  Component(sub_model, "Subscription", "Django Model", "ORM-Modell mit FK zu Provider und M2M zu Category")
+  Component(cat_prov_model, "Category / Provider", "Django Models", "Stammdaten für Kategorien und Vertragspartner")
+  Component(auth_views, "UserRegistrationView / login_view", "DRF Views", "Registrierung und Login; geben JWT-Tokens zurück")
 }
 
-Container_Boundary(persistence, "Persistenz") {
-  Component(booking_repo, "Buchungs-Repository", "z. B. JPA Repository", "Datenzugriff für Buchungsentitäten")
-  Component(user_repo, "Nutzer-Repository", "z. B. JPA Repository", "Datenzugriff für Nutzerentitäten")
-  ContainerDb(db, "Datenbank", "z. B. PostgreSQL", "Persistente Datenhaltung für alle Entitäten")
-}
+ContainerDb(db, "PostgreSQL", "Relationale Datenbank", "Persistente Datenhaltung")
 
-System_Ext(ext, "Externer E-Mail-Dienst", "Zustellung von E-Mail-Benachrichtigungen, z. B. via SMTP")
+Rel(add_view, add_composable, "nutzt")
+Rel(add_view, category_picker, "enthält")
+Rel(add_composable, add_service, "delegiert an")
+Rel(add_service, sub_repo, "schreibt Abo")
+Rel(add_service, cat_repo, "liest / schreibt Kategorien")
+Rel(add_service, prov_repo, "liest / schreibt Provider")
+Rel(list_view, list_composable, "nutzt")
+Rel(list_composable, list_service, "delegiert an")
+Rel(list_service, sub_repo, "liest Abos (findAll)")
+Rel(list_service, cat_repo, "liest Kategorien (findByIds)")
+Rel(list_service, prov_repo, "liest Provider (findByIds)")
 
-Rel(booking_ui, booking_ctrl, "sendet Buchungsanfragen", "REST / HTTPS")
-Rel(auth_ui, user_svc, "authentifiziert Nutzer:in", "REST / HTTPS")
-Rel(booking_ctrl, booking_svc, "delegiert an", "Java API")
-Rel(booking_svc, booking_repo, "liest / schreibt Buchungen", "JPA")
-Rel(booking_svc, notification_svc, "löst Benachrichtigung aus", "Java API")
-Rel(user_svc, user_repo, "liest / schreibt Nutzerdaten", "JPA")
-Rel(booking_repo, db, "persistiert Daten", "SQL")
-Rel(user_repo, db, "persistiert Daten", "SQL")
-Rel(notification_svc, ext, "sendet E-Mails über", "SMTP")
+Rel(sub_repo, sub_viewset, "POST/GET /api/abos/", "HTTPS / JSON")
+Rel(cat_repo, cat_prov_model, "GET/POST /api/categories/ — fehlt noch", "HTTPS / JSON")
+Rel(prov_repo, cat_prov_model, "GET/POST /api/providers/ — fehlt noch", "HTTPS / JSON")
+
+Rel(sub_viewset, sub_serializer, "delegiert")
+Rel(sub_serializer, sub_model, "liest / schreibt")
+Rel(sub_model, cat_prov_model, "FK / M2M")
+Rel(sub_model, db, "SQL")
+Rel(cat_prov_model, db, "SQL")
+Rel(auth_views, db, "liest / schreibt auth_user", "Django ORM")
 
 @enduml
 ....
+
+NOTE: Die REST-Repositories (`RestSubscriptionRepository` usw.) sind implementiert, aber in `main.ts` werden aktuell `MockedRepositories` bereitgestellt. In `feature/22` geschieht das nur im DEV-Modus (`import.meta.env.DEV`); in der Produktionsumgebung müssen die REST-Implementierungen explizit eingebunden werden. Das ist ein offener Integrationsschritt.
+
+NOTE: ViewSets für `/api/categories/` und `/api/providers/` fehlen im Backend. Das blockiert die vollständige Funktion von `AddSubscriptionService`.
 
 === Komponentenbeschreibung
 
@@ -143,151 +180,172 @@ Rel(notification_svc, ext, "sendet E-Mails über", "SMTP")
 |===
 | Komponente | Verantwortung | Schnittstellen
 
-| [z. B. Buchungs-Controller]
-| HTTP-Anfragen für Buchungsvorgänge entgegennehmen;
-  Eingaben validieren; Antworten zurückgeben
-| REST-API (eingehend); Buchungs-Service (ausgehend)
+| AddSubscriptionView
+| Formular zur Abo-Erfassung rendern; Nutzereingaben an `useSubscriptionCreation` weitergeben; Ladezustand und Fehler anzeigen
+| `useSubscriptionCreation` (ausgehend); Vue Router `/add`
 
-| [z. B. Buchungs-Service]
-| Buchungslogik koordinieren; Verfügbarkeit prüfen;
-  Transaktionen verwalten; Benachrichtigungen auslösen
-| Buchungs-Repository; Benachrichtigungs-Service
+| CategoryPicker
+| Bestehende Kategorien auswählen; neue Kategorien mit Name und Icon anlegen; ausgewählte Kategorien anzeigen und entfernen
+| `useSubscriptionCreation` (über Props / Emits)
 
-| [z. B. Buchungs-Repository]
-| Buchungsdaten lesen und schreiben;
-  Datenbankabfragen kapseln
-| Datenbank (JPA / SQL)
+| useSubscriptionCreation
+| Formularzustand als reaktive Refs halten; Validierung vor Submit; Provider-Suche mit Levenshtein-Ranking; Service-Aufrufe koordinieren; Fehler an View zurückgeben
+| `AddSubscriptionService` (ausgehend)
 
-| [z. B. Benachrichtigungs-Service]
-| E-Mail-Benachrichtigungen versenden;
-  Vorlagen verwalten
-| Externer SMTP-Dienst
+| AddSubscriptionService
+| Abo anlegen: Provider suchen oder neu anlegen, dann Abo speichern; Kategorie anlegen mit Duplikat-Prüfung; verfügbare Kategorien und Provider laden
+| `SubscriptionRepository`, `CategoryRepository`, `ProviderRepository` (ausgehend)
 
-| [Weitere Komponente]
-| [Verantwortung]
-| [Schnittstellen]
+| ListView
+| Abo-Liste rendern; ruft `loadList()` beim Laden auf; Ladezustand anzeigen
+| `useSubscriptionList` (ausgehend); Vue Router `/list`
+
+| useSubscriptionList
+| Reaktive Liste von `Subscription`-Entitäten halten; delegiert das Laden an `ListSubscriptionService`
+| `ListSubscriptionService` (ausgehend)
+
+| ListSubscriptionService
+| Alle Abo-DTOs laden; Provider- und Kategorie-DTOs parallel per `findByIds` laden; DTOs zu Domänenentitäten hydratisieren; Fehler mit `cause` weiterwerfen
+| `SubscriptionRepository`, `CategoryRepository`, `ProviderRepository` (ausgehend)
+
+| RestSubscriptionRepository
+| `GET /api/abos/` und `POST /api/abos/` aufrufen; DTO-Validierung mit `typia`
+| Backend REST-API (ausgehend)
+
+| RestCategoryRepository
+| `GET /api/categories/` und `POST /api/categories/` aufrufen
+| Backend REST-API (ausgehend) — Gegenstück im Backend fehlt noch
+
+| RestProviderRepository
+| `GET /api/providers/` und `POST /api/providers/` aufrufen
+| Backend REST-API (ausgehend) — Gegenstück im Backend fehlt noch
+
+| MockedRepositories
+| In-Memory-Implementierungen aller drei Repository-Interfaces für Entwicklung und Tests ohne Backend
+| Werden in `main.ts` über Vue `provide()` bereitgestellt
+
+| SubscriptionViewSet
+| CRUD-Endpunkte für Abos; Anfragen auf den angemeldeten Nutzer filtern (`IsAuthenticated`)
+| DRF DefaultRouter (eingehend); `SubscriptionSerializer` (ausgehend)
+
+| SubscriptionSerializer
+| JSON-Payload validieren und auf Django-Model mappen; `create()` und `update()` ausführen; verschachtelte `price`- und `renewal`-Felder auflösen
+| `Subscription`, `Category`, `Provider` Django Models
+
+| UserRegistrationView / login_view
+| Nutzer registrieren und einloggen; JWT-Access- und Refresh-Token zurückgeben
+| `POST /api/auth/register/`, `POST /api/auth/login/` (eingehend); Django `auth_user` (ausgehend)
+
 |===
 
 ---
 
 == Wichtige Interaktionsflüsse
 
-Sequenzdiagramme zeigen, wie Komponenten bei typischen Abläufen zusammenarbeiten.
-Dokumentiert werden hier nur die wichtigsten und komplexesten Flüsse —
-nicht jede einfache CRUD-Operation.
+=== Abo erfassen (Happy Path, Zielzustand nach Integration)
 
-=== [Flussname, z. B. Raum buchen]
+Dieser Ablauf zeigt den geplanten Fluss nach vollständiger Integration aller Feature-Branches. Er durchläuft alle Schichten und illustriert die Koordinationslogik im `AddSubscriptionService`. Aktuell läuft das System mit `MockedRepositories`, weshalb die HTTP-Aufrufe an das Backend noch nicht stattfinden.
 
-_Beschreibe kurz, was dieser Ablauf zeigt und warum er dokumentiert wird._
-
-//Beispielhaftes Sequenzdiagramm für den Buchungsprozess
-//Die tatsächlichen Flüsse müssen auf das konkrete Projekt zugeschnitten sein
-
-[plantuml, sequence-booking, svg]
+[plantuml, sequence-add-subscription, svg]
 ....
 @startuml
 skinparam monochrome true
-skinparam defaultFontSize 12
+skinparam defaultFontSize 11
 
 actor "Nutzer:in" as user
-participant "Buchungs-\nController" as ctrl
-participant "Buchungs-\nService" as svc
-participant "Buchungs-\nRepository" as repo
-participant "Benachrichtigungs-\nService" as notify
+participant "AddSubscription\nView" as view
+participant "useSubscription\nCreation" as composable
+participant "AddSubscription\nService" as service
+participant "RestProvider\nRepository" as prov_repo
+participant "RestSubscription\nRepository" as sub_repo
+participant "Subscription\nViewSet" as viewset
+database "PostgreSQL" as db
 
-user -> ctrl : POST /buchungen\n{raumId, zeitraum}
-ctrl -> ctrl : Eingabe validieren
-ctrl -> svc : buchungErstellen(raumId, zeitraum, nutzerId)
-svc -> repo : istVerfuegbar(raumId, zeitraum)
-repo --> svc : true
-svc -> repo : buchungSpeichern(buchung)
-repo --> svc : gespeicherteBuchung
-svc -> notify : bestaetigungSenden(buchung)
-notify --> svc : OK
-svc --> ctrl : buchung
-ctrl --> user : 201 Created\n{buchungsId, details}
+user -> view : Formular ausfüllen\n+ Absenden
+view -> composable : submitSubscription()
+composable -> composable : Eingaben validieren\n(name, provider, bookingDate)
+composable -> service : addSubscription(dto)
+
+service -> prov_repo : findAll()
+prov_repo -> viewset : GET /api/providers/
+note right : Endpunkt fehlt noch im Backend
+
+service -> service : Provider nicht gefunden,\nneu anlegen
+service -> prov_repo : insert(providerDTO)
+prov_repo -> viewset : POST /api/providers/
+
+service -> sub_repo : insert(subscriptionDTO)
+sub_repo -> viewset : POST /api/abos/\n{id, name, providerId, ...}
+viewset -> viewset : JWT validieren,\nNutzer extrahieren
+viewset -> db : INSERT INTO abos_subscription ...
+db --> viewset : OK
+viewset --> sub_repo : 201 Created\n{id, ...}
+sub_repo --> service : subscriptionDTO
+service --> composable : Subscription Entity
+composable -> composable : resetForm()
+composable --> view : submitError = null,\nisSubmitting = false
 
 @enduml
 ....
-
----
-
-=== [Weiterer Fluss, z. B. Fehlerfall: Raum nicht verfügbar]
-
-[plantuml, sequence-conflict, svg]
-....
-@startuml
-skinparam monochrome true
-skinparam defaultFontSize 12
-
-actor "Nutzer:in" as user
-participant "Buchungs-\nController" as ctrl
-participant "Buchungs-\nService" as svc
-participant "Buchungs-\nRepository" as repo
-
-user -> ctrl : POST /buchungen\n{raumId, zeitraum}
-ctrl -> svc : buchungErstellen(raumId, zeitraum, nutzerId)
-svc -> repo : istVerfuegbar(raumId, zeitraum)
-repo --> svc : false
-svc --> ctrl : RaumNichtVerfuegbarException
-ctrl --> user : 409 Conflict\n{message, alternativen}
-
-@enduml
-....
-
-NOTE: Flussnamen im Diagramm sollten identisch mit den Methodennamen im Code sein.
-Das macht es einfacher, vom Diagramm zum Code zu navigieren und umgekehrt.
 
 ---
 
 == Datenmodell
 
-_Dieser Abschnitt beschreibt die technische Datenbankstruktur: Tabellen, Spalten,
-Datentypen und Beziehungen. Er beantwortet die Frage: Wie werden die Daten gespeichert?_
+=== Persistenzmodell (Backend)
 
-NOTE: Die *fachliche* Bedeutung der Entitäten — was sie repräsentieren und wie sie sich zueinander verhalten — ist im Domänenmodell (`domain_glossary.adoc`) beschrieben.
-Dieses Dokument zeigt ausschließlich die technische Persistenzstruktur.
-
-=== Datenbankmodell
-
-//beispielhaftes ER-Diagramm für das Datenmodell
-//Die tatsächlichen Tabellen und Spalten müssen auf das konkrete Projekt zugeschnitten sein
+Die folgenden Tabellen werden durch Django-Migrationen verwaltet. IDs werden clientseitig als UUIDs generiert und als `CharField` gespeichert. Das Modell verwendet `MoneyField` aus `django-money`, der intern als zwei Spalten (`price` + `price_currency`) gespeichert wird.
 
 [plantuml, data-model, svg]
 ....
 @startuml
 skinparam monochrome true
-skinparam defaultFontSize 12
+skinparam defaultFontSize 11
 
-entity "nutzer" as user {
-  * id : UUID <<PK>>
+entity "abos_category" as cat {
+  * id : VARCHAR <<PK, UUID>>
   --
-  * email : VARCHAR(255) <<UNIQUE>>
-  * name : VARCHAR(100)
-  * erstellt_am : TIMESTAMP
+  * name : VARCHAR
+  * icon : VARCHAR
 }
 
-entity "raum" as room {
-  * id : UUID <<PK>>
+entity "abos_provider" as prov {
+  * id : VARCHAR <<PK, UUID>>
   --
-  * bezeichnung : VARCHAR(100)
-  * kapazitaet : INTEGER
-  * standort : VARCHAR(100)
+  * name : TEXT
 }
 
-entity "buchung" as booking {
-  * id : UUID <<PK>>
+entity "abos_subscription" as sub {
+  * id : VARCHAR <<PK, UUID>>
   --
-  * nutzer_id : UUID <<FK>>
-  * raum_id : UUID <<FK>>
-  * beginn : TIMESTAMP
-  * ende : TIMESTAMP
-  * status : VARCHAR(20)
-  * erstellt_am : TIMESTAMP
+  * user_id : INTEGER <<FK → auth_user>>
+  * createdAt : DATETIME
+  name : VARCHAR
+  * providerId_id : VARCHAR <<FK → abos_provider>>
+  * price : DECIMAL(10,2)
+  * price_currency : VARCHAR(3)
+  renewal_amount : SMALLINT
+  renewal_unit : VARCHAR(10)
+  bookingDate : DATE
 }
 
-user ||--o{ booking : "gibt auf"
-room ||--o{ booking : "ist Gegenstand von"
+entity "abos_subscription_categoryIds" as sub_cat {
+  * subscription_id : VARCHAR <<FK>>
+  * category_id : VARCHAR <<FK>>
+}
+
+entity "auth_user" as user {
+  * id : INTEGER <<PK>>
+  --
+  * username : VARCHAR
+  * password : VARCHAR (Hash)
+  ...
+}
+
+user ||--o{ sub : "besitzt"
+prov ||--o{ sub : "ist Vertragspartner\nvon"
+sub ||--o{ sub_cat : "hat"
+cat ||--o{ sub_cat : "ist zugeordnet\nzu"
 
 @enduml
 ....
@@ -298,50 +356,176 @@ room ||--o{ booking : "ist Gegenstand von"
 |===
 | Tabelle | Spalte | Beschreibung & Besonderheiten
 
-.4+| nutzer
-| id | UUID als Primärschlüssel; wird vom System generiert
-| email | Eindeutig; wird für Login und Benachrichtigungen verwendet
-| name | Anzeigename; kein Pflichtfeld nach DSGVO-Anforderung
-| erstellt_am | Automatisch gesetzt; nicht änderbar
+.3+| abos_category
+| id | UUID als String; wird clientseitig generiert (`crypto.randomUUID()`)
+| name | Anzeigename der Kategorie; darf nicht leer sein (Validierung im Frontend-Konstruktor)
+| icon | Bezeichner des Icons; aus einem vordefinierten Set in `categoryIcons.ts`
 
-.4+| buchung
-| id | UUID als Primärschlüssel
-| status | Enum-Werte: `AKTIV`, `STORNIERT`, `ABGELAUFEN`
-| beginn / ende | Beide Zeitpunkte inklusive; keine Überschneidung per DB-Constraint
-| nutzer_id / raum_id | Fremdschlüssel; kein Cascade Delete — Buchungen bleiben erhalten
+.2+| abos_provider
+| id | UUID als String; wird clientseitig generiert
+| name | Name des Vertragspartners (z. B. "Netflix", "Spotify")
 
-| [Weitere Tabelle]
-| [Spalte]
-| [Beschreibung]
+.9+| abos_subscription
+| id | UUID als String; wird clientseitig generiert
+| user_id | FK auf `auth_user`; ON DELETE CASCADE; jedes Abo gehört genau einem Nutzer
+| createdAt | Erstellungszeitpunkt; wird clientseitig gesetzt
+| name | Frei wählbarer Name des Abos; Default leer
+| providerId_id | FK auf `abos_provider`; ON DELETE CASCADE
+| price / price_currency | Betrag und Währung (EUR, USD, GBP); zwei Spalten durch django-money
+| renewal_amount | Positive Ganzzahl für den Verlängerungszeitraum (z. B. 1)
+| renewal_unit | Enum-String: `days`, `weeks`, `months`, `years`
+| bookingDate | Abbuchungsdatum als vollständiges Datum (DATE); vom Nutzer angegeben
+
+| abos_subscription_categoryIds
+| (Verbindungstabelle M2M)
+| Verknüpft Subscription mit Category; Einträge werden beim Löschen einer Subscription oder Category automatisch durch Django entfernt
+
 |===
 
 === Datenbankmigrationen
-
-_Schemaänderungen werden nicht manuell durchgeführt, sondern über Migrationsskripte
-versioniert. So ist der Datenbankzustand jederzeit reproduzierbar._
 
 [cols="1,3", options="header"]
 |===
 | Aspekt | Beschreibung
 
 | Werkzeug
-| [z. B. Flyway / Liquibase]
+| Django-eigenes Migrationssystem (`makemigrations` / `migrate`)
 
 | Speicherort
-| [z. B. `src/main/resources/db/migration/`]
+| `src/backend/django/abos/migrations/`
 
 | Namenskonvention
-| [z. B. `V001__initiales_schema.sql`, `V002__buchung_status_spalte.sql`]
+| Automatisch generiert durch Django: `0001_initial.py`, `0002_…py`
 
 | Regel
-| Bestehende Migrationsskripte werden *nie* verändert — nur neue hinzugefügt
+| Bestehende Migrationsskripte werden nicht verändert, nur neue hinzugefügt
 |===
 
-== Eingesetzte Muster & Konventionen
+=== Clientseitiges Domänenmodell (Frontend)
 
-_Dieser Abschnitt dokumentiert übergreifende Designmuster und Konventionen, die im
-gesamten Codebase gelten. Das verhindert, dass verschiedene Teammitglieder dasselbe
-Problem auf unterschiedliche Weise lösen._
+Das Frontend hält ein eigenes Domänenmodell in TypeScript, das von den REST-DTOs getrennt ist. Dieses Modell hat keine Abhängigkeit auf Vue oder Netzwerklogik und kann dadurch später auch für clientseitige Offline-Persistenz (IndexedDB) genutzt werden.
+
+[cols="1,3", options="header"]
+|===
+| Klasse / Typ | Beschreibung
+
+| `EntityId`
+| Value Object für UUIDs; validiert das UUID-Format beim Erzeugen; `EntityId.new()` generiert eine neue UUID, `EntityId.fromString()` stellt sie aus persistierten Daten wieder her
+
+| `Subscription`
+| Unveränderliche Klasse; alle Felder `readonly`; `Subscription.create()` setzt `id` und `createdAt`; `Subscription.rehydrate()` stellt aus gespeicherten Daten wieder her
+
+| `Provider`
+| Value Object mit `id` und `name`; gleiche Factory-Methodik wie `Subscription`
+
+| `Category`
+| Enthält `id`, `name` und `icon`; `name` darf nicht leer sein (Invariante im Konstruktor)
+
+| `Price`
+| Interface: `{ amount: number, currency: Currency }`
+
+| `RenewalPeriod`
+| Interface: `{ amount: number, unit: RenewalPeriodUnitEnum }`
+
+|===
+
+Der Mapper-Layer (`subscriptionMapper.ts`, `categoryMapper.ts`, `providerMapper.ts`) übersetzt zwischen REST-DTOs und diesen Entitäten. Domänenentitäten bleiben so frei von API-spezifischen Formaten (ISO-8601-Strings, untypisierte UUID-Strings).
+
+---
+
+== Schnittstellen
+
+=== Backend REST-API
+
+Nginx leitet Anfragen mit dem Präfix `/api/` an das Django-Backend weiter und strippt dabei das Präfix (`proxy_pass http://web:8000/`). Django empfängt den Pfad ohne `/api/`.
+
+WARNING: In `feature/79` wurden die Django-URLs auf `path('api/', include('abos.urls'))` geändert — Django erwartet den Pfad dann *mit* `/api/`-Präfix. Das widerspricht dem Nginx-Strip-Verhalten und führt zu 404-Fehlern auf `/api/abos/`. Dieser Konflikt muss vor dem Merge von `feature/79` aufgelöst werden (entweder Nginx-Konfiguration anpassen oder Django-URLs auf `path('', ...)` zurückstellen).
+
+[cols="1,1,3,1", options="header"]
+|===
+| Methode | Pfad (Browser-seitig) | Beschreibung | Status
+
+| POST
+| `/api/auth/register/`
+| Nutzer registrieren; gibt `access`- und `refresh`-JWT zurück
+| Implementiert (`feature/79`)
+
+| POST
+| `/api/auth/login/`
+| Nutzer einloggen; gibt `access`- und `refresh`-JWT zurück
+| Implementiert (`feature/79`)
+
+| POST
+| `/api/auth/refresh/`
+| Access-Token erneuern anhand eines gültigen Refresh-Tokens
+| Implementiert (`feature/79`)
+
+| GET
+| `/api/abos/`
+| Alle Abos des angemeldeten Nutzers auflisten
+| Implementiert (`feature/70`)
+
+| POST
+| `/api/abos/`
+| Neues Abo anlegen; Payload: `RestSubscriptionDTO`
+| Implementiert (`feature/70`)
+
+| GET
+| `/api/abos/{id}/`
+| Einzelnes Abo abrufen
+| Implementiert via DRF DefaultRouter
+
+| PUT / PATCH
+| `/api/abos/{id}/`
+| Abo vollständig oder teilweise aktualisieren
+| Implementiert; kein Frontend-Aufruf vorhanden
+
+| DELETE
+| `/api/abos/{id}/`
+| Abo löschen
+| Implementiert via DRF DefaultRouter; kein Frontend-Aufruf vorhanden
+
+| GET / POST
+| `/api/categories/`
+| Kategorien laden und anlegen
+| Nicht implementiert im Backend
+
+| GET / POST
+| `/api/providers/`
+| Provider laden und anlegen
+| Nicht implementiert im Backend
+
+|===
+
+==== DTO-Format: RestSubscriptionDTO
+
+[source,json]
+----
+{
+  "id": "550e8400-e29b-41d4-a716-446655440000",
+  "createdAt": "2025-06-01T10:00:00.000Z",
+  "name": "Netflix Premium",
+  "providerId": "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
+  "categoriesId": ["7c9e6679-7425-40de-944b-e07fc1f90ae7"],
+  "price": { "amount": 17.99, "currency": "EUR" },
+  "renewal": { "amount": 1, "unit": "months" },
+  "bookingDate": "2025-01-15"
+}
+----
+
+==== DTO-Format: Auth (Register / Login Response)
+
+[source,json]
+----
+{
+  "access": "<JWT Access Token>",
+  "refresh": "<JWT Refresh Token>"
+}
+----
+
+---
+
+== Eingesetzte Muster & Konventionen
 
 === Designmuster
 
@@ -350,23 +534,29 @@ Problem auf unterschiedliche Weise lösen._
 | Muster | Wo eingesetzt | Begründung
 
 | Repository Pattern
-| Persistenzschicht: alle Datenbankzugriffe
-| Datenbanklogik von Geschäftslogik trennen;
-  einfacher austauschbar und testbar
+| Frontend: `SubscriptionRepository`, `CategoryRepository`, `ProviderRepository` als TypeScript-Interfaces mit REST-Implementierungen und Mock-Implementierungen
+| Austauschbarkeit zwischen REST-Backend, Mock-Daten und künftigem lokalem Speicher (IndexedDB); Unit-Tests mit `MockedRepositories` ohne Netzwerk
 
-| DTO (Data Transfer Object)
-| Schnittstelle zwischen Controller und Service
-| Interne Domänenobjekte nicht direkt exponieren;
-  API-Struktur unabhängig vom Datenbankmodell
+| DTO Pattern
+| Trennung zwischen `RestSubscriptionDTO` (API-Kontrakt) und `Subscription`-Entität (Domänenlogik) mit expliziten Mapper-Funktionen
+| API-Änderungen betreffen nur die Mapper; DTO-Validierung mit `typia` zur Laufzeit
+
+| Composable Pattern (Vue)
+| `useSubscriptionCreation`, `useSubscriptionList` als Vue Composables in der Anwendungsschicht
+| Formularzustand und UI-Rendering sind getrennt; Composables sind unabhängig von konkreten Komponenten testbar
 
 | Service Layer
-| Anwendungsschicht: alle Use Cases
-| Geschäftslogik zentralisieren;
-  Controller schlank halten
+| `AddSubscriptionService` (`src/feature/add/service/`) und `ListSubscriptionService` (`src/services/`) als eigenständige TypeScript-Klassen mit injizierten Repositories
+| Geschäftslogik liegt nicht im Composable: `AddSubscriptionService` koordiniert Duplikat-Prüfung und Reihenfolge der Operationen; `ListSubscriptionService` hydratisiert DTOs zu Domänenentitäten durch parallele Provider/Category-Auflösung
 
-| [Weiteres Muster]
-| [Wo eingesetzt]
-| [Begründung]
+| Factory Methods (create / rehydrate)
+| Alle Domänenentitäten: `Subscription.create()`, `Subscription.rehydrate()`, analog für `Provider` und `Category`
+| Unterscheidung zwischen neuen Objekten (ID wird generiert) und wiederhergestellten Objekten (ID aus Persistenz); Invarianten im Konstruktor
+
+| Dependency Injection (Vue provide / inject)
+| Repository-Instanzen werden in `main.ts` über `app.provide()` bereitgestellt; Composables rufen sie über `inject()` ab
+| Implementierungen können ohne Code-Änderungen in Komponenten ausgetauscht werden; aktuell Mock-Implementierungen, im Zielbetrieb REST-Implementierungen
+
 |===
 
 === Fehlerbehandlung
@@ -375,21 +565,21 @@ Problem auf unterschiedliche Weise lösen._
 |===
 | Aspekt | Konvention
 
-| Fachliche Fehler
-| Als eigene Exception-Klassen modellieren
-  (z. B. `RaumNichtVerfuegbarException`, `BuchungNichtGefundenException`)
+| Frontend-Repositories
+| Alle Repository-Methoden werfen einen `Error` mit `cause` bei fehlgeschlagenen Netzwerkanfragen; kein stiller Fehlschluck
 
-| HTTP-Fehlercodes
-| 400 für Validierungsfehler; 404 für nicht gefundene Ressourcen;
-  409 für Konflikte; 500 nur für unerwartete Systemfehler
+| Composables
+| Fangen Service-Fehler ab und schreiben die Meldung in `submitError` (reaktive Ref); die View zeigt diese an
 
-| Fehlermeldungen
-| Immer strukturiert zurückgeben:
-  `{ "fehler": "...", "details": "..." }` — kein Stack Trace an den Client
+| Pflichtfeldprüfung
+| `useSubscriptionCreation` prüft `name`, `providerName` und `bookingDate` vor dem Submit; kein Absenden ohne gültige Eingaben
+
+| Backend (DRF)
+| HTTP 400 für Validierungsfehler, 401 für fehlende Authentifizierung, 404 für nicht gefundene Ressourcen; kein Stack Trace an den Client
 
 | Logging
-| Fachliche Fehler als WARN; unerwartete Fehler als ERROR;
-  keine personenbezogenen Daten in Log-Ausgaben (DSGVO)
+| Keine personenbezogenen Daten in Log-Ausgaben (DSGVO)
+
 |===
 
 === API-Konventionen
@@ -399,19 +589,21 @@ Problem auf unterschiedliche Weise lösen._
 | Aspekt | Konvention
 
 | URL-Struktur
-| Ressourcenorientiert im Plural: `/buchungen`, `/raeume`, `/nutzer`
+| Ressourcenorientiert im Plural unter `/api/`: `/api/abos/`, `/api/categories/`, `/api/providers/`; Auth-Endpunkte unter `/api/auth/`
 
 | HTTP-Methoden
-| GET = lesen; POST = erstellen; PUT = ersetzen; PATCH = teilweise ändern;
-  DELETE = löschen
+| GET = lesen; POST = erstellen; PUT = vollständig ersetzen; PATCH = teilweise ändern; DELETE = löschen
 
 | Antwortformat
-| JSON in allen Fällen; Datumsformat ISO 8601: `2024-06-01T09:00:00Z`
+| JSON; Datumsformat ISO 8601 mit UTC-Offset für `createdAt` (`2025-06-01T10:00:00.000Z`), reines Datum für `bookingDate` (`2025-01-15`)
 
-| Versionierung
-| [z. B. URL-Präfix `/api/v1/` - Version nur erhöhen bei Breaking Changes]
+| Authentifizierung
+| Alle Backend-Endpunkte außer `/api/auth/*` erfordern einen gültigen JWT-Bearer-Token im `Authorization`-Header; Token-Lebensdauer: 1 Stunde (Access), 1 Tag (Refresh)
+
+| DTO-Validierung (Frontend)
+| Eingehende REST-Antworten werden mit `typia` zur Laufzeit gegen das DTO-Schema geprüft; ungültige Antworten werfen einen Fehler
+
+| Format-Abgleich Frontend / Backend
+| `price` und `renewal` werden als verschachtelte JSON-Objekte übertragen; das Backend löst sie im Serializer auf separate Felder auf (`price` + `price_currency`, `renewal_amount` + `renewal_unit`)
+
 |===
-
-_Diagramme in diesem Dokument sollten den aktuellen Stand des Codes widerspiegeln.
-Bei größeren Refactorings oder neuen Komponenten ist dieses Dokument im selben
-Pull Request zu aktualisieren._
