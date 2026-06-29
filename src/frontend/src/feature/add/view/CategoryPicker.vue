@@ -197,8 +197,8 @@ async function confirmCreateCategory() {
 }
 
 .category-pill {
-  background: var(--color-heading);
-  color: var(--vt-c-indigo);
+  background: var(--color-background-mute);
+  color: var(--color-text);
   font-size: 18px;
   padding: 8px 16px;
 }
