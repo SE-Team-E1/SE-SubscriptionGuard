@@ -23,7 +23,6 @@ from drf_spectacular.views import SpectacularSwaggerView, SpectacularRedocView, 
 from rest_framework.routers import DefaultRouter
 from abos.views import SubscriptionViewSet, ProviderViewSet, CategoryViewSet
 
-router = DefaultRouter()
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('authentication.urls')),
@@ -37,5 +36,4 @@ urlpatterns = [
   # OpenAPI Schema
   path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
 
-  path('', include(router.urls))
 ]

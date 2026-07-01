@@ -1,4 +1,4 @@
-from rest_framework import status, generics
+from rest_framework import status, generics, serializers
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth.models import User
@@ -9,7 +9,7 @@ from .serializers import (
   UserLoginSerializer,
   UserSerializer,
 )
-
+from drf_spectacular.utils import extend_schema, inline_serializer
 
 class UserRegistrationView(generics.CreateAPIView):
   queryset = User.objects.all()
@@ -28,7 +28,29 @@ class UserRegistrationView(generics.CreateAPIView):
       }, status=status.HTTP_201_CREATED)
     return response
 
-
+@extend_schema(
+    request=UserLoginSerializer,
+    responses={
+        200: inline_serializer(
+            name="LoginResponse",
+            fields={
+                "access": serializers.CharField(),
+                "refresh": serializers.CharField(),
+                "user": serializers.JSONField(),
+            },
+        ),
+        401: inline_serializer(
+            name="LoginErrorResponse",
+            fields={
+                "error": serializers.CharField(),
+            },
+        ),
+        400: inline_serializer(
+            name="LoginValidationErrorResponse",
+            fields={},
+        ),
+    },
+)
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_view(request):
