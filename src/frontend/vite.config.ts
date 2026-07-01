@@ -1,0 +1,32 @@
+import { fileURLToPath, URL } from 'node:url'
+
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import vueJsx from '@vitejs/plugin-vue-jsx'
+import vueDevTools from 'vite-plugin-vue-devtools'
+
+import UnpluginTypia from '@typia/unplugin/vite'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [
+    vue(),
+    vueJsx(),
+    vueDevTools(),
+    UnpluginTypia( { tsconfig: './tsconfig.app.json' } ),
+  ],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    },
+  },
+  server: {
+    proxy: {
+      '/abos': {
+        target: 'http://iseproject05.informatik.htw-dresden.de:8001',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
+})
