@@ -11,6 +11,18 @@ class PriceSerializer(serializers.Serializer):
 class RenewalSerializer(serializers.Serializer):
   amount = serializers.IntegerField(min_value=1)
   unit = serializers.ChoiceField(choices=["days", "weeks", "months", "years"])
+
+class ProviderSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Provider
+    fields = ["id", "name"]
+
+
+class CategorySerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Category
+    fields = ["id", "name", "icon"]
+
 class SubscriptionSerializer(serializers.ModelSerializer):
   price = PriceSerializer()
   renewal = RenewalSerializer()

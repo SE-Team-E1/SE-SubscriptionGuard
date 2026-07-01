@@ -43,11 +43,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'abos.apps.AbosConfig',
     'authentication.apps.AuthenticationConfig',
-    'rest_framework',
     'rest_framework_simplejwt',
+    'drf_spectacular',
+    'rest_framework.authtoken',
+    'rest_framework',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -137,12 +141,22 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 CSRF_TRUSTED_ORIGINS = [
-    'https://iseproject05.informatik.htw-dresden.de:8001',
-    'http://iseproject05.informatik.htw-dresden.de:8001',
+    'https://iseproject05.informatik.htw-dresden.de',
+    'http://iseproject05.informatik.htw-dresden.de',
+    "http://localhost:8000",
+    "http://http://127.0.0.1:8000"
 ]
+CORS_ALLOW_CREDENTIALS = True
 
-# REST Framework Configuration
 REST_FRAMEWORK = {
+    "DEFAULT_PARSER_CLASSES": (
+        "rest_framework.parsers.JSONParser",
+    ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_RENDERER_CLASSES": (
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    ),
   'DEFAULT_AUTHENTICATION_CLASSES': (
     'rest_framework_simplejwt.authentication.JWTAuthentication',
   ),

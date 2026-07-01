@@ -27,6 +27,14 @@ class Subscription(models.Model):
     GBP = "GBP", "British Pound"
   def __str__(self):
     return ""
+
+  @property
+  def renewal(self):
+    return {
+      "amount": self.renewal_amount,
+      "unit": self.renewal_unit,
+    }
+
   user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

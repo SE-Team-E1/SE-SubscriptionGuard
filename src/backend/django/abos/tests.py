@@ -137,6 +137,16 @@ class SubscriptionSerializerTest(TestCase):
         self.assertEqual(subscription.renewal_amount, 1)
         self.assertEqual(subscription.renewal_unit, "months")
 
+    def test_created_subscription_serializes_renewal(self):
+        serializer = SubscriptionSerializer(
+            data=self.valid_data,
+            context={"request": self._get_request()}
+        )
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        subscription = serializer.save()
+        self.assertEqual(serializer.instance, subscription)
+        self.assertEqual(serializer.data["renewal"], {"amount": 1, "unit": "months"})
+
     # -------------------------
     # Update
     # -------------------------
