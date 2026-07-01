@@ -24,9 +24,6 @@ from rest_framework.routers import DefaultRouter
 from abos.views import SubscriptionViewSet, ProviderViewSet, CategoryViewSet
 
 router = DefaultRouter()
-# router.register(r'abos', SubscriptionViewSet, basename='subscription')
-# router.register(r'categories', CategoryViewSet, basename='categories')
-# router.register(r'providers', ProviderViewSet, basename='providers')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('authentication.urls')),
