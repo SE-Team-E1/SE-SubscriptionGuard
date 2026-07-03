@@ -112,11 +112,11 @@ Beschreiben Sie konkret anhand von drei Beispielen, was sich durch Implementieru
 | Offline Modus wurde höher priorisiert als gedacht
 | Frontend Softwaredesign wurde angepasst um das Datenmodell und dessen Logik clientseitig zu unterstützen (Repliziert/Spiegelt Backend Logik).
 
-| 
-|
-|
+| Figma UI-Concept ist optimal
+| eher Wunschvorstellung bzw. entgegen der Implementierung in Vue mit Standardkomponenten zu stark verkompliziert
+| UI-Concept wird während der Implementierung leicht adaptiert
 
-|
+| 
 |
 |
 |===
@@ -141,7 +141,7 @@ Beschreiben Sie kurz, welche Nachweise zeigen, dass Ihr Produktinkrement nützli
 | Die Akzeptanzkriterien wurden bereits zu den User Stories im Miro hinzugefügt und beim Zerlegen in einzelne Issues teils angepasst. Die Akzeptanzkriterien sind daher teilweise im Miro, als auch in den Github Issues dokumentiert und von den Reviewern bestätigt.
 
 | Akzeptanzorientierte Verifikation
-| 
+| Der erstellte Code und die darin befindliche Logik wird durch Tests und einen Reviewer überprüft und getestet. Dabei wird darauf geachtet, dass die im Team geplante Softwarearchitektur und insbesondere das Softwaredesign möglichst umgesetzt wurde und Änderungen bei Bedarf im Pull Request mittels Kommentaren getrackt bzw. abgestimmt werden.
 
 | Code Review, Integration und main branch
 |
@@ -167,14 +167,14 @@ Beschreiben Sie, was Ihr Team nach Sprint 3 beibehalten, ändern oder gezielt ve
 | Kriterium | Ihre Antwort
 
 | Beibehalten
-|
+| Asynchrone Arbeitsweise, Aufsplitten Frontend/Backend-Team mit gelegentlicher Absprache, Spikes für Risikoabbau, Timeboxing in Meetings, ...
 
 | Ändern / verbessern
-|
+| main-Branch protecten, Reviewer muss vor merge zustimmen/approven, schnelleres Review, 
 
 | Nächster MVP-Schritt
 |
 
 | Offene Fragen / Risiken für die weitere Projektarbeit
-|
+| Wie komplex wird die Synchronisationslogik in der Realität?
 |===
