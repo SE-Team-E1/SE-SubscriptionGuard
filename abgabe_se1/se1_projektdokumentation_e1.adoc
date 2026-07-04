@@ -1,9 +1,9 @@
 // --- 1. Projektthema -------------------------
 = SE I - Projektdokumentation: {project-name}
 // --- 2. Teammitglieder -----------------------
-Vorname Nachname <s00000@htw-dresden.de>; Vorname Nachname <s00000@htw-dresden.de>; Vorname Nachname <s00000@htw-dresden.de>; Vorname Nachname <s00000@htw-dresden.de>; Vorname Nachname <s00000@htw-dresden.de>; Vorname Nachname <s00000@htw-dresden.de>
+Jannik Thiele; Niels Wiesner <s88199@htw-dresden.de>; Quôc Dat Nguyên; Juan Ramiro Groh Fili <s88773@htw-dresden.de>; Johannes Meinck; Franz Rehschuh; Lennox Schmollny
 // --- 3. Abgabedatum --------------------------
-01. Januar 2025
+06. Juli 2026
 // ---------------------------------------------
 :docs: ../docs
 include::{docs}/_includes/default-attributes.inc.adoc[]
