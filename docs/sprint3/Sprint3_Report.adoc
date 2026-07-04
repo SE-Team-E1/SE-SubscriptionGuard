@@ -1,10 +1,10 @@
 = Sprint-3-Report: Erstes Produktinkrement und agile Arbeitsweise
 
 // Bitte fügen Sie hier die Informationen zu Ihrem Team, Projekt, Datum und Repository ein.
-Team::
-Projektname::
-Datum::
-Repository-Link::
+Team:: E1
+Projektname:: SubscriptionGuard
+Datum:: 04.07.2026
+Repository-Link:: https://github.com/SE-Team-E1/SE-SubscriptionGuard
 
 ====
 Dieser Report soll auf maximal einer Seite zeigen, wie Ihr Team in Sprint 3 gearbeitet hat,
@@ -66,7 +66,7 @@ Beziehen Sie sich bevorzugt auf Praktiken, die in den Hinweisen für Sprint 3 be
 | Implementierungsüberlegungen in Issues, Pull Requests und Miro dokumentieren
 | Meetings und Brainstorming Sessions um das Softwaredesign im Frontend/Backend zu überarbeiten und für den zukünftigen Offline Modus zu festigen.
 | https://miro.com/app/board/uXjVGl4xE1g=/?moveToWidget=3458764672558710419&cot=14 [ Miro Board ]
-| 
+| Frühzeitiges Festhalten von Designentscheidungen im Miro reduzierte Missverständnisse zwischen Frontend- und Backend-Team.
 
 | Pull Request vorbereiten und durchführen
 | Pull Requests für User Stories aus Frontend/Backend Tasks erstellt um diese zu reviewen, Entscheidungen festzuhalten und in den main-Branch zu integrieren.
@@ -116,9 +116,9 @@ Beschreiben Sie konkret anhand von drei Beispielen, was sich durch Implementieru
 | eher Wunschvorstellung bzw. entgegen der Implementierung in Vue mit Standardkomponenten zu stark verkompliziert
 | UI-Concept wird während der Implementierung leicht adaptiert
 
-| 
-|
-|
+| Registrierung/Login war ursprünglich als einfache Nebenaufgabe für Sprint 3 eingeplant
+| Für einen realistischen End-to-End-Nutzerfluss (Abo anlegen, dem Nutzer zuordnen, in einer Liste einsehen) musste eine vollständige Authentifizierung (Django-Backend, Token-basiert) bereits in Sprint 3 stabil funktionieren
+| Backend-Authentifizierung wurde vorgezogen und umgesetzt (https://github.com/SE-Team-E1/SE-SubscriptionGuard/pull/132[PR #132]); Registrierungs-/Login-Endpunkte sind Voraussetzung für die im nächsten Sprint folgende Anbindung von "Abo anlegen" an den jeweiligen Nutzer
 |===
 
 == 5. Produktinkrement, Verifikation und Umsetzungsqualität
@@ -144,13 +144,13 @@ Beschreiben Sie kurz, welche Nachweise zeigen, dass Ihr Produktinkrement nützli
 | Der erstellte Code und die darin befindliche Logik wird durch Tests und einen Reviewer überprüft und getestet. Dabei wird darauf geachtet, dass die im Team geplante Softwarearchitektur und insbesondere das Softwaredesign möglichst umgesetzt wurde und Änderungen bei Bedarf im Pull Request mittels Kommentaren getrackt bzw. abgestimmt werden.
 
 | Code Review, Integration und main branch
-|
+| Alle Sprint-3-Beiträge liefen über Pull Requests mit mindestens einem Reviewer, z. B. https://github.com/SE-Team-E1/SE-SubscriptionGuard/pull/132[PR #132] (Backend-Authentifizierung) und https://github.com/SE-Team-E1/SE-SubscriptionGuard/pull/118[PR #118] (Frontend-Domänenmodelle). Merges in den main-Branch erfolgten erst nach Review-Freigabe; weitere Feature-PRs (#133, #134) waren zum Redaktionsschluss dieses Reports noch offen und werden in Sprint 4 fertiggestellt.
 
 | Wartbarkeitsverbesserung / Refactoring
 | Bessere Separation of Concerns im Frontend (Repo, Dtos, Service, Domain, View Components) und Abstraktion von Logik in Basisklassen. https://github.com/SE-Team-E1/SE-SubscriptionGuard/pull/118 [ Frontend Pull Request ]
 
 | User-Flow- oder Usability-Check
-| 
+| Der Kern-Flow (Registrieren → Abo manuell anlegen → Abo in Liste einsehen) wurde im Team gemeinsam durchgespielt und mit den im UX-Konzept dokumentierten Personas (siehe link:../product/ux_concept.adoc[UX-Konzept]) abgeglichen. Dabei fiel auf, dass das Figma-Konzept mit den verfügbaren Vuetify-Standardkomponenten zu komplex war und für die Implementierung vereinfacht werden musste (siehe Tabelle oben).
 |===
 
 == 6. Nächste MVP-Schritte und Anpassung der Arbeitsweise
@@ -170,10 +170,10 @@ Beschreiben Sie, was Ihr Team nach Sprint 3 beibehalten, ändern oder gezielt ve
 | Asynchrone Arbeitsweise, Aufsplitten Frontend/Backend-Team mit gelegentlicher Absprache, Spikes für Risikoabbau, Timeboxing in Meetings, ...
 
 | Ändern / verbessern
-| main-Branch protecten, Reviewer muss vor merge zustimmen/approven, schnelleres Review, 
+| main-Branch protecten, Reviewer muss vor merge zustimmen/approven, schnelleres Review,
 
 | Nächster MVP-Schritt
-|
+| Die offenen Pull Requests zum Erfassen neuer Abos über die Backend-API und die zugehörige Frontend-Anbindung (#133, #134) fertigstellen und mit der Authentifizierung (#132) verknüpfen, sodass Abos eindeutig einem registrierten Nutzer zugeordnet werden.
 
 | Offene Fragen / Risiken für die weitere Projektarbeit
 | Wie komplex wird die Synchronisationslogik in der Realität?

@@ -356,18 +356,20 @@ Wireframes und UI-Implementierungen._
 | Aspekt | Entscheidung & Begründung
 
 | Farbpalette
-| [z. B. Primärfarbe: Hochschulblau #003D6E; Akzent: #E87722;
-  Begründung: Corporate Identity der Hochschule]
+| Vuetify-Standard-Theme (Material-Design-Palette), primär Blau (`#1867C0`); +
+  Begründung: kein eigenes Corporate Design vorhanden, Vuetify-Defaults sind bereits kontrastgeprüft und sparen in der frühen Projektphase Aufwand. Eine eigene Theme-Konfiguration ist für einen späteren Sprint denkbar, sobald das Produkt einen eigenen Markenauftritt braucht.
 
 | Typografie
-| [z. B. Fließtext: Inter 16px; Überschriften: Inter Bold;
-  Begründung: Hohe Lesbarkeit auf kleinen Bildschirmen]
+| Fließtext: Inter 15px (`src/frontend/src/assets/base.css`), Fallback auf System-Sans-Serif-Fonts; +
+  Begründung: Inter ist gut lesbar auf kleinen Bildschirmen (mobile-first, siehe Nutzungskontext) und kostenlos einsetzbar.
 
 | Ikonografie
-| [z. B. Material Icons; konsistentes Icon-Set im gesamten Produkt]
+| Material Design Icons (MDI) über `vuetify/iconsets/mdi-svg`; +
+  Begründung: konsistentes, großes Icon-Set, das direkt mit den Vuetify-Komponenten harmoniert und keine zusätzliche Icon-Bibliothek erfordert.
 
 | Bildsprache
-| [z. B. Keine Stock-Fotos; Illustrationen im Flat-Design-Stil]
+| Noch kein eigenes Bildkonzept definiert; UI setzt bislang ausschließlich auf Komponenten, Icons und Text statt auf Fotos oder Illustrationen. +
+  Offener Punkt für einen späteren Sprint, sobald Onboarding- oder Leerzustände visuell aufgewertet werden sollen.
 |===
 
 === Interaktionsprinzipien
