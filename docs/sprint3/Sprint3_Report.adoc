@@ -113,12 +113,12 @@ Beschreiben Sie konkret anhand von drei Beispielen, was sich durch Implementieru
 | Frontend-Softwaredesign wurde angepasst, um das Datenmodell und dessen Logik clientseitig zu unterstützen (repliziert/spiegelt Backend-Logik).
 
 | Figma-UI-Konzept ist optimal
-| Eher eine Wunschvorstellung: In der Implementierung mit Vue-Standardkomponenten war die Umsetzung zu stark verkompliziert
+| Das Figma-UI-Konzept war eher eine Wunschvorstellung und wurde entsprechend der Vue-Standardkomponenten angepasst.
 | UI-Konzept wird während der Implementierung leicht angepasst
 
-| Registrierung/Login war ursprünglich als einfache Nebenaufgabe für Sprint 3 eingeplant
-| Für einen realistischen End-to-End-Nutzerfluss (Abo anlegen, dem Nutzer zuordnen, in einer Liste einsehen) musste eine vollständige Authentifizierung (Django-Backend, Token-basiert) bereits in Sprint 3 stabil funktionieren
-| Backend-Authentifizierung wurde vorgezogen und umgesetzt (https://github.com/SE-Team-E1/SE-SubscriptionGuard/pull/132[PR #132]); Registrierungs-/Login-Endpunkte sind Voraussetzung für die im nächsten Sprint folgende Anbindung von "Abo anlegen" an den jeweiligen Nutzer
+| Ratingsystem ist gewünscht
+| Ratingsystem wurde durch das letzte Stakeholder-Review als niedriger priorisiert
+| Ratingsystem wird in einem späteren Sprint umgesetzt und ist daher bisher kein Teil des Datenmodells.
 |===
 
 == 5. Produktinkrement, Verifikation und Umsetzungsqualität
@@ -138,7 +138,7 @@ Beschreiben Sie kurz, welche Nachweise zeigen, dass Ihr Produktinkrement nützli
 | Nutzer kann sich registrieren, ein Abonnement manuell anlegen und in einer Liste einsehen. Dieser Nutzerfluss, der aus dem Sprint Planning hervorgegangen ist und in den Reviews geprüft wurde, wird abschließend durch die Stakeholder getestet und bestätigt.
 
 | Akzeptanzkriterien und Definition of Done
-| Die Akzeptanzkriterien wurden bereits zu den User Stories im Miro hinzugefügt und beim Zerlegen in einzelne Issues teils angepasst. Sie sind daher sowohl im Miro als auch in den GitHub Issues dokumentiert und von den Reviewern bestätigt.
+| Die Akzeptanzkriterien wurden bereits zu den User Stories im Miro hinzugefügt und beim Zerlegen in einzelne Issues teils angepasst. Sie sind daher sowohl im Miro als auch in den GitHub Issues dokumentiert und von den Reviewern bestätigt. Die Definition of Done [link:../team/team_charter.adoc#definition-of-done[Team Charter]] wurde durch Tests, Reviews und dem finalen Mergen in den main-Branch eingehalten. Änderungen an dem Softwaredesign sind bisher in den Pull Requests dokumentiert.
 
 | Akzeptanzorientierte Verifikation
 | Der erstellte Code und die darin befindliche Logik wird durch Tests und einen Reviewer überprüft und getestet. Dabei wird darauf geachtet, dass die im Team geplante Softwarearchitektur und insbesondere das Softwaredesign möglichst umgesetzt wurde und Änderungen bei Bedarf im Pull Request mittels Kommentaren getrackt bzw. abgestimmt werden.
