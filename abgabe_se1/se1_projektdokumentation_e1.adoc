@@ -1,7 +1,7 @@
 // --- 1. Projektthema -------------------------
 = SE I - Projektdokumentation: {project-name}
 // --- 2. Teammitglieder -----------------------
-Jannik Thiele; Niels Wiesner <s88199@htw-dresden.de>; Quôc Dat Nguyên; Juan Ramiro Groh Fili <s88773@htw-dresden.de>; Johannes Meinck; Franz Rehschuh; Lennox Schmollny
+Jannik Thiele <s88210@htw-dresden.de>; Niels Wiesner <s88199@htw-dresden.de>; Quôc Dat Nguyên <s88784@htw-dresden.de>; Juan Ramiro_Groh_Fili <s88773@htw-dresden.de>; Johannes Meinck <s88889@htw-dresden.de>; Franz Rehschuh <s88216@htw-dresden.de>; Lennox Schmollny <s88178@htw-dresden.de>
 // --- 3. Abgabedatum --------------------------
 06. Juli 2026
 // ---------------------------------------------
