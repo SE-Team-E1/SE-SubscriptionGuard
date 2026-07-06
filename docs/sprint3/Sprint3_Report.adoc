@@ -55,27 +55,27 @@ Beziehen Sie sich bevorzugt auf Praktiken, die in den Hinweisen für Sprint 3 be
 
 | nützliche Funktionalität für Sprint 3 auswählen
 | Basisfunktionalitäten aus Walking Skeleton übernehmen und mittels Planning Poker priorisiert.
-| https://github.com/orgs/SE-Team-E1/projects/2/views/2 [Sprint 3 Planning]
+| https://github.com/orgs/SE-Team-E1/projects/2/views/2[Sprint 3 Planning]
 | Konzentrieren der Entwicklungskapazitäten auf die wichtigsten Funktionen.
 
 | Aufgaben aus User Stories ableiten
 | Meetings innerhalb der getrennten Frontend/Backend-Teams um die Aufgaben gezielt zu verteilen.
-| https://github.com/SE-Team-E1/SE-SubscriptionGuard/issues [Sprint 3 Issues]
+| https://github.com/SE-Team-E1/SE-SubscriptionGuard/issues[Sprint 3 Issues]
 | User Stories in geeignete Issues zerteilen.
 
 | Implementierungsüberlegungen in Issues, Pull Requests und Miro dokumentieren
 | Meetings und Brainstorming Sessions, um das Softwaredesign im Frontend/Backend zu überarbeiten und für den zukünftigen Offline-Modus zu festigen.
-| https://miro.com/app/board/uXjVGl4xE1g=/?moveToWidget=3458764672558710419&cot=14 [ Miro Board ]
+| https://miro.com/app/board/uXjVGl4xE1g=/?moveToWidget=3458764672558710419&cot=14[ Miro Board ]
 | Frühzeitiges Festhalten von Designentscheidungen im Miro reduzierte Missverständnisse zwischen Frontend- und Backend-Team.
 
 | Pull Request vorbereiten und durchführen
 | Pull Requests für User Stories aus Frontend/Backend Tasks erstellt, um diese zu reviewen, Entscheidungen festzuhalten und in den main-Branch zu integrieren.
-| https://github.com/SE-Team-E1/SE-SubscriptionGuard/pulls?q=is%3Apr [ Pull Requests ]
+| https://github.com/SE-Team-E1/SE-SubscriptionGuard/pulls?q=is%3Apr[ Pull Requests ]
 | Dokumentation von kurzfristigen Entscheidungen festhalten und Absicherung der Akzeptanzkriterien.
 
 | Code Reviews durchführen
 | Nachbessern von fehlendem Code, bessere Strukturierung des Codes
-| https://github.com/SE-Team-E1/SE-SubscriptionGuard/pulls?q=is%3Apr [ Pull Requests ]
+| https://github.com/SE-Team-E1/SE-SubscriptionGuard/pulls?q=is%3Apr[ Pull Requests ]
 | Sicherung der Codequalität und vermeiden von Fehlern/Bugs
 |===
 
@@ -147,7 +147,7 @@ Beschreiben Sie kurz, welche Nachweise zeigen, dass Ihr Produktinkrement nützli
 | Alle Sprint-3-Beiträge liefen über Pull Requests mit mindestens einem Reviewer, z. B. https://github.com/SE-Team-E1/SE-SubscriptionGuard/pull/132[PR #132] (Backend-Authentifizierung) und https://github.com/SE-Team-E1/SE-SubscriptionGuard/pull/118[PR #118] (Frontend-Domänenmodelle). Merges in den main-Branch erfolgten erst nach Review-Freigabe; weitere Feature-PRs (#133, #134) waren zum Redaktionsschluss dieses Reports noch offen und werden in Sprint 4 fertiggestellt.
 
 | Wartbarkeitsverbesserung / Refactoring
-| Bessere Separation of Concerns im Frontend (Repo, Dtos, Service, Domain, View Components) und Abstraktion von Logik in Basisklassen. https://github.com/SE-Team-E1/SE-SubscriptionGuard/pull/118 [ Frontend Pull Request ]
+| Bessere Separation of Concerns im Frontend (Repo, Dtos, Service, Domain, View Components) und Abstraktion von Logik in Basisklassen. https://github.com/SE-Team-E1/SE-SubscriptionGuard/pull/118[ Frontend Pull Request ]
 
 | User-Flow- oder Usability-Check
 | Der Kern-Flow (Registrieren → Abo manuell anlegen → Abo in Liste einsehen) wurde im Team gemeinsam durchgespielt und mit den im UX-Konzept dokumentierten Personas (siehe link:../product/ux_concept.adoc[UX-Konzept]) abgeglichen. Dabei fiel auf, dass das Figma-Konzept mit den verfügbaren Vuetify-Standardkomponenten zu komplex war und für die Implementierung vereinfacht werden musste (siehe Tabelle oben).
