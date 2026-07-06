@@ -142,7 +142,6 @@ _Eine User Story ist bereit für die Entwicklung, wenn:_
 * [ ] Der Aufwand wurde vom Team geschätzt
 * [ ] Abhängigkeiten sind identifiziert und geklärt
 * [ ] Designs / Mockups sind vorhanden (falls relevant)
-* [ ] [Weitere Kriterien ergänzen]
 
 === Definition of Done (DoD)
 _Eine User Story gilt als fertig, wenn:_
@@ -154,7 +153,6 @@ _Eine User Story gilt als fertig, wenn:_
 * [ ] Die Funktionalität wurde im Staging-System getestet
 * [ ] Dokumentation wurde aktualisiert (falls erforderlich)
 * [ ] Der Product Owner hat die Story abgenommen
-* [ ] [Weitere Kriterien ergänzen]
 
 === Code & Versionierung
 
@@ -200,11 +198,6 @@ _Diese Vereinbarungen haben wir gemeinsam getroffen:_
 . Wichtige Angelegenheiten werden in der Gruppe diskutiert
 . Wir reden nicht über Teammitglieder hinter deren Rücken
 . Bedürfnisse, Erwartungen werden frühzeitig geäußert, respektvoll aufgenommen und spätestens im Retro-Meeting disktutiert und umgesetzt
-. [z. B. Wir gehen respektvoll und offen miteinander um.]
-. [z. B. Wir sprechen Probleme frühzeitig an, anstatt sie zu ignorieren.]
-. [z. B. Fehler sind Lernchancen – wir suchen keine Schuldigen.]
-. [z. B. Meetings beginnen pünktlich; wer verhindert ist, gibt rechtzeitig Bescheid.]
-. [z. B. Entscheidungen werden dort dokumentiert, wo alle sie finden können.]
 
 _Version 2.0 [19.06.2026 / Sprint 2] - Erfassung der Maßnahmen des Retros am Ende von Sprint 2_
 
