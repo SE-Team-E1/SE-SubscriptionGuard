@@ -1,0 +1,180 @@
+= Sprint-3-Report: Erstes Produktinkrement und agile Arbeitsweise
+
+// Bitte fügen Sie hier die Informationen zu Ihrem Team, Projekt, Datum und Repository ein.
+Team:: E1
+Projektname:: SubscriptionGuard
+Datum:: 04.07.2026
+Repository-Link:: https://github.com/SE-Team-E1/SE-SubscriptionGuard
+
+====
+Dieser Report soll auf maximal einer Seite zeigen, wie Ihr Team in Sprint 3 gearbeitet hat,
+welche Praktiken Sie angewendet haben, welches erste nützliche Produktinkrement entstanden ist und was Sie daraus gelernt haben.
+
+Der Report ist kein Tätigkeitsprotokoll und kein vollständiges Implementierungs- oder Testdokument. Beschreiben Sie nicht nur, *was* Sie umgesetzt haben,
+sondern vor allem, *warum* dieser Ausschnitt für das MVP nützlich ist, welche Evidenz die Umsetzung stützt und wie Review, Verifikation und Verbesserungen zur Qualität beigetragen haben.
+====
+
+== 1. Sprintziel und nützlicher MVP-Ausschnitt
+
+Formulieren Sie Ihr Sprintziel in 1–2 Sätzen. Leitfragen:
+
+* Welchen zusammenhängenden Nutzerfluss oder welche zusammenhängenden User Stories wollte Ihr Team in diesem Sprint als erstes nützliches End-to-End-Inkrement umsetzen?
+* Welches Nutzerziel sollte durch das Inkrement unterstützt werden?
+* Warum ist dieser Ausschnitt ein sinnvoller Schritt in Richtung MVP?
+
+[cols="1,3", options="header"]
+|===
+| Kriterium | Ihre Antwort
+
+| Sprintziel
+| Erreichen eines MVP, welches die wichtigsten Basisfunktionalitäten zum Tracking von Abos enthält.
+
+| Ausgewählter MVP-Ausschnitt / Nutzerfluss
+| Nutzer kann sich registrieren, ein Abonnement manuell anlegen und in einer Liste einsehen.
+
+| Zentrale Annahme oder Umsetzungsfrage
+| Die genannten Funktionen stellen die absolute Grundlage für das weitere Vorgehen dar und waren daher als Basis für das MVP notwendig, um zentrale Nutzerziele zu unterstützen.
+|===
+
+== 2. Erwartete Praktiken in Sprint 3
+
+Wählen Sie 3–5 Praktiken aus, die für Ihren Sprint besonders relevant waren.
+Beziehen Sie sich bevorzugt auf Praktiken, die in den Hinweisen für Sprint 3 beschrieben werden. Mögliche Praktiken:
+
+* Implementierungsüberlegungen in Issues, Tasks oder Pull Requests dokumentieren
+* Verantwortlichkeiten im Code durch Presentation/Controller, Application/Use Case, Domain und Infrastructure umsetzen
+* Definition of Done vor dem Schließen von Issues prüfen
+* einfachen User-Flow- oder Usability-Check durchführen
+
+[cols="1,2,2,2", options="header"]
+|===
+| Praktik
+| Konkrete Anwendung in unserem Sprint
+| Nachweis / Artefakt (Link einfügen)
+| Nutzen, Erkenntnis oder Anpassung
+
+| nützliche Funktionalität für Sprint 3 auswählen
+| Basisfunktionalitäten aus Walking Skeleton übernehmen und mittels Planning Poker priorisiert.
+| https://github.com/orgs/SE-Team-E1/projects/2/views/2[Sprint 3 Planning]
+| Konzentrieren der Entwicklungskapazitäten auf die wichtigsten Funktionen.
+
+| Aufgaben aus User Stories ableiten
+| Meetings innerhalb der getrennten Frontend/Backend-Teams um die Aufgaben gezielt zu verteilen.
+| https://github.com/SE-Team-E1/SE-SubscriptionGuard/issues[Sprint 3 Issues]
+| User Stories in geeignete Issues zerteilen.
+
+| Implementierungsüberlegungen in Issues, Pull Requests und Miro dokumentieren
+| Meetings und Brainstorming Sessions, um das Softwaredesign im Frontend/Backend zu überarbeiten und für den zukünftigen Offline-Modus zu festigen.
+| https://miro.com/app/board/uXjVGl4xE1g=/?moveToWidget=3458764672558710419&cot=14[ Miro Board ]
+| Frühzeitiges Festhalten von Designentscheidungen im Miro reduzierte Missverständnisse zwischen Frontend- und Backend-Team.
+
+| Pull Request vorbereiten und durchführen
+| Pull Requests für User Stories aus Frontend/Backend Tasks erstellt, um diese zu reviewen, Entscheidungen festzuhalten und in den main-Branch zu integrieren.
+| https://github.com/SE-Team-E1/SE-SubscriptionGuard/pulls?q=is%3Apr[ Pull Requests ]
+| Dokumentation von kurzfristigen Entscheidungen festhalten und Absicherung der Akzeptanzkriterien.
+
+| Code Reviews durchführen
+| Nachbessern von fehlendem Code, bessere Strukturierung des Codes
+| https://github.com/SE-Team-E1/SE-SubscriptionGuard/pulls?q=is%3Apr[ Pull Requests ]
+| Sicherung der Codequalität und vermeiden von Fehlern/Bugs
+|===
+
+== 3. Wichtigste Lernergebnisse aus Sprint 3
+
+Beschreiben Sie 2–3 zentrale Erkenntnisse aus Sprint 3. Leitfragen:
+
+* Was hat Ihr Team über die Umsetzung eines nützlichen End-to-End-Inkrements gelernt?
+* Welche Annahme zum Nutzerfluss, zur Architektur, zum Design, zur Codebasis oder zur Teamarbeit wurde bestätigt, widerlegt oder präzisiert?
+* Welche Verifikations-, Review- oder Usability-Erkenntnis hatte den größten Einfluss auf Ihre weitere Planung?
+
+[cols="1,3", options="header"]
+|===
+| Kriterium | Ihre Antwort
+
+| Nutzerfluss und Architektur
+| Die Annahme, dass für den Nutzerfluss speziell ein Online-Modus zum Synchronisieren der Daten notwendig ist, wurde durch das letzte Sprint Review teils widerlegt. Entgegen vorherigen Annahmen und dem Feedback wurde ein Offline-Modus von den Stakeholdern als wichtiger eingestuft. Da allerdings bereits ein Online-Modus fest eingeplant und nicht komplett ausgeschlossen wurde, haben wir uns entschieden, den Offline-Modus strategisch einzuplanen, um ihn in einem späteren Sprint umzusetzen.
+
+| Codereview-Aufwand
+| Der Aufwand für die Codereviews war höher als erwartet, da sich nicht alle Entwickler:innen vollständig auf ihre Aufgaben beschränkten, sondern sich auch um andere Aufgaben im Team kümmerten. Dies hatte zur Folge, dass die Codereviews deutlich länger dauerten. Des Weiteren fehlt noch eine gewisse Einarbeitung sowie klare Absprachen innerhalb des Teams, um den Review-Prozess zu beschleunigen.
+|===
+
+== 4. Änderungen am Inkrement, Backlog oder an Projektdokumentation
+
+Beschreiben Sie konkret anhand von drei Beispielen, was sich durch Implementierung, Review, Verifikation oder User-Flow-Check verändert hat.
+
+[cols="2,2,2", options="header"]
+|===
+| Ursprüngliche Annahme / geplanter Stand
+| Neue Erkenntnisse
+| Anpassung am Inkrement, Backlog, Code oder an der Dokumentation
+
+| Online-Modus reicht aus
+| Offline-Modus wurde höher priorisiert als gedacht
+| Frontend-Softwaredesign wurde angepasst, um das Datenmodell und dessen Logik clientseitig zu unterstützen (repliziert/spiegelt Backend-Logik).
+
+| Figma-UI-Konzept ist optimal
+| Das Figma-UI-Konzept war eher eine Wunschvorstellung und wurde entsprechend der Vue-Standardkomponenten angepasst.
+| UI-Konzept wird während der Implementierung leicht angepasst
+
+| Ratingsystem ist gewünscht
+| Ratingsystem wurde durch das letzte Stakeholder-Review als niedriger priorisiert
+| Ratingsystem wird in einem späteren Sprint umgesetzt und ist daher bisher kein Teil des Datenmodells.
+|===
+
+== 5. Produktinkrement, Verifikation und Umsetzungsqualität
+
+Beschreiben Sie kurz, welche Nachweise zeigen, dass Ihr Produktinkrement nützlich, integriert, überprüft und wartbar umgesetzt wurde. Leitfragen:
+
+* Wie zeigt sich, dass das Inkrement end-to-end lauffähig und für ein Nutzerziel nützlich ist?
+* Welche Akzeptanzkriterien wurden erfüllt und wie wurde dies überprüft?
+* Wie wurde die Definition of Done eingehalten?
+* Welche Erkenntnisse ergab der User-Flow- oder Usability-Check?
+
+[cols="1,3", options="header"]
+|===
+| Kriterium | Ihre Antwort
+
+| Umgesetzter End-to-End-Nutzerfluss
+| Nutzer kann sich registrieren, ein Abonnement manuell anlegen und in einer Liste einsehen. Dieser Nutzerfluss, der aus dem Sprint Planning hervorgegangen ist und in den Reviews geprüft wurde, wird abschließend durch die Stakeholder getestet und bestätigt.
+
+| Akzeptanzkriterien und Definition of Done
+| Die Akzeptanzkriterien wurden bereits zu den User Stories im Miro hinzugefügt und beim Zerlegen in einzelne Issues teils angepasst. Sie sind daher sowohl im Miro als auch in den GitHub Issues dokumentiert und von den Reviewern bestätigt. Die Definition of Done [link:../team/team_charter.adoc#definition-of-done[Team Charter]] wurde durch Tests, Reviews und dem finalen Mergen in den main-Branch eingehalten. Änderungen an dem Softwaredesign sind bisher in den Pull Requests dokumentiert.
+
+| Akzeptanzorientierte Verifikation
+| Der erstellte Code und die darin befindliche Logik wird durch Tests und einen Reviewer überprüft und getestet. Dabei wird darauf geachtet, dass die im Team geplante Softwarearchitektur und insbesondere das Softwaredesign möglichst umgesetzt wurde und Änderungen bei Bedarf im Pull Request mittels Kommentaren getrackt bzw. abgestimmt werden.
+
+| Code Review, Integration und main branch
+| Alle Sprint-3-Beiträge liefen über Pull Requests mit mindestens einem Reviewer, z. B. https://github.com/SE-Team-E1/SE-SubscriptionGuard/pull/132[PR #132] (Backend-Authentifizierung) und https://github.com/SE-Team-E1/SE-SubscriptionGuard/pull/118[PR #118] (Frontend-Domänenmodelle). Merges in den main-Branch erfolgten erst nach Review-Freigabe; weitere Feature-PRs (#133, #134) waren zum Redaktionsschluss dieses Reports noch offen und werden in Sprint 4 fertiggestellt.
+
+| Wartbarkeitsverbesserung / Refactoring
+| Bessere Separation of Concerns im Frontend (Repo, Dtos, Service, Domain, View Components) und Abstraktion von Logik in Basisklassen. https://github.com/SE-Team-E1/SE-SubscriptionGuard/pull/118[ Frontend Pull Request ]
+
+| User-Flow- oder Usability-Check
+| Der Kern-Flow (Registrieren → Abo manuell anlegen → Abo in Liste einsehen) wurde im Team gemeinsam durchgespielt und mit den im UX-Konzept dokumentierten Personas (siehe link:../product/ux_concept.adoc[UX-Konzept]) abgeglichen. Dabei fiel auf, dass das Figma-Konzept mit den verfügbaren Vuetify-Standardkomponenten zu komplex war und für die Implementierung vereinfacht werden musste (siehe Tabelle oben).
+|===
+
+== 6. Nächste MVP-Schritte und Anpassung der Arbeitsweise
+
+Beschreiben Sie, was Ihr Team nach Sprint 3 beibehalten, ändern oder gezielt verbessern will. Leitfragen:
+
+* Welche Implementierungs-, Review- oder Koordinationsweise hat gut funktioniert?
+* Was hat Ihre Umsetzung, Integration, Verifikation oder Zusammenarbeit behindert?
+* Welcher nächste MVP-Schritt ist fachlich oder technisch am wichtigsten?
+* Welche offenen Produkt-, Technik- oder Qualitätsfragen sollten in der weiteren Projektarbeit aufgegriffen werden?
+
+[cols="1,3", options="header"]
+|===
+| Kriterium | Ihre Antwort
+
+| Beibehalten
+| Asynchrone Arbeitsweise, Aufsplitten Frontend/Backend-Team mit gelegentlicher Absprache, Spikes für Risikoabbau, Timeboxing in Meetings, ...
+
+| Ändern / verbessern
+| main-Branch protecten, Reviewer muss vor Merge zustimmen/approven, schnelleres Review, ...
+
+| Nächster MVP-Schritt
+| Die offenen Pull Requests zum Erfassen neuer Abos über die Backend-API und die zugehörige Frontend-Anbindung (#133, #134) fertigstellen und mit der Authentifizierung (#132) verknüpfen, sodass Abos eindeutig einem registrierten Nutzer zugeordnet werden.
+
+| Offene Fragen / Risiken für die weitere Projektarbeit
+| Wie komplex wird die Synchronisationslogik in der Realität?
+|===
