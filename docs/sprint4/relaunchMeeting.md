@@ -1,5 +1,13 @@
 # Relaunch-Meeting Sprint 4
 
+## === Zusammenfassung ===
+
+Sprint 4 schließt das MVP ab (offenen Merges/Tickets, Offlinefunktionalität entscheiden) und startet mit Release 2.0. Anforderungen und Zusammenarbeit bleiben gleich. Johannes gibt die Techlead-Rolle ab, Nachfolge offen zwischen Niels und Franz. Neue ermittlung der freien Zeiten im Miro Terminplaner. Eintragung von Terminen von nun an in einem Kalender.
+
+In KW 43 werden offene Branches gemergt, Tickets geschlossen und veraltete Branches gelöscht. In KW 43/44 entscheidet das Team parallel über die Offline-Funktionalität (Aufwand, Nutzen, nachträgliche Integration; Termin Donnerstag, 22.11.?). Die CI/CD-Pipeline wird geprüft, erweitert und dokumentiert.
+
+Ab KW 44 folgen im Schnittstellen-Meeting die nächsten Features: Gesamtkosten (#39), Abo-Anzahl (#26), Detailansicht (#27) und Löschen (#30).
+
 ## === Status Quo ===
 
 ### Teamgefühl
