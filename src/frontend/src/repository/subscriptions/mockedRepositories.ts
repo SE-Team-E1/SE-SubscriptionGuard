@@ -4,11 +4,11 @@ import type {
   SubscriptionRepository
 } from "./repositories.ts";
 import {Category, Provider, type Subscription} from "@/domain/subscriptionModel.ts";
-import type {
-  RestCategoryDTO, RestProviderDTO,
-  RestSubscriptionDTO
-} from "@/repository/subscriptions/restRepositories.ts";
+import type { RestCategoryDTO } from "./dto/categoryDto";
+import type { RestProviderDTO } from "./dto/providerDto";
+import type { RestSubscriptionDTO } from "./dto/subscriptionDto";
 import {id} from "vuetify/locale";
+import { mdiMovie, mdiMusic, mdiHeartPulse } from "@mdi/js";
 
 export class MockedSubscriptionRepository implements SubscriptionRepository{
   private subscriptions: RestSubscriptionDTO[] = [];
@@ -35,9 +35,9 @@ export class MockedSubscriptionRepository implements SubscriptionRepository{
 
 export class MockedCategoryRepository implements CategoryRepository {
   private categories : RestCategoryDTO[] = [
-    Category.create({name: "Entertainment", icon:""}),
-    Category.create({name: "Music", icon:""}),
-    Category.create({name: "Health", icon: ""})
+    Category.create({name: "Entertainment", icon:mdiMovie}),
+    Category.create({name: "Music", icon:mdiMusic}),
+    Category.create({name: "Health", icon:mdiHeartPulse})
   ].map(c => ({id: c.id.value, name: c.name, icon: c.icon}));
 
   findAll(): Promise<RestCategoryDTO[]> {
@@ -45,7 +45,8 @@ export class MockedCategoryRepository implements CategoryRepository {
   }
 
   insert(newCategory: RestCategoryDTO): Promise<RestCategoryDTO> {
-    return Promise.reject("not yet supported");
+    this.categories.push(newCategory);
+    return Promise.resolve(newCategory);
   }
 
   update(category: RestCategoryDTO): Promise<RestCategoryDTO> {
