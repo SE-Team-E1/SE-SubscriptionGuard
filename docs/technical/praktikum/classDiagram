@@ -1,0 +1,18 @@
+@startuml
+ListSubscriptionService o-- SubscriptionRepository
+ListView o-- ListSubscriptionService
+Class ListView{
+
+}
+Class ListSubscriptionService{
+  -SubscriptionRepository subscriptionRepository
+  -CategoryRepository categoryRepository
+  -ProviderRepository providerRepository
+  Promise<Subscription> execute()
+}
+Class SubscriptionRepository{
+ Promise<RestSubscriptionDTO[]> findAll()
+ Promise<RestSubscriptionDTO[]> insert()
+ Promise<RestSubscriptionDTO[]> update()
+}
+@enduml
