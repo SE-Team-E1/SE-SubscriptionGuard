@@ -1,8 +1,8 @@
 @startuml
-ListSubscriptionService o-- SubscriptionRepository
-ListView o-- ListSubscriptionService
+ListSubscriptionService --> SubscriptionRepository
+ListView --> ListSubscriptionService
 Class ListView{
-
+  -{Subscription[], function} useListSubscriptionService()
 }
 Class ListSubscriptionService{
   -SubscriptionRepository subscriptionRepository
