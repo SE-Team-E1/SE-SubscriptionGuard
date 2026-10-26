@@ -6,6 +6,7 @@ import { mapSubscriptionDTOtoEntity, mapSubscriptionEntityToDTO } from "@/reposi
 import type { CategoryAddDto } from "../dto/categoryAddDto";
 import type { ProviderAddDto } from "../dto/providerAddDto";
 import type { SubscriptionAddDto } from "../dto/subscriptionAddDto";
+import { bookingDateFromIso } from "../bookingDate";
 
 export class AddSubscriptionService {
     constructor(
@@ -65,11 +66,12 @@ export class AddSubscriptionService {
             categories: subscriptionAddDto.categories,
             price: subscriptionAddDto.price,
             renewal: subscriptionAddDto.renewal,
-            bookingDate: new Date(subscriptionAddDto.bookingDate)
+            bookingDate: bookingDateFromIso(subscriptionAddDto.bookingDate)
         })
 
         const subscriptionRepoDto = mapSubscriptionEntityToDTO(subscriptionEntity);
-        await this.subscriptionRepository.insert(subscriptionRepoDto);
-        return mapSubscriptionDTOtoEntity(subscriptionRepoDto, providerEntity, subscriptionAddDto.categories);
+        const insertedSubscriptionDto = await this.subscriptionRepository.insert(subscriptionRepoDto);
+
+        return mapSubscriptionDTOtoEntity(insertedSubscriptionDto, providerEntity, subscriptionAddDto.categories);
     }
 }

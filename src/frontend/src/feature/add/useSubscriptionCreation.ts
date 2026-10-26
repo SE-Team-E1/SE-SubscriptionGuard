@@ -1,5 +1,6 @@
 import { computed, inject, onMounted, reactive, ref, watch } from 'vue'
 import { AddSubscriptionService } from '@/feature/add/service/addSubscriptionService'
+import { toBookingDateIso } from '@/feature/add/bookingDate'
 import type { CategoryAddDto } from '@/feature/add/dto/categoryAddDto'
 import type { ProviderAddDto } from '@/feature/add/dto/providerAddDto'
 import type { CategoryRepository, ProviderRepository, SubscriptionRepository } from '@/repository/subscriptions/repositories'
@@ -33,6 +34,14 @@ function levenshtein(a: string, b: string): number {
   }
 
   return previous[n] ?? n
+}
+
+function isValidPriceAmount(amount: unknown): boolean {
+  return typeof amount === 'number' && Number.isFinite(amount) && amount >= 0
+}
+
+function isValidIntervalAmount(amount: unknown): boolean {
+  return typeof amount === 'number' && Number.isInteger(amount) && amount >= 1
 }
 
 function providerRank(name: string, query: string) {
@@ -77,10 +86,12 @@ export default function useSubscriptionCreation() {
   const name = ref('')
   const price = ref<Price>({ amount: 0, currency: Currency.EUR })
   const renewal = ref<RenewalPeriod>({ amount: 1, unit: RenewalPeriodUnitEnum.MONTHS })
-  const bookingDate = ref('')
   const dateParts = reactive({ day: '', month: '', year: '' })
+  const nameTouched = ref(false)
+  const providerTouched = ref(false)
+  const dateTouched = ref(false)
 
-  const providerName = ref('')
+  const providerName = ref<string | null>('')
   const providerSearch = ref('')
   const availableProviders = ref<Provider[]>([])
   const availableCategories = ref<Category[]>([])
@@ -120,32 +131,64 @@ export default function useSubscriptionCreation() {
     ),
   )
 
-  // watch date parts and update booking date
-  watch(
-    () => [dateParts.day, dateParts.month, dateParts.year],
-    ([day, month, year]) => {
-      if (day && month && year) {
-        const y = year.toString().padStart(4, '0')
-        const m = month.toString().padStart(2, '0')
-        const d = day.toString().padStart(2, '0')
-        bookingDate.value = `${y}-${m}-${d}`
-      } else {
-        bookingDate.value = ''
-      }
-    },
-    { immediate: true },
+  const bookingDate = computed(() =>
+    toBookingDateIso(dateParts.day, dateParts.month, dateParts.year) ?? '',
   )
+
+  const nameError = computed(() => {
+    if (!nameTouched.value || name.value.trim()) return null
+    return 'Bitte einen Namen eingeben'
+  })
+
+  const providerError = computed(() => {
+    if (!providerTouched.value || providerName.value?.trim()) return null
+    return 'Bitte einen Vertragspartner eingeben'
+  })
+
+  const dateError = computed(() => {
+    if (bookingDate.value) return null
+    const dateComplete = dateParts.day !== '' && dateParts.month !== '' && dateParts.year !== ''
+    if (!dateTouched.value && !dateComplete) return null
+    return 'Bitte ein gültiges Datum eingeben'
+  })
+
+  const priceError = computed(() =>
+    isValidPriceAmount(price.value.amount) ? null : 'Bitte einen gültigen Preis eingeben',
+  )
+
+  const intervalError = computed(() =>
+    isValidIntervalAmount(renewal.value.amount) ? null : 'Bitte eine ganze Zahl ab 1 eingeben',
+  )
+
+  const canSubmit = computed(() =>
+    Boolean(name.value.trim())
+    && Boolean(providerName.value?.trim())
+    && Boolean(bookingDate.value)
+    && priceError.value === null
+    && intervalError.value === null,
+  )
+
+  // The clear button empties the combobox without blurring it.
+  watch(providerName, value => {
+    if (!value?.trim()) providerTouched.value = true
+  })
 
   // on mount, load available categories and providers
   onMounted(async () => {
-    try {
-      await reloadCatalogs()
-    } catch (error) {
-      submitError.value = error instanceof Error ? error.message : 'Daten konnten nicht geladen werden'
-    } finally {
-      isLoading.value = false
-    }
+    await reloadCatalogs()
   })
+
+  function touchName() {
+    nameTouched.value = true
+  }
+
+  function touchProvider() {
+    providerTouched.value = true
+  }
+
+  function touchDate() {
+    dateTouched.value = true
+  }
 
   function selectExistingCategory(category: Category) {
     // if already selected, do nothing
@@ -186,12 +229,18 @@ export default function useSubscriptionCreation() {
   async function reloadCatalogs() {
     isLoading.value = true
 
-    const [categories, providers] = await Promise.all([
-      service.getAvailableCategories(),
-      service.getAvailableProviders(),
-    ])
-    availableCategories.value = categories
-    availableProviders.value = providers
+    try {
+      const [categories, providers] = await Promise.all([
+        service.getAvailableCategories(),
+        service.getAvailableProviders(),
+      ])
+      availableCategories.value = categories
+      availableProviders.value = providers
+    } catch (error) {
+      submitError.value = error instanceof Error ? error.message : 'Daten konnten nicht geladen werden'
+    } finally {
+      isLoading.value = false
+    }
   }
 
   async function resetForm() {
@@ -201,9 +250,11 @@ export default function useSubscriptionCreation() {
     dateParts.day = ''
     dateParts.month = ''
     dateParts.year = ''
-    bookingDate.value = ''
     providerName.value = ''
     providerSearch.value = ''
+    nameTouched.value = false
+    providerTouched.value = false
+    dateTouched.value = false
     selectedCategories.value = []
 
     await reloadCatalogs()
@@ -211,17 +262,12 @@ export default function useSubscriptionCreation() {
 
   async function submitSubscription() {
     submitError.value = null
+    touchName()
+    touchProvider()
+    touchDate()
 
-    if (!name.value.trim()) {
-      submitError.value = 'Bitte einen Namen eingeben'
-      return
-    }
-    if (!providerName.value.trim()) {
-      submitError.value = 'Bitte einen Vertragspartner eingeben'
-      return
-    }
-    if (!bookingDate.value) {
-      submitError.value = 'Bitte ein gültiges Datum eingeben'
+    const trimmedProvider = providerName.value?.trim() ?? ''
+    if (!canSubmit.value || !trimmedProvider) {
       return
     }
 
@@ -230,7 +276,7 @@ export default function useSubscriptionCreation() {
       await service.addSubscription(
         {
           name: name.value.trim(),
-          provider: { name: providerName.value.trim() } as ProviderAddDto,
+          provider: { name: trimmedProvider } as ProviderAddDto,
           categories: selectedCategories.value,
           price: price.value,
           renewal: renewal.value,
@@ -250,7 +296,6 @@ export default function useSubscriptionCreation() {
     name,
     price,
     renewal,
-    bookingDate,
     dateParts,
     providerName,
     providerSearch,
@@ -262,6 +307,15 @@ export default function useSubscriptionCreation() {
     isSubmitting,
     submitError,
     isLoading,
+    nameError,
+    providerError,
+    dateError,
+    priceError,
+    intervalError,
+    canSubmit,
+    touchName,
+    touchProvider,
+    touchDate,
     selectExistingCategory,
     removeCategory,
     createAndSelectCategory,

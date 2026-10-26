@@ -24,6 +24,15 @@ const {
   isSubmitting,
   submitError,
   isLoading,
+  nameError,
+  providerError,
+  dateError,
+  priceError,
+  intervalError,
+  canSubmit,
+  touchName,
+  touchProvider,
+  touchDate,
   selectExistingCategory,
   removeCategory,
   createAndSelectCategory,
@@ -58,7 +67,9 @@ const {
         variant="outlined"
         density="comfortable"
         hide-details="auto"
+        :error-messages="nameError || undefined"
         :prepend-inner-icon="mdiTagOutline"
+        @blur="touchName"
       />
 
       <div class="field horizontal">
@@ -73,6 +84,7 @@ const {
             min="0"
             placeholder="0.00"
           />
+          <p v-if="priceError" class="field-error">{{ priceError }}</p>
         </div>
         <div class="right">
           <label class="field-label" for="currency-select">Währung</label>
@@ -87,10 +99,11 @@ const {
       <div class="field date-row">
         <div class="field-label">Datum</div>
         <div class="date-inputs">
-          <input v-model="dateParts.day" maxlength="2" placeholder="DD" inputmode="numeric" />
-          <input v-model="dateParts.month" maxlength="2" placeholder="MM" inputmode="numeric" />
-          <input v-model="dateParts.year" maxlength="4" placeholder="YYYY" inputmode="numeric" />
+          <input v-model="dateParts.day" maxlength="2" placeholder="DD" inputmode="numeric" @blur="touchDate" />
+          <input v-model="dateParts.month" maxlength="2" placeholder="MM" inputmode="numeric" @blur="touchDate" />
+          <input v-model="dateParts.year" maxlength="4" placeholder="YYYY" inputmode="numeric" @blur="touchDate" />
         </div>
+        <p v-if="dateError" class="field-error">{{ dateError }}</p>
       </div>
 
       <v-combobox
@@ -103,8 +116,11 @@ const {
         variant="outlined"
         density="comfortable"
         hide-details="auto"
+        :error-messages="providerError || undefined"
         :prepend-inner-icon="mdiAccountOutline"
         clearable
+        @blur="touchProvider"
+        @click:clear="touchProvider"
       />
 
       <div class="field horizontal">
@@ -118,9 +134,12 @@ const {
               class="native-input interval-input"
               type="number"
               min="1"
+              step="1"
+              inputmode="numeric"
               placeholder="1"
             />
           </div>
+          <p v-if="intervalError" class="field-error">{{ intervalError }}</p>
         </div>
         <div class="right">
           <label class="field-label" for="interval-unit-select">Einheit</label>
@@ -143,7 +162,7 @@ const {
 
       <p v-if="submitError" class="submit-error">{{ submitError }}</p>
 
-      <button class="add-btn" type="submit" :disabled="isSubmitting || isLoading">
+      <button class="add-btn" type="submit" :disabled="!canSubmit || isSubmitting || isLoading">
         {{ isSubmitting ? 'Speichern…' : 'Hinzufügen' }}
       </button>
     </form>
@@ -273,7 +292,8 @@ const {
   cursor: not-allowed;
 }
 
-.submit-error {
+.submit-error,
+.field-error {
   color: #c62828;
   font-size: 13px;
   margin: 0;
