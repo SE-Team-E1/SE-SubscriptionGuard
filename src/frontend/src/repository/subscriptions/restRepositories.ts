@@ -2,33 +2,12 @@ import {
   type CategoryRepository, type ProviderRepository,
   type SubscriptionRepository,
 } from "@/repository/subscriptions/repositories.ts";
-import {Category, Provider, Subscription, EntityId} from "@/domain/subscriptionModel.ts";
-import type {Price, RenewalPeriod} from "@/domain/domain.ts";
-import { tags } from "typia";
 import type { RestSubscriptionDTO } from "./dto/subscriptionDto";
 import type { RestCategoryDTO } from "./dto/categoryDto";
 import type { RestProviderDTO } from "./dto/providerDto";
 import { parseRestSubscriptionDTO, parseRestSubscriptionDTOs, parseRestCategoryDTO, parseRestCategoryDTOs, parseRestProviderDTO, parseRestProviderDTOs } from "./restDtoValidation.ts";
 
 export class RestSubscriptionRepository implements SubscriptionRepository {
-  constructor (
-    // private providerRepository: ProviderRepository,
-    // private categoryRepository: CategoryRepository,
-  ) {}
-
-  // private async hydratedSubscriptionEntityFromDTO(dto: RestSubscriptionDTO): Promise<Subscription> {
-  //   let provider: Provider;
-  //   let categories: Category[];
-  //
-  //   try {
-  //     provider = await this.providerRepository.findByIdategory));(dto.providerId);
-  //     categories = await this.categoryRepository.findByIds(dto.categoriesId);
-  //   } catch (error) {
-  //     throw new Error(`Failed to hydrate subscription ${dto.id}: ${(error as Error).message}`);
-  //   }
-  //
-  //   return mapSubscriptionDTOtoEntity(dto, provider, [...categories]);
-  // }
 
   async findAll(): Promise<RestSubscriptionDTO[]> {
     let dtos: RestSubscriptionDTO[];
