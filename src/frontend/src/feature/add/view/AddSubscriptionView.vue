@@ -11,6 +11,19 @@ import {
   mdiTrayArrowDown,
 } from '@mdi/js'
 
+const currencies = [
+  { title: '€', value: Currency.EUR },
+  { title: '$', value: Currency.USD },
+  { title: '£', value: Currency.GBP },
+]
+
+const intervalUnits = [
+  { title: 'Tage', value: RenewalPeriodUnitEnum.DAYS },
+  { title: 'Wochen', value: RenewalPeriodUnitEnum.WEEKS },
+  { title: 'Monate', value: RenewalPeriodUnitEnum.MONTHS },
+  { title: 'Jahre', value: RenewalPeriodUnitEnum.YEARS },
+]
+
 const {
   name,
   price,
@@ -29,6 +42,7 @@ const {
   dateError,
   priceError,
   intervalError,
+  submitBlockReason,
   canSubmit,
   touchName,
   touchProvider,
@@ -43,15 +57,13 @@ const {
 <template>
   <DefaultAppBar title="Abonnement hinzufügen">
     <template #extension>
-      <div class="actions">
-        <button type="button" class="action-btn">
-          <v-icon :icon="mdiTrayArrowDown" size="small" />
+      <div class="d-flex ga-2 w-100 pb-2">
+        <v-btn type="button" class="palette-btn flex-grow-1" variant="flat" :prepend-icon="mdiTrayArrowDown">
           Import
-        </button>
-        <button type="button" class="action-btn">
-          <v-icon :icon="mdiCameraOutline" size="small" />
+        </v-btn>
+        <v-btn type="button" class="palette-btn flex-grow-1" variant="flat" :prepend-icon="mdiCameraOutline">
           Scan
-        </button>
+        </v-btn>
       </div>
     </template>
   </DefaultAppBar>
@@ -59,7 +71,7 @@ const {
   <div class="screen">
     <v-progress-linear v-if="isLoading" indeterminate class="mb-2" />
 
-    <form class="form-card" @submit.prevent="submitSubscription">
+    <form class="d-flex flex-column ga-3 pt-2" @submit.prevent="submitSubscription">
       <v-text-field
         v-model="name"
         label="Name"
@@ -72,39 +84,77 @@ const {
         @blur="touchName"
       />
 
-      <div class="field horizontal">
-        <div class="left">
-          <label class="field-label" for="cost-input">Kosten</label>
-          <input
-            id="cost-input"
+      <v-row align="start">
+        <v-col cols="8">
+          <v-text-field
             v-model.number="price.amount"
-            class="native-input"
+            label="Kosten"
             type="number"
             step="0.01"
             min="0"
             placeholder="0.00"
+            variant="outlined"
+            density="comfortable"
+            hide-details="auto"
+            :error-messages="priceError || undefined"
           />
-          <p v-if="priceError" class="field-error">{{ priceError }}</p>
-        </div>
-        <div class="right">
-          <label class="field-label" for="currency-select">Währung</label>
-          <select id="currency-select" v-model="price.currency" class="native-input native-select" aria-label="Währung">
-            <option :value="Currency.EUR">€</option>
-            <option :value="Currency.USD">$</option>
-            <option :value="Currency.GBP">£</option>
-          </select>
-        </div>
-      </div>
+        </v-col>
+        <v-col cols="4">
+          <v-select
+            v-model="price.currency"
+            :items="currencies"
+            label="Währung"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+          />
+        </v-col>
+      </v-row>
 
-      <div class="field date-row">
-        <div class="field-label">Datum</div>
-        <div class="date-inputs">
-          <input v-model="dateParts.day" maxlength="2" placeholder="DD" inputmode="numeric" @blur="touchDate" />
-          <input v-model="dateParts.month" maxlength="2" placeholder="MM" inputmode="numeric" @blur="touchDate" />
-          <input v-model="dateParts.year" maxlength="4" placeholder="YYYY" inputmode="numeric" @blur="touchDate" />
-        </div>
-        <p v-if="dateError" class="field-error">{{ dateError }}</p>
-      </div>
+      <v-row align="start">
+        <v-col cols="4">
+          <v-text-field
+            v-model="dateParts.day"
+            label="Tag"
+            placeholder="DD"
+            maxlength="2"
+            inputmode="numeric"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+            :error="Boolean(dateError)"
+            @blur="touchDate"
+          />
+        </v-col>
+        <v-col cols="4">
+          <v-text-field
+            v-model="dateParts.month"
+            label="Monat"
+            placeholder="MM"
+            maxlength="2"
+            inputmode="numeric"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+            :error="Boolean(dateError)"
+            @blur="touchDate"
+          />
+        </v-col>
+        <v-col cols="4">
+          <v-text-field
+            v-model="dateParts.year"
+            label="Jahr"
+            placeholder="YYYY"
+            maxlength="4"
+            inputmode="numeric"
+            variant="outlined"
+            density="comfortable"
+            hide-details="auto"
+            :error-messages="dateError || undefined"
+            @blur="touchDate"
+          />
+        </v-col>
+      </v-row>
 
       <v-combobox
         v-model="providerName"
@@ -123,34 +173,34 @@ const {
         @click:clear="touchProvider"
       />
 
-      <div class="field horizontal">
-        <div class="left">
-          <label class="field-label" for="interval-input">Intervall</label>
-          <div class="interval-input-wrap">
-            <v-icon :icon="mdiClockOutline" size="small" class="interval-icon" />
-            <input
-              id="interval-input"
-              v-model.number="renewal.amount"
-              class="native-input interval-input"
-              type="number"
-              min="1"
-              step="1"
-              inputmode="numeric"
-              placeholder="1"
-            />
-          </div>
-          <p v-if="intervalError" class="field-error">{{ intervalError }}</p>
-        </div>
-        <div class="right">
-          <label class="field-label" for="interval-unit-select">Einheit</label>
-          <select id="interval-unit-select" v-model="renewal.unit" class="native-input native-select" aria-label="Intervall-Einheit">
-            <option :value="RenewalPeriodUnitEnum.DAYS">Tage</option>
-            <option :value="RenewalPeriodUnitEnum.WEEKS">Wochen</option>
-            <option :value="RenewalPeriodUnitEnum.MONTHS">Monate</option>
-            <option :value="RenewalPeriodUnitEnum.YEARS">Jahre</option>
-          </select>
-        </div>
-      </div>
+      <v-row align="start">
+        <v-col cols="8">
+          <v-text-field
+            v-model.number="renewal.amount"
+            label="Intervall"
+            type="number"
+            min="1"
+            step="1"
+            inputmode="numeric"
+            placeholder="1"
+            variant="outlined"
+            density="comfortable"
+            hide-details="auto"
+            :error-messages="intervalError || undefined"
+            :prepend-inner-icon="mdiClockOutline"
+          />
+        </v-col>
+        <v-col cols="4">
+          <v-select
+            v-model="renewal.unit"
+            :items="intervalUnits"
+            label="Einheit"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+          />
+        </v-col>
+      </v-row>
 
       <CategoryPicker
         :available="selectableCategories"
@@ -160,11 +210,24 @@ const {
         @remove="removeCategory"
       />
 
-      <p v-if="submitError" class="submit-error">{{ submitError }}</p>
+      <v-alert
+        v-if="submitError"
+        type="error"
+        variant="text"
+        density="compact"
+        :text="submitError"
+      />
 
-      <button class="add-btn" type="submit" :disabled="!canSubmit || isSubmitting || isLoading">
-        {{ isSubmitting ? 'Speichern…' : 'Hinzufügen' }}
-      </button>
+      <v-btn
+        type="submit"
+        block
+        variant="flat"
+        class="palette-btn"
+        :disabled="!canSubmit || isSubmitting || isLoading"
+        :loading="isSubmitting"
+      >
+        {{ submitBlockReason ?? 'Hinzufügen' }}
+      </v-btn>
     </form>
   </div>
 </template>
@@ -174,128 +237,8 @@ const {
   padding: 0 var(--horizontal-screen-padding) 88px;
 }
 
-.actions {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-  padding-bottom: 8px;
-}
-
-.action-btn {
-  flex: 1;
+.palette-btn {
   background: var(--color-heading);
-  color: var(--vt-c-indigo);
-  border-radius: 8px;
-  padding: 10px;
-  border: none;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.form-card {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding-top: 8px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.field-label {
-  font-size: 13px;
-  opacity: 0.7;
-}
-
-.field.horizontal {
-  flex-direction: row;
-  gap: 8px;
-}
-
-.field.horizontal .left {
-  flex: 1;
-  width: 70%;
-}
-
-.field.horizontal .right {
-  width: 30%;
-}
-
-.native-input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 10px;
-  border: 1px solid var(--color-border);
-  background: var(--color-background);
-  font-size: 16px;
-  color: var(--color-text);
-}
-
-.native-select {
-  min-height: 44px;
-}
-
-.date-inputs {
-  display: flex;
-  gap: 8px;
-}
-
-.date-inputs input {
-  flex: 1;
-  text-align: center;
-  width: 33%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid var(--color-border);
-  background: var(--color-background);
-  font-size: 16px;
-  color: var(--color-text);
-}
-
-.interval-input-wrap {
-  position: relative;
-}
-
-.interval-icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  opacity: 0.6;
-}
-
-.interval-input {
-  padding-left: 36px;
-}
-
-.add-btn {
-  margin-top: 6px;
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  background: var(--color-heading);
-  color: var(--vt-c-indigo);
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.add-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.submit-error,
-.field-error {
-  color: #c62828;
-  font-size: 13px;
-  margin: 0;
+  color: var(--color-background);
 }
 </style>

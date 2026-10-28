@@ -74,9 +74,9 @@ async function confirmCreateCategory() {
 </script>
 
 <template>
-  <div class="category-box">
-    <div class="category-toolbar">
-      <v-icon :icon="mdiTagOutline" size="small" class="category-icon" />
+  <v-card variant="outlined" rounded="lg" class="category-card pa-3">
+    <div class="d-flex align-center ga-2">
+      <v-icon :icon="mdiTagOutline" size="small" class="flex-shrink-0 opacity-70" />
 
       <v-select
         v-model="selectedCategoryId"
@@ -87,7 +87,7 @@ async function confirmCreateCategory() {
         density="compact"
         variant="outlined"
         hide-details
-        class="category-select"
+        class="flex-grow-1"
         @update:model-value="onCategorySelected"
       >
         <template #item="{ props: itemProps, item }">
@@ -110,20 +110,21 @@ async function confirmCreateCategory() {
       </v-btn>
     </div>
 
-    <div v-if="selected.length" class="category-pills">
+    <div v-if="selected.length" class="d-flex flex-wrap ga-2 mt-3">
       <v-chip
         v-for="category in selected"
         :key="category.id.value"
+        class="palette-chip"
         closable
         size="small"
-        class="category-pill"
+        variant="outlined"
+        :prepend-icon="category.icon || undefined"
         @click:close="emit('remove', category)"
       >
-        <v-icon v-if="category.icon" :icon="category.icon" size="x-small" start />
         {{ category.name }}
       </v-chip>
     </div>
-  </div>
+  </v-card>
 
   <v-dialog v-model="showCreateDialog" max-width="420">
     <v-card title="Neue Kategorie">
@@ -134,104 +135,60 @@ async function confirmCreateCategory() {
           autofocus
           hide-details="auto"
           class="mb-4"
+          :error-messages="createError || undefined"
         />
 
-        <div class="icon-picker-label">Icon</div>
-        <div class="icon-grid">
-          <button
+        <div class="text-body-2 text-medium-emphasis mb-2">Icon</div>
+        <v-row>
+          <v-col
             v-for="iconOption in CATEGORY_ICON_OPTIONS"
             :key="iconOption.value"
-            type="button"
-            class="icon-option"
-            :class="{ selected: newCategoryIcon === iconOption.value }"
-            :aria-label="iconOption.label"
-            @click="newCategoryIcon = iconOption.value"
+            class="d-flex justify-center"
+            cols="2"
           >
-            <v-icon :icon="iconOption.value" size="small" />
-          </button>
-        </div>
-
-        <p v-if="createError" class="create-error">{{ createError }}</p>
+            <v-btn
+              icon
+              size="small"
+              :variant="newCategoryIcon === iconOption.value ? 'flat' : 'outlined'"
+              :class="newCategoryIcon === iconOption.value ? 'palette-btn' : 'icon-choice'"
+              :aria-label="iconOption.label"
+              @click="newCategoryIcon = iconOption.value"
+            >
+              <v-icon :icon="iconOption.value" size="small" />
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-card-text>
 
       <v-card-actions>
         <v-spacer />
         <v-btn variant="text" @click="showCreateDialog = false">Abbrechen</v-btn>
-        <v-btn color="primary" :loading="isCreating" @click="confirmCreateCategory">Erstellen</v-btn>
+        <v-btn class="palette-btn" variant="flat" :loading="isCreating" @click="confirmCreateCategory">Erstellen</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <style scoped>
-.category-box {
+.category-card {
   background: var(--color-background-mute);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  border-color: var(--color-border);
+  color: var(--color-text);
 }
 
-.category-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.category-icon {
-  flex-shrink: 0;
-  opacity: 0.7;
-}
-
-.category-select {
-  flex: 1;
-  min-width: 0;
-}
-
-.category-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.category-pill {
+.palette-chip {
   background: var(--color-background-mute);
   color: var(--color-text);
-  font-size: 18px;
-  padding: 8px 16px;
+  border-color: var(--color-border);
 }
 
-.icon-picker-label {
-  font-size: 13px;
-  margin-bottom: 8px;
-  opacity: 0.7;
+.palette-btn {
+  background: var(--color-heading);
+  color: var(--color-background);
 }
 
-.icon-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-}
-
-.icon-option {
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-background);
+.icon-choice {
   color: var(--color-text);
-  padding: 8px;
-  cursor: pointer;
-}
-
-.icon-option.selected {
-  border-color: var(--color-heading);
-  background: var(--color-background-soft);
-}
-
-.create-error {
-  margin-top: 12px;
-  color: #c62828;
-  font-size: 13px;
+  border-color: var(--color-border);
 }
 </style>

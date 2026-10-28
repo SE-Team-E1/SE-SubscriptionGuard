@@ -1,4 +1,4 @@
-import { computed, inject, onMounted, reactive, ref, watch } from 'vue'
+import { computed, inject, onMounted, reactive, ref } from 'vue'
 import { AddSubscriptionService } from '@/feature/add/service/addSubscriptionService'
 import { toBookingDateIso } from '@/feature/add/bookingDate'
 import type { CategoryAddDto } from '@/feature/add/dto/categoryAddDto'
@@ -91,7 +91,7 @@ export default function useSubscriptionCreation() {
   const providerTouched = ref(false)
   const dateTouched = ref(false)
 
-  const providerName = ref<string | null>('')
+  const providerName = ref<string | null>(null)
   const providerSearch = ref('')
   const availableProviders = ref<Provider[]>([])
   const availableCategories = ref<Category[]>([])
@@ -136,19 +136,29 @@ export default function useSubscriptionCreation() {
   )
 
   const nameError = computed(() => {
-    if (!nameTouched.value || name.value.trim()) return null
+    if (name.value && name.value.trim()) return null
     return 'Bitte einen Namen eingeben'
+  })
+  const nameUiError = computed(() => {
+    if (!nameTouched.value || !nameError.value) return null
+    return nameError.value
   })
 
   const providerError = computed(() => {
-    if (!providerTouched.value || providerName.value?.trim()) return null
+    if (providerName.value?.trim()) return null
     return 'Bitte einen Vertragspartner eingeben'
+  })
+  const providerUiError = computed(() => {
+    if (!providerTouched.value || !providerError.value) return null
+    return providerError.value
   })
 
   const dateError = computed(() => {
     if (bookingDate.value) return null
-    const dateComplete = dateParts.day !== '' && dateParts.month !== '' && dateParts.year !== ''
-    if (!dateTouched.value && !dateComplete) return null
+    return 'Bitte ein gültiges Datum eingeben'
+  })
+  const dateUiError = computed(() => {
+    if (!dateTouched.value || !dateError.value) return null
     return 'Bitte ein gültiges Datum eingeben'
   })
 
@@ -160,18 +170,16 @@ export default function useSubscriptionCreation() {
     isValidIntervalAmount(renewal.value.amount) ? null : 'Bitte eine ganze Zahl ab 1 eingeben',
   )
 
-  const canSubmit = computed(() =>
-    Boolean(name.value.trim())
-    && Boolean(providerName.value?.trim())
-    && Boolean(bookingDate.value)
-    && priceError.value === null
-    && intervalError.value === null,
-  )
-
-  // The clear button empties the combobox without blurring it.
-  watch(providerName, value => {
-    if (!value?.trim()) providerTouched.value = true
+  const submitBlockReason = computed(() => {
+    if (nameError.value) return nameError.value
+    if (priceError.value) return priceError.value
+    if (dateError.value) return dateError.value
+    if (providerError.value) return providerError.value
+    if (intervalError.value) return intervalError.value
+    return null
   })
+
+  const canSubmit = computed(() => submitBlockReason.value === null)
 
   // on mount, load available categories and providers
   onMounted(async () => {
@@ -250,7 +258,7 @@ export default function useSubscriptionCreation() {
     dateParts.day = ''
     dateParts.month = ''
     dateParts.year = ''
-    providerName.value = ''
+    providerName.value = null
     providerSearch.value = ''
     nameTouched.value = false
     providerTouched.value = false
@@ -307,11 +315,12 @@ export default function useSubscriptionCreation() {
     isSubmitting,
     submitError,
     isLoading,
-    nameError,
-    providerError,
-    dateError,
-    priceError,
-    intervalError,
+    nameError: nameUiError,
+    providerError: providerUiError,
+    dateError: dateUiError,
+    priceError: priceError,
+    intervalError: intervalError,
+    submitBlockReason,
     canSubmit,
     touchName,
     touchProvider,
