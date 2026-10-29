@@ -1,0 +1,66 @@
+@startuml list-filter-sequence-diagram
+
+'skinparam responseMessageBelowArrow true
+'autonumber
+
+actor User as u01
+participant "App" as c00
+participant "Vue Router" as c01
+participant "ListView" as c02
+participant "FilterView" as c03
+participant "useFilterState" as c07
+participant "ListSubscriptionService" as c04
+participant "subscriptionRepository" as c05
+participant "Backend" as c06
+
+u01 -> c00: Click "Subscriptions"
+
+c00 -> c01: /list
+
+c01 -> c02: Load Component
+
+c02 -> c03: render FilterView
+
+group load and display
+    c03 -> c07: init()
+
+    c07 --> c03: filterState
+
+    c03 --> c02: filterState
+
+    c02 -> c04: execute(filterState)
+
+    c04 -> c05: findAll()
+
+    c05 -> c06: fetch /api/abos
+
+    c06 --> c05: receive subscriptions
+
+    c05 --> c04: domain models
+
+    c04 -> c04: apply filterState\non domain models
+
+    c04 --> c02: filtered subscriptions
+
+    c02 --> u01: display subscriptions
+end
+
+group change filter (frontend only)
+    u01 -> c03: change filter
+
+    c03 -> c07: setFilter(criteria)
+
+    c07 --> c03: filterState
+
+    c03 --> c02: filterState
+
+    c02 -> c04: execute(filterState)
+
+    c04 -> c04: apply filterState\non loaded domain models
+
+    c04 --> c02: filtered subscriptions
+
+    c02 --> u01: display filtered subscriptions
+end
+
+@enduml

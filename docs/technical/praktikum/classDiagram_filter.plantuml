@@ -1,0 +1,38 @@
+@startuml
+ListSubscriptionService --> SubscriptionRepository
+ListSubscriptionService --> FilterState
+ListView --> ListSubscriptionService
+ListView --> FilterView
+FilterView --> useFilterState
+useFilterState --> FilterState
+
+Class ListView{
+  -FilterView filterView
+  -{Subscription[], function} useListSubscriptionService(FilterState)
+}
+Class FilterView{
+  -useFilterState useFilterState
+  +FilterState init()
+  +FilterState setFilter(criteria)
+}
+Class useFilterState{
+  -FilterState filterState
+  +FilterState setFilter(criteria)
+}
+Class FilterState{
+  -number minPrice
+  +FilterState init()
+}
+Class ListSubscriptionService{
+  -SubscriptionRepository subscriptionRepository
+  -CategoryRepository categoryRepository
+  -ProviderRepository providerRepository
+  Promise<Subscription[]> execute(FilterState)
+  -Subscription[] applyFilter(FilterState)
+}
+Class SubscriptionRepository{
+ Promise<RestSubscriptionDTO[]> findAll()
+ Promise<RestSubscriptionDTO[]> insert()
+ Promise<RestSubscriptionDTO[]> update()
+}
+@enduml
