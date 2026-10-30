@@ -15,9 +15,9 @@
     "types": ["node", "jsdom"],
     "strict": true,
     "strictNullChecks": true,
-    "plugins": [
-      { "transform": "typia/lib/transform" }
-    ],
+    // "plugins": [
+    //   { "transform": "typia/lib/transform" }
+    // ],
 
     // `vue-tsc --build` produces a .tsbuildinfo file for incremental type-checking.
     // Specified here to keep it out of the root directory.

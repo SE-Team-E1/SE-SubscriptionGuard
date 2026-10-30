@@ -1,5 +1,7 @@
 import typia from "typia";
-import type { RestProviderDTO, RestCategoryDTO, RestSubscriptionDTO } from "./restRepositories.ts";
+import type { RestProviderDTO } from "./dto/providerDto";
+import type { RestCategoryDTO } from "./dto/categoryDto";
+import type { RestSubscriptionDTO } from "./dto/subscriptionDto";
 
 // Provider Dto Validation
 export const parseRestProviderDTOs = (input: unknown): RestProviderDTO[] =>
