@@ -11,6 +11,19 @@ from .serializers import (
 )
 from drf_spectacular.utils import extend_schema, inline_serializer
 
+INVALID_CREDENTIALS = {'error': 'Invalid credentials'}
+
+
+def _find_user_for_login(login):
+  if '@' in login:
+    candidates = User.objects.filter(email__iexact=login)
+  else:
+    candidates = User.objects.filter(username=login)
+  matches = list(candidates[:2])
+  if len(matches) == 1:
+    return matches[0]
+  return None
+
 class UserRegistrationView(generics.CreateAPIView):
   queryset = User.objects.all()
   serializer_class = UserRegistrationSerializer
@@ -56,23 +69,19 @@ class UserRegistrationView(generics.CreateAPIView):
 def login_view(request):
   serializer = UserLoginSerializer(data=request.data)
   if serializer.is_valid():
-    username = serializer.validated_data['username']
+    login = serializer.validated_data['login']
     password = serializer.validated_data['password']
-    try:
-      user = User.objects.get(username=username)
-      if user.check_password(password):
-        refresh = RefreshToken.for_user(user)
-        return Response({
-          'access': str(refresh.access_token),
-          'refresh': str(refresh),
-          'user': UserSerializer(user).data,
-        }, status=status.HTTP_200_OK)
-      else:
-        return Response({
-          'error': 'Invalid credentials'
-        }, status=status.HTTP_401_UNAUTHORIZED)
-    except User.DoesNotExist:
-      return Response({
-        'error': 'User not found'
-      }, status=status.HTTP_401_UNAUTHORIZED)
+    user = _find_user_for_login(login)
+    if user is None:
+      # Hash anyway so unknown identifiers take as long as known ones.
+      User().set_password(password)
+      return Response(INVALID_CREDENTIALS, status=status.HTTP_401_UNAUTHORIZED)
+    if not user.check_password(password) or not user.is_active:
+      return Response(INVALID_CREDENTIALS, status=status.HTTP_401_UNAUTHORIZED)
+    refresh = RefreshToken.for_user(user)
+    return Response({
+      'access': str(refresh.access_token),
+      'refresh': str(refresh),
+      'user': UserSerializer(user).data,
+    }, status=status.HTTP_200_OK)
   return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

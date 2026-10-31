@@ -7,6 +7,219 @@ from .serializers import UserRegistrationSerializer
 User = get_user_model()
 
 PASSWORD = 'Sicher123!'
+WRONG_PASSWORD = 'Falsch123!'
+INVALID_CREDENTIALS = {'error': 'Invalid credentials'}
+USER_KEYS = {'id', 'username', 'email', 'first_name', 'last_name'}
+
+
+class LoginApiTest(APITestCase):
+
+  def setUp(self):
+    self.otto = User.objects.create_user(
+      username='otto', email='otto@example.de', password=PASSWORD,
+    )
+    self.inaktiv = User.objects.create_user(
+      username='inaktiv', email='inaktiv@example.de', password=PASSWORD, is_active=False,
+    )
+
+  def _login(self, data):
+    return self.client.post('/api/auth/login/', data, format='json')
+
+  def _assert_tokens(self, body):
+    for key in ('access', 'refresh'):
+      self.assertIsInstance(body[key], str)
+      self.assertTrue(body[key])
+
+  # -------------------------
+  # Login per E-Mail
+  # -------------------------
+
+  def test_login_with_email(self):  # T-1
+    # Arrange
+    data = {'login': 'otto@example.de', 'password': PASSWORD}
+
+    # Act
+    response = self._login(data)
+
+    # Assert
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    body = response.json()
+    self._assert_tokens(body)
+    self.assertEqual(body['user']['email'], 'otto@example.de')
+    self.assertEqual(set(body['user'].keys()), USER_KEYS)
+
+  def test_login_with_username(self):  # T-2
+    # Arrange
+    data = {'login': 'otto', 'password': PASSWORD}
+
+    # Act
+    response = self._login(data)
+
+    # Assert
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    body = response.json()
+    self._assert_tokens(body)
+    self.assertEqual(body['user']['username'], 'otto')
+
+  def test_login_with_email_ignores_case(self):  # T-3
+    # Arrange
+    data = {'login': 'OTTO@Example.DE', 'password': PASSWORD}
+
+    # Act
+    response = self._login(data)
+
+    # Assert
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertEqual(response.json()['user']['id'], self.otto.id)
+
+  def test_login_with_username_is_case_sensitive(self):  # T-4
+    # Arrange
+    data = {'login': 'OTTO', 'password': PASSWORD}
+
+    # Act
+    response = self._login(data)
+
+    # Assert
+    self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+    self.assertEqual(response.json(), INVALID_CREDENTIALS)
+
+  def test_login_after_registration(self):  # T-16
+    # Arrange
+    registration = {
+      'username': 'neu',
+      'email': ' Neu@Example.de ',
+      'password': PASSWORD,
+      'password_confirm': PASSWORD,
+    }
+    registered = self.client.post('/api/auth/register/', registration, format='json')
+
+    # Act
+    response = self._login({'login': 'neu@example.de', 'password': PASSWORD})
+
+    # Assert
+    self.assertEqual(registered.status_code, status.HTTP_201_CREATED)
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self._assert_tokens(response.json())
+
+  def test_login_with_email_surrounded_by_whitespace(self):  # T-22
+    # Arrange
+    data = {'login': ' otto@example.de ', 'password': PASSWORD}
+
+    # Act
+    response = self._login(data)
+
+    # Assert
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+  # -------------------------
+  # Fehlerantworten
+  # -------------------------
+
+  def test_wrong_password_and_unknown_email_look_the_same(self):  # T-5
+    # Arrange: user otto from setUp
+
+    # Act
+    wrong_password = self._login({'login': 'otto@example.de', 'password': WRONG_PASSWORD})
+    unknown = self._login({'login': 'niemand@example.de', 'password': PASSWORD})
+
+    # Assert
+    self.assertEqual(wrong_password.status_code, status.HTTP_401_UNAUTHORIZED)
+    self.assertEqual(unknown.status_code, status.HTTP_401_UNAUTHORIZED)
+    self.assertEqual(wrong_password.content, unknown.content)
+    self.assertEqual(wrong_password.json(), INVALID_CREDENTIALS)
+
+  def test_wrong_password_and_unknown_username_look_the_same(self):  # T-6
+    # Arrange: user otto from setUp
+
+    # Act
+    wrong_password = self._login({'login': 'otto', 'password': WRONG_PASSWORD})
+    unknown = self._login({'login': 'niemand', 'password': PASSWORD})
+
+    # Assert
+    self.assertEqual(wrong_password.status_code, status.HTTP_401_UNAUTHORIZED)
+    self.assertEqual(unknown.status_code, status.HTTP_401_UNAUTHORIZED)
+    self.assertEqual(wrong_password.content, unknown.content)
+    self.assertEqual(wrong_password.json(), INVALID_CREDENTIALS)
+
+  def test_inactive_account_is_rejected(self):  # T-7
+    # Arrange: inactive user from setUp, response for an unknown account as reference
+    unknown = self._login({'login': 'niemand@example.de', 'password': PASSWORD})
+
+    for login in ('inaktiv@example.de', 'inaktiv'):
+      with self.subTest(login=login):
+        # Act
+        response = self._login({'login': login, 'password': PASSWORD})
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.content, unknown.content)
+        self.assertNotIn('access', response.json())
+        self.assertNotIn('refresh', response.json())
+
+  def test_ambiguous_email_is_rejected(self):  # T-21
+    # Arrange: second user with the same email in other case, response for an unknown account as reference
+    unknown = self._login({'login': 'niemand@example.de', 'password': PASSWORD})
+    User.objects.create_user(username='otto_alt', email='OTTO@example.de', password=PASSWORD)
+
+    # Act
+    by_email = self._login({'login': 'otto@example.de', 'password': PASSWORD})
+    by_username = self._login({'login': 'otto', 'password': PASSWORD})
+
+    # Assert
+    self.assertEqual(by_email.status_code, status.HTTP_401_UNAUTHORIZED)
+    self.assertEqual(by_email.content, unknown.content)
+    self.assertNotIn('access', by_email.json())
+    self.assertEqual(by_username.status_code, status.HTTP_200_OK)
+
+  # -------------------------
+  # Validierung
+  # -------------------------
+
+  def test_missing_fields_fail(self):  # T-8
+    # Arrange
+    cases = (
+      ({'password': PASSWORD}, 'login'),
+      ({'login': 'otto'}, 'password'),
+    )
+
+    for data, field in cases:
+      with self.subTest(field=field):
+        # Act
+        response = self._login(data)
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn(field, response.json())
+
+  def test_blank_fields_fail(self):  # T-9
+    # Arrange
+    cases = (
+      ({'login': '', 'password': PASSWORD}, 'login'),
+      ({'login': 'otto', 'password': ''}, 'password'),
+    )
+
+    for data, field in cases:
+      with self.subTest(field=field):
+        # Act
+        response = self._login(data)
+
+        # Assert
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn(field, response.json())
+
+  def test_username_field_is_not_accepted(self):  # T-10
+    # Arrange
+    data = {'username': 'otto', 'password': PASSWORD}
+
+    # Act
+    response = self._login(data)
+
+    # Assert
+    self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    body = response.json()
+    self.assertIn('login', body)
+    self.assertNotIn('access', body)
+    self.assertNotIn('refresh', body)
 
 
 class RegistrationApiTest(APITestCase):
