@@ -338,6 +338,7 @@ entity "auth_user" as user {
   * id : INTEGER <<PK>>
   --
   * username : VARCHAR
+  * email : VARCHAR (Pflicht, lowercase, eindeutig (nur Anwendungsebene))
   * password : VARCHAR (Hash)
   ...
 }
@@ -452,7 +453,7 @@ WARNING: In `feature/79` wurden die Django-URLs auf `path('api/', include('abos.
 
 | POST
 | `/api/auth/login/`
-| Nutzer einloggen; gibt `access`- und `refresh`-JWT zurück
+| Nutzer einloggen per E-Mail oder Username (Feld `login`); gibt `access`-, `refresh`-JWT und `user` zurück; einheitliche 401 bei jedem Fehlschlag
 | Implementiert (`feature/79`)
 
 | POST
@@ -513,7 +514,7 @@ WARNING: In `feature/79` wurden die Django-URLs auf `path('api/', include('abos.
 }
 ----
 
-==== DTO-Format: Auth (Register / Login Response)
+==== DTO-Format: Auth (Register Response)
 
 [source,json]
 ----
@@ -522,6 +523,37 @@ WARNING: In `feature/79` wurden die Django-URLs auf `path('api/', include('abos.
   "refresh": "<JWT Refresh Token>"
 }
 ----
+
+==== DTO-Format: Auth (Login Request)
+
+`login` ist eine E-Mail-Adresse (enthält `@`, Groß-/Kleinschreibung egal) oder ein Username (case-sensitiv).
+
+[source,json]
+----
+{
+  "login": "<E-Mail oder Username>",
+  "password": "<Passwort>"
+}
+----
+
+==== DTO-Format: Auth (Login Response)
+
+[source,json]
+----
+{
+  "access": "<JWT Access Token>",
+  "refresh": "<JWT Refresh Token>",
+  "user": {
+    "id": 1,
+    "username": "<Username>",
+    "email": "<E-Mail>",
+    "first_name": "<Vorname>",
+    "last_name": "<Nachname>"
+  }
+}
+----
+
+Bei unbekannter Kennung, falschem Passwort oder deaktiviertem Account antwortet der Login immer mit `401` und `{"error": "Invalid credentials"}`.
 
 ---
 
