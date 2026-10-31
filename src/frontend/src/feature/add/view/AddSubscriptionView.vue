@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import DefaultAppBar from '@/feature/DefaultAppBar.vue'
 import CategoryPicker from '@/feature/add/view/CategoryPicker.vue'
 import useSubscriptionCreation from '@/feature/add/useSubscriptionCreation'
 import { Currency, RenewalPeriodUnitEnum } from '@/domain/domain'
 import {
   mdiAccountOutline,
-  mdiCameraOutline,
   mdiClockOutline,
   mdiTagOutline,
-  mdiTrayArrowDown,
 } from '@mdi/js'
 
 const currencies = [
@@ -55,19 +52,6 @@ const {
 </script>
 
 <template>
-  <DefaultAppBar title="Abonnement hinzufügen">
-    <template #extension>
-      <div class="d-flex ga-2 w-100 pb-2">
-        <v-btn type="button" class="palette-btn flex-grow-1" variant="flat" :prepend-icon="mdiTrayArrowDown">
-          Import
-        </v-btn>
-        <v-btn type="button" class="palette-btn flex-grow-1" variant="flat" :prepend-icon="mdiCameraOutline">
-          Scan
-        </v-btn>
-      </div>
-    </template>
-  </DefaultAppBar>
-
   <div class="screen">
     <v-progress-linear v-if="isLoading" indeterminate class="mb-2" />
 
