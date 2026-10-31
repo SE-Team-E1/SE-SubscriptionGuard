@@ -1,9 +1,9 @@
 // --- 1. Projektthema -------------------------
 = SE I - Projektdokumentation: {project-name}
 // --- 2. Teammitglieder -----------------------
-Vorname Nachname <s00000@htw-dresden.de>; Vorname Nachname <s00000@htw-dresden.de>; Vorname Nachname <s00000@htw-dresden.de>; Vorname Nachname <s00000@htw-dresden.de>; Vorname Nachname <s00000@htw-dresden.de>; Vorname Nachname <s00000@htw-dresden.de>
+Jannik Thiele <s88210@htw-dresden.de>; Niels Wiesner <s88199@htw-dresden.de>; Quôc Dat Nguyên <s88784@htw-dresden.de>; Juan Ramiro_Groh_Fili <s88773@htw-dresden.de>; Johannes Meinck <s88889@htw-dresden.de>; Franz Rehschuh <s88216@htw-dresden.de>; Lennox Schmollny <s88178@htw-dresden.de>
 // --- 3. Abgabedatum --------------------------
-01. Januar 2025
+06. Juli 2026
 // ---------------------------------------------
 :docs: ../docs
 include::{docs}/_includes/default-attributes.inc.adoc[]
@@ -42,7 +42,7 @@ include::{docs}/_includes/default-attributes.inc.adoc[]
 :imagesdir: {docs-team}/images
 
 // Teamcharta
-include::{docs-team}/teamcharter.adoc[lines=1..1;4..-1,leveloffset=+1]
+include::{docs-team}/team_charter.adoc[lines=1..1;4..-1,leveloffset=+1]
 <<<
 
 // ---------------------------------------------

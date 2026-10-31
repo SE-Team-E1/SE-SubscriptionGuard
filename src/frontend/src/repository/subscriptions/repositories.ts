@@ -1,7 +1,6 @@
-import type {
-  RestCategoryDTO, RestProviderDTO,
-  RestSubscriptionDTO
-} from "@/repository/subscriptions/restRepositories.ts";
+import type { RestCategoryDTO } from "./dto/categoryDto";
+import type { RestProviderDTO } from "./dto/providerDto";
+import type { RestSubscriptionDTO } from "./dto/subscriptionDto";
 
 export interface SubscriptionRepository {
   findAll(): Promise<RestSubscriptionDTO[]>;

@@ -8,10 +8,7 @@ import type {
   CategoryRepository, ProviderRepository,
   SubscriptionRepository
 } from "@/repository/subscriptions/repositories.ts";
-import type {
-  RestProviderDTO,
-  RestSubscriptionDTO
-} from "@/repository/subscriptions/restRepositories.ts";
+import type { RestSubscriptionDTO } from "@/repository/subscriptions/dto/subscriptionDto";
 
 export function mapSubscriptionDTOtoEntity(dto: RestSubscriptionDTO, provider: Provider, categories: Category[]): Subscription {
   return Subscription.rehydrate({
@@ -39,20 +36,6 @@ export function mapSubscriptionEntityToDTO(subscription: Subscription): RestSubs
     renewal: subscription.renewal,
     bookingDate: subscription.bookingDate.toISOString()
   }
-}
-
-function mapProviderEntityToDTO(provider: Provider): RestProviderDTO {
-  return {
-    id: provider.id.value,
-    name: provider.name,
-  }
-}
-
-function mapProviderDTOtoEntity(dto: RestProviderDTO): Provider {
-  return Provider.rehydrate({
-    id: EntityId.fromString(dto.id),
-    name: dto.name
-  })
 }
 
 export class ListSubscriptionService {

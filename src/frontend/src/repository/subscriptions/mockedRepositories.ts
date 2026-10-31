@@ -1,118 +1,96 @@
 import type {
   CategoryRepository,
   ProviderRepository,
-  SubscriptionRepository
+  SubscriptionRepository,
 } from "./repositories.ts";
-import {Category} from "@/domain/subscriptionModel.ts";
-import {
-  type RestCategoryDTO, type RestProviderDTO, type RestSubscriptionDTO
-} from "@/repository/subscriptions/restRepositories.ts";
+import { Category } from "@/domain/subscriptionModel.ts";
+import type { RestCategoryDTO } from "./dto/categoryDto";
+import type { RestProviderDTO } from "./dto/providerDto";
+import type { RestSubscriptionDTO } from "./dto/subscriptionDto";
+import { mdiMovie, mdiMusic, mdiHeartPulse } from "@mdi/js";
 
-export class MockedSubscriptionRepository implements SubscriptionRepository{
-  private subscriptions: RestSubscriptionDTO[] = [];
+export class MockedSubscriptionRepository implements SubscriptionRepository {
+  private subscriptions: RestSubscriptionDTO[];
 
-  constructor(initSubscriptions?: RestSubscriptionDTO[]) {
-    if(initSubscriptions) {
-      this.subscriptions = [...initSubscriptions];
-    }
+  constructor(initSubscriptions: RestSubscriptionDTO[] = []) {
+    this.subscriptions = [...initSubscriptions];
   }
 
   findAll(): Promise<RestSubscriptionDTO[]> {
     return Promise.resolve([...this.subscriptions]);
   }
 
-  insert(newSubscription: RestSubscriptionDTO): Promise<RestSubscriptionDTO> {
-    this.subscriptions.push(newSubscription);
-    return Promise.resolve(newSubscription);
+  insert(subscription: RestSubscriptionDTO): Promise<RestSubscriptionDTO> {
+    this.subscriptions.push(subscription);
+    return Promise.resolve(subscription);
   }
 
   update(subscription: RestSubscriptionDTO): Promise<RestSubscriptionDTO> {
-    let subscriptionToUpdate = this.subscriptions.find(s => s.id === subscription.id);
-    if(subscriptionToUpdate) {
-      // TODO when editing is supported
-      return Promise.reject("not yet supported");
-      //return Promise.resolve(subscriptionToUpdate);
+    if (!this.subscriptions.some((item) => item.id === subscription.id)) {
+      return Promise.reject(new Error(`Could not find subscription with id ${subscription.id}`));
     }
-    return Promise.reject(new Error("Could not find subscription with id " + subscription.id));
+    return Promise.reject(new Error("Not yet supported"));
   }
 }
 
 export class MockedCategoryRepository implements CategoryRepository {
-  private categories : RestCategoryDTO[] = [
-    Category.create({name: "Entertainment", icon:""}),
-    Category.create({name: "Music", icon:""}),
-    Category.create({name: "Health", icon: ""})
-  ].map(c => ({id: c.id.value, name: c.name, icon: c.icon}));
+  private categories: RestCategoryDTO[] = [
+    Category.create({ name: "Entertainment", icon: mdiMovie }),
+    Category.create({ name: "Music", icon: mdiMusic }),
+    Category.create({ name: "Health", icon: mdiHeartPulse }),
+  ].map((category) => ({ id: category.id.value, name: category.name, icon: category.icon }));
 
-  constructor(initCategories?: RestCategoryDTO[]) {
-    if(initCategories) {
-      this.categories.push(...initCategories);
-    }
+  constructor(initCategories: RestCategoryDTO[] = []) {
+    this.categories.push(...initCategories);
   }
 
   findAll(): Promise<RestCategoryDTO[]> {
     return Promise.resolve([...this.categories]);
   }
 
-  insert(newCategory: RestCategoryDTO): Promise<RestCategoryDTO> {
-    return Promise.reject("not yet supported");
+  insert(category: RestCategoryDTO): Promise<RestCategoryDTO> {
+    this.categories.push(category);
+    return Promise.resolve(category);
   }
 
-  update(category: RestCategoryDTO): Promise<RestCategoryDTO> {
-    return Promise.reject("not yet supported");
+  update(_category: RestCategoryDTO): Promise<RestCategoryDTO> {
+    return Promise.reject(new Error("Not yet supported"));
   }
 
-  findByIds(id: string[]): Promise<RestCategoryDTO[]> {
-    let success = true;
-    let categoriesFound = id.map(id => {
-      let categoryFound = this.categories.find(c => c.id === id);
-      if(categoryFound) {
-        return categoryFound;
-      }
-      success = false;
-    })
-    if(success) {
-      return Promise.resolve(categoriesFound as RestCategoryDTO[]);
+  findByIds(ids: string[]): Promise<RestCategoryDTO[]> {
+    const found = ids.map((id) => this.categories.find((category) => category.id === id));
+    if (found.some((category) => !category)) {
+      return Promise.reject(new Error("Could not find category"));
     }
-    return Promise.reject("Could not find category");
+    return Promise.resolve(found as RestCategoryDTO[]);
   }
 }
 
 export class MockedProviderRepository implements ProviderRepository {
-  private providers : RestProviderDTO[] = []
+  private providers: RestProviderDTO[];
 
-  constructor(initProviders?: RestProviderDTO[]) {
-    if(initProviders) {
-      this.providers.push(...initProviders);
-    }
+  constructor(initProviders: RestProviderDTO[] = []) {
+    this.providers = [...initProviders];
   }
 
   findAll(): Promise<RestProviderDTO[]> {
     return Promise.resolve([...this.providers]);
   }
 
-
-  findByIds(id: string[]): Promise<RestProviderDTO[]> {
-    let success = true;
-    let providersFound = id.map(id => {
-      let providerFound = this.providers.find(c => c.id === id);
-      if(providerFound) {
-        return providerFound;
-      }
-      success = false;
-    })
-    if(success) {
-      return Promise.resolve(providersFound as RestCategoryDTO[]);
+  findByIds(ids: string[]): Promise<RestProviderDTO[]> {
+    const found = ids.map((id) => this.providers.find((provider) => provider.id === id));
+    if (found.some((provider) => !provider)) {
+      return Promise.reject(new Error("Could not find provider"));
     }
-    return Promise.reject("Could not find provider");
+    return Promise.resolve(found as RestProviderDTO[]);
   }
 
-  insert(newProvider: RestProviderDTO): Promise<RestProviderDTO> {
-    this.providers.push(newProvider);
-    return Promise.resolve(newProvider);
+  insert(provider: RestProviderDTO): Promise<RestProviderDTO> {
+    this.providers.push(provider);
+    return Promise.resolve(provider);
   }
 
-  update(provider: RestProviderDTO): Promise<RestProviderDTO> {
-    return Promise.reject("not yet supported");
+  update(_provider: RestProviderDTO): Promise<RestProviderDTO> {
+    return Promise.reject(new Error("Not yet supported"));
   }
 }

@@ -1,6 +1,6 @@
 import './assets/main.css'
 
-import {createApp, inject} from 'vue'
+import {createApp} from 'vue'
 import { createPinia } from 'pinia'
 
 // Vuetify
@@ -17,11 +17,9 @@ import {
   type CategoryRepository, type ProviderRepository,
   type SubscriptionRepository
 } from "./repository/subscriptions/repositories.ts";
-import {
-  type RestCategoryDTO,
-  type RestProviderDTO,
-  type RestSubscriptionDTO,
-} from "@/repository/subscriptions/restRepositories.ts";
+import type { RestCategoryDTO } from "@/repository/subscriptions/dto/categoryDto";
+import type { RestProviderDTO } from "@/repository/subscriptions/dto/providerDto";
+import type { RestSubscriptionDTO } from "@/repository/subscriptions/dto/subscriptionDto";
 import {
   MockedCategoryRepository, MockedProviderRepository,
   MockedSubscriptionRepository

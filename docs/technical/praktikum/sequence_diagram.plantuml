@@ -1,0 +1,36 @@
+@startuml example-sequence-diagram
+
+'skinparam responseMessageBelowArrow true
+'autonumber
+
+actor User as u01
+participant "App" as c00
+participant "Vue Router" as c01
+participant "ListView" as c02 
+participant "ListSubscriptionService" as c04 
+participant "subscriptionRepository" as c05 
+participant "Backend" as c06 
+
+u01 -> c00: Click "Subscriptions"
+
+c00 -> c01: /list
+
+c01 -> c02: Load Component
+
+c02 -> c04: execute()
+
+c04 -> c05: findAll()
+
+c05 -> c06: fetch /api/abos
+
+
+c06 -> c05: receive subscriptions
+
+c05 -> c04: domain models
+
+c04 -> c02: ...
+
+c02 -> u01: display subscriptions
+
+
+@enduml

@@ -2,78 +2,12 @@ import {
   type CategoryRepository, type ProviderRepository,
   type SubscriptionRepository,
 } from "@/repository/subscriptions/repositories.ts";
-import {Category, Provider, Subscription, EntityId} from "@/domain/subscriptionModel.ts";
-import type {Price, RenewalPeriod} from "@/domain/domain.ts";
-
-export interface RestSubscriptionDTO {
-  id: string;
-  createdAt: string; // Datumsformat ISO-8601
-  name: string;
-  providerId: string
-  categoriesId: string[];
-  price: Price;
-  renewal: RenewalPeriod;
-  bookingDate: string; // Datumsformat ISO-8601
-}
-
-export interface RestCategoryDTO {
-  id: string,
-  name: string,
-  icon: string
-}
-
-export interface RestProviderDTO {
-  id: string,
-  name: string
-}
-
-function mapSubscriptionDTOtoEntity(dto: RestSubscriptionDTO, provider: Provider, categories: Category[]): Subscription {
-  return Subscription.rehydrate({
-    id: EntityId.fromString(dto.id),
-    createdAt: new Date(dto.createdAt), // TODO discuss usage of Date type and which standard the response string follows
-
-    name: dto.name,
-    provider: provider,
-    categories: categories,
-
-    price: dto.price,
-    bookingDate: new Date(dto.bookingDate),
-    renewal: dto.renewal
-  })
-}
-
-function mapSubscriptionEntityToDTO(subscription: Subscription): RestSubscriptionDTO {
-  return {
-    id: subscription.id.value,
-    createdAt: subscription.createdAt.toISOString(),
-    name: subscription.name,
-    providerId: subscription.provider.id.value,
-    categoriesId: subscription.categories.map(c => c.id.value),
-    price: subscription.price,
-    renewal: subscription.renewal,
-    bookingDate: subscription.bookingDate.toISOString()
-  }
-}
+import type { RestSubscriptionDTO } from "./dto/subscriptionDto";
+import type { RestCategoryDTO } from "./dto/categoryDto";
+import type { RestProviderDTO } from "./dto/providerDto";
+import { parseRestSubscriptionDTO, parseRestSubscriptionDTOs, parseRestCategoryDTO, parseRestCategoryDTOs, parseRestProviderDTO, parseRestProviderDTOs } from "./restDtoValidation.ts";
 
 export class RestSubscriptionRepository implements SubscriptionRepository {
-  constructor (
-    // private providerRepository: ProviderRepository,
-    // private categoryRepository: CategoryRepository,
-  ) {}
-
-  // private async hydratedSubscriptionEntityFromDTO(dto: RestSubscriptionDTO): Promise<Subscription> {
-  //   let provider: Provider;
-  //   let categories: Category[];
-  //
-  //   try {
-  //     provider = await this.providerRepository.findById(dto.providerId);
-  //     categories = await this.categoryRepository.findByIds(dto.categoriesId);
-  //   } catch (error) {
-  //     throw new Error(`Failed to hydrate subscription ${dto.id}: ${(error as Error).message}`);
-  //   }
-  //
-  //   return mapSubscriptionDTOtoEntity(dto, provider, [...categories]);
-  // }
 
   async findAll(): Promise<RestSubscriptionDTO[]> {
     let dtos: RestSubscriptionDTO[];
@@ -83,11 +17,13 @@ export class RestSubscriptionRepository implements SubscriptionRepository {
         throw new Error(`HTTP ${response.status}`);
       }
 
-      dtos = await response.json();
+      const jsonResponse: unknown = await response.json();
+      dtos = parseRestSubscriptionDTOs(jsonResponse);
+      return dtos;
+
     } catch (error: any) {
       throw new Error(`Could not fetch subscriptions}`, {cause: error});
     }
-    return dtos;
   }
 
   async insert(newSubscription: RestSubscriptionDTO): Promise<RestSubscriptionDTO> {
@@ -102,7 +38,10 @@ export class RestSubscriptionRepository implements SubscriptionRepository {
       if(!response.ok){
         throw new Error(`Could not create new Subscription. Request status: ${response.status}`);
       }
-      const dtoResult: RestSubscriptionDTO = await response.json();
+
+      const jsonResponse: unknown = await response.json();
+      const dtoResult: RestSubscriptionDTO = parseRestSubscriptionDTO(jsonResponse);
+
       return dtoResult;
 
 
@@ -138,11 +77,14 @@ export class RestCategoryRepository implements CategoryRepository {
         throw new Error(`HTTP ${response.status}`);
       }
 
-      dtos = await response.json();
+      const jsonResponse: unknown = await response.json();
+      dtos = parseRestCategoryDTOs(jsonResponse);
+
+      return dtos;
+
     } catch (error: any) {
       throw new Error(`Could not fetch subscriptions}`, {cause: error});
     }
-    return dtos;
   }
 
   findByIds(id: string[]): Promise<RestCategoryDTO[]> {
@@ -166,11 +108,13 @@ export class RestProviderRepository implements ProviderRepository {
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
-      dtos = await response.json();
+
+      const jsonResponse: unknown = await response.json();
+      dtos = parseRestProviderDTOs(jsonResponse);
+      return dtos;
     } catch (error: any) {
       throw new Error(`Could not fetch providers`, {cause: error});
     }
-    return dtos;
   }
 
   findByIds(id: string[]): Promise<RestProviderDTO[]> {

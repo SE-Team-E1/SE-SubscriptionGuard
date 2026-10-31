@@ -1,4 +1,4 @@
-= Produktkonzept: {project-name}
+= Produktkonzept: SubscriptionGuard
 include::../_includes/default-attributes.inc.adoc[]
 {authoren}
 {localdatetime}
@@ -24,7 +24,9 @@ Lösung zu nennen. 3–5 Sätze genügen._
 // Lernräume. Die Suche nach freien Plätzen kostet täglich wertvolle Zeit und führt zu Frust.
 // Eine einfache, mobil nutzbare Lösung fehlt bisher."]
 
+____
 Nahezu jeder Mensch sieht sich heutzutage zunehmend mit Abomodellen konfrontiert. Doch Abonnements erschweren, besonders in der Menge, ein bewusstes, transparentes und verantwortungsvolles Finanzmanagement, da sie von Natur aus unübersichtlich und unberechnbar sind. Es fehlt der Überblick und spezialisierte, einfach gehaltene Tools.
+____
 
 == Produktvision
 
@@ -40,13 +42,16 @@ ____
 
 //Beispiel: Für Studierende der HTWD, die zu wenig Zeit in der Mittagspause zum Essen haben, ist Flying Burger ein  Lieferdient für Burger, der per Drohne liefert. Anders als landgestützte Lieferdienste kann unser Produkt durchs Fenster direkt in den Hörsaal liefern.
 
-NOTE: Das Visions-Statement kann im Team mit der „Elevator Pitch"-Methode oder dem „Future Press Release"-Format erarbeitet werden.
+// NOTE: Das Visions-Statement kann im Team mit der „Elevator Pitch"-Methode oder dem „Future Press Release"-Format erarbeitet werden.
 
 === Zielbild
 
 _Optional: Beschreibe in 2–4 Sätzen, wie die Welt mit diesem Produkt aussieht. Was hat sich für die Nutzer:innen verändert?_
 //[Hier das Zielbild beschreiben]
 
+____
+Studierende und junge Erwachsene behalten den Überblick über ihre Abonnements — ohne Überraschungen bei der nächsten Abbuchung, ohne verpasste Kündigungsfristen. SubscriptionGuard ersetzt die zerstreuten Notizen und Erinnerungen durch eine einzige, übersichtliche Anlaufstelle: Abos erfassen, Kosten auf einen Blick sehen, rechtzeitig kündigen.
+____
 
 == Produktpositionierung
 _Wer sind die Zielgruppen, und wie positioniert sich das Produkt im Vergleich zu bestehenden Alternativen?_
@@ -58,10 +63,13 @@ _Wer sind die Zielgruppen, und wie positioniert sich das Produkt im Vergleich zu
 | Zielgruppe | Beschreibung
 
 | Studierende
-| Technisch erfahren mit einer Vielzahl digitaler Abonnements in einer vergleichsweise schwierigen? finanziellen Situation.
+| Junge Erwachsene mit mehreren digitalen Abonnements, die den Überblick über laufende Kosten und Kündigungsfristen verlieren. Wollen schnelle, unkomplizierte Verwaltung ohne Aufwand.
 
-| Junge Leute allgemein
-| 20 - 50 Jahre mit vielen Abonnements
+| Datenschutzbewusste Nutzer
+| Personen, die keine Registrierung oder Datenweitergabe wünschen und ihre Abos ausschließlich lokal verwalten wollen.
+
+| Technikaffine Optimierer
+| Nutzer mit gutem Finanzverständnis, die Ausgaben aktiv analysieren und Einsparpotenziale identifizieren wollen.
 
 // | [Weitere Zielgruppe]
 // | [Kurzbeschreibung]
@@ -113,7 +121,7 @@ erklärt, warum bestimmte Entscheidungen getroffen wurden.
 
 | Studenten
 | Hauptnutzer; wollen Abo-Konditionen überblicken und optimieren
-| 
+|
 - Übersichtlichkeit, einfache Bediernung, möglichst wenig manuelle Arbeit +
 - Einfaches Abo-Management +
 - Hilfe Abo-Nutzen zu bewerten +
@@ -126,25 +134,42 @@ erklärt, warum bestimmte Entscheidungen getroffen wurden.
 |
 - Umsetzung im Rahmen der Fähigkeiten +
 - Komplexität gering halten +
-- möglichst viele Bibliotheken verwenden + 
+- möglichst viele Bibliotheken verwenden +
 - rechtlichen Aufwand gering halten +
 | Hoch
+
+| Behörden
+| Einhaltung der Gesetzgebung
+| Einhaltung von Nutzerinteressen/Datenschutz; kein unerlaubtes Weiterleiten von Daten an Dritte; ordnungsgemäße Datenspeicherung (verschlüsselt, …)
+| Hoch
+
+| Werbekunden / Partner
+| Anbieter Abomodelle, Produkt fördert Geschäftsinteressen
+| Interesse an Werbung auf der Platform, Bewerben von ihren günstigeren Abos, Nutzer ergänzende Abos vorschlagen
+| Mittel
+
+| Datenanbieter (z. B. Vergleichsportale)
+| Liefern Preise, Alternativen und Marktinfos.
+| —
+| Mittel
 
 | Anbieter von Abomodellen
 | Bieten Gestaltungsgrundlage für Erfassung, Kündigung der Abos
 | Einhalten bestimmter Formate zur integrierten Erfassung / Kündigung
 | Mittel
 
-| Werbekunden / Partner   
-| Anbieter Abomodelle, Produkt fördert Geschäftsinteressen
-| Interesse an Werbung auf der Platform, Bewerben von ihren günstigeren Abos, Nutzer ergänzende Abos vorschlagen
-| niedrig
+| Anbieter von Abomodellen (Produktgegner)
+| Negatives Interesse, da Produkt bedroht Geschäftsinteressen.
+|
+- Das Produkt offenbart ggf. Geschäftsmodelle die auf der Unübersichtlichkeit von Abomodellen beruhen. +
+- Eventuell teils offen für Integration (automatische Erfassung). +
+- Kündigungsschreiben muss Mindestanforderungen entsprechen. +
+| Mittel - Niedrig
 
-// [.not-really]
-| Produktgegner
-| Anbieter Abomodelle, Produkt bedrohen Geschäftsinteressen
-| Das Produkt offenbart ggf. Geschäftsmodelle die auf der Unübersichtlichkeit von Abomodellen beruhen
-| niedrig
+| Datenschutzkritische Nutzer (Produktgegner)
+| Menschen, die nicht möchten, dass ihre Überweisungen oder Abodaten digital erfasst werden. Kein Interesse an Bankverbindung oder Datenweitergabe.
+| Negatives Interesse; keine Bankverbindung gewollt.
+| Niedrig
 |===
 
 == Hauptfunktionen
@@ -166,8 +191,7 @@ Diese Hauptfunktionen sollten als Epics im Product Backlog für die Gruppierung 
 | Hoch
 
 | Nutzer wollen Abos rechtzeitig kündigen
-| Erinnerung Kündigungsfrist (Mitteilungen) +
-    Abo zentral kündigen (so zentral wie möglich)
+| Erinnerung Kündigungsfrist (Mitteilungen); Abo zentral kündigen (so zentral wie möglich); Einsparpotenziale entdecken; Handlungsempfehlungen
 | Mittel
 
 // | [Nutzerbedarf]
@@ -208,7 +232,7 @@ technischen Entscheidungen, die sich daraus ergeben — ohne sie hier zu wiederh
 | Kernfunktionen im Gastmodus vollständig verfügbar.
 | Must have
 
-| Leistungseffizienz
+| Leistungsfähigkeit
 | Das Produkt reagiert schnell auf Nutzerinteraktionen.
 | Seitenladezeit unter 2 Sekunden bei normaler Netzwerkverbindung.
 | Must have
@@ -256,6 +280,10 @@ organisatorische, rechtliche oder zeitliche Vorgaben._
 | Das Produkt muss innerhalb eines Semesters (ca. 4 Monate) lieferbar sein.
 | Zeitlich
 
+| Komplexität gering halten
+| Die Implementierung soll im Rahmen der Teamfähigkeiten bleiben; möglichst vorhandene Bibliotheken nutzen.
+| Organisatorisch
+
 | Ressourcen
 | Kein Budget für kostenpflichtige Dienste.
 | Technisch
@@ -279,6 +307,10 @@ organisatorische, rechtliche oder zeitliche Vorgaben._
 | 3.0
 | 20.05.2026
 | Update nach dem ersten Sprint-Review
+
+| 4.0
+| 21.06.2026
+| Update nach dem zweiten Sprint-Review
 
 |===
 
