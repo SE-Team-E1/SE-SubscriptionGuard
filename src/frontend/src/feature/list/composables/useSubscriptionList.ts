@@ -16,11 +16,21 @@ function useListSubscriptionService() {
 
 export default function useSubscriptionList() {
   const list = ref<Subscription[]>([]);
+  const isLoading = ref(false);
+  const hasError = ref(false);
   const {service} = useListSubscriptionService();
 
   const loadList = async() => {
-    list.value = await service.execute();
+    isLoading.value = true;
+    hasError.value = false;
+    try {
+      list.value = await service.execute();
+    } catch {
+      hasError.value = true;
+    } finally {
+      isLoading.value = false;
+    }
   }
 
-  return {list, loadList};
+  return {list, isLoading, hasError, loadList};
 }
