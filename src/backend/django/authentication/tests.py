@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -370,3 +372,36 @@ class UserRegistrationSerializerTest(APITestCase):
     # Assert
     self.assertFalse(is_valid)
     self.assertIn('email', serializer.errors)
+
+
+class LoginSchemaTest(APITestCase):
+
+  def _resolve(self, schema, node):
+    ref = node.get('$ref')
+    if ref is None:
+      return node
+    return schema['components']['schemas'][ref.split('/')[-1]]
+
+  def _content_schema(self, schema, content):
+    return self._resolve(schema, next(iter(content.values()))['schema'])
+
+  # -------------------------
+  # OpenAPI-Schema
+  # -------------------------
+
+  def test_login_schema_describes_login_field_and_401(self):  # T-20
+    # Arrange
+    url = '/api/schema/?format=json'
+
+    # Act
+    response = self.client.get(url)
+
+    # Assert
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    schema = json.loads(response.content)
+    operation = schema['paths']['/api/auth/login/']['post']
+    request_schema = self._content_schema(schema, operation['requestBody']['content'])
+    self.assertIn('login', request_schema['properties'])
+    self.assertNotIn('username', request_schema['properties'])
+    error_schema = self._content_schema(schema, operation['responses']['401']['content'])
+    self.assertIn('error', error_schema['properties'])

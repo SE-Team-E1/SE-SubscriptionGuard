@@ -9,7 +9,7 @@ from .serializers import (
   UserLoginSerializer,
   UserSerializer,
 )
-from drf_spectacular.utils import extend_schema, inline_serializer
+from drf_spectacular.utils import extend_schema, inline_serializer, OpenApiExample
 
 INVALID_CREDENTIALS = {'error': 'Invalid credentials'}
 
@@ -42,6 +42,11 @@ class UserRegistrationView(generics.CreateAPIView):
     return response
 
 @extend_schema(
+    summary="Log in with e-mail address or username",
+    description=(
+        "`login` accepts an e-mail address (contains `@`, case-insensitive) "
+        "or a username (case-sensitive). Every failed login returns the same 401."
+    ),
     request=UserLoginSerializer,
     responses={
         200: inline_serializer(
@@ -63,6 +68,13 @@ class UserRegistrationView(generics.CreateAPIView):
             fields={},
         ),
     },
+    examples=[
+        OpenApiExample(
+            "Login with e-mail address",
+            value={"login": "user@example.com", "password": "string"},
+            request_only=True,
+        ),
+    ],
 )
 @api_view(['POST'])
 @permission_classes([AllowAny])
