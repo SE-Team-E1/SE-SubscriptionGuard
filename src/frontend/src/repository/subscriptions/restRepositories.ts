@@ -7,12 +7,16 @@ import type { RestCategoryDTO } from "./dto/categoryDto";
 import type { RestProviderDTO } from "./dto/providerDto";
 import { parseRestSubscriptionDTO, parseRestSubscriptionDTOs, parseRestCategoryDTO, parseRestCategoryDTOs, parseRestProviderDTO, parseRestProviderDTOs } from "./restDtoValidation.ts";
 
+export type { RestSubscriptionDTO } from "./dto/subscriptionDto";
+export type { RestCategoryDTO } from "./dto/categoryDto";
+export type { RestProviderDTO } from "./dto/providerDto";
+
 export class RestSubscriptionRepository implements SubscriptionRepository {
 
   async findAll(): Promise<RestSubscriptionDTO[]> {
     let dtos: RestSubscriptionDTO[];
     try {
-      const response = await fetch("/api/abos/?format=json")
+      const response = await fetch("/api/subscriptions/?format=json")
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
@@ -28,7 +32,7 @@ export class RestSubscriptionRepository implements SubscriptionRepository {
 
   async insert(newSubscription: RestSubscriptionDTO): Promise<RestSubscriptionDTO> {
     try {
-      const response = await fetch("/api/abos/", {
+      const response = await fetch("/api/subscriptions/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -129,4 +133,3 @@ export class RestProviderRepository implements ProviderRepository {
     return Promise.reject("not yet implemented");
   }
 }
-

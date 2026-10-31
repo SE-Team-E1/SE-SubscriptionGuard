@@ -24,6 +24,11 @@ import {
   MockedCategoryRepository, MockedProviderRepository,
   MockedSubscriptionRepository
 } from "@/repository/subscriptions/mockedRepositories.ts";
+import {
+  RestCategoryRepository,
+  RestProviderRepository,
+  RestSubscriptionRepository,
+} from "@/repository/subscriptions/restRepositories.ts";
 import {Category, Provider, Subscription} from "@/domain/subscriptionModel.ts";
 import {Currency, RenewalPeriodUnitEnum} from "@/domain/domain.ts";
 import {mapSubscriptionEntityToDTO} from "@/services/subscriptionServices.ts";
@@ -82,7 +87,9 @@ function mapTestEntitiesToDTO(subscriptions: Subscription[]): {subscription: Res
   });
 }
 
-if( import.meta.env.DEV) {
+const useMockRepositories = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_REPOSITORIES === 'true';
+
+if (useMockRepositories) {
   const entities = createTestEntities(3);
   const dtos = mapTestEntitiesToDTO(entities);
 
@@ -93,6 +100,10 @@ if( import.meta.env.DEV) {
   app.provide<SubscriptionRepository, string>("subscriptionRepository", subRepo);
   app.provide<CategoryRepository, string>("categoryRepository", catRepo);
   app.provide<ProviderRepository, string>("providerRepository", provRepo);
+} else {
+  app.provide<SubscriptionRepository, string>("subscriptionRepository", new RestSubscriptionRepository());
+  app.provide<CategoryRepository, string>("categoryRepository", new RestCategoryRepository());
+  app.provide<ProviderRepository, string>("providerRepository", new RestProviderRepository());
 }
 
 
