@@ -18,7 +18,7 @@ def _find_user_for_login(login):
   if '@' in login:
     candidates = User.objects.filter(email__iexact=login)
   else:
-    candidates = User.objects.filter(username=login)
+    candidates = User.objects.filter(username__iexact=login)
   matches = list(candidates[:2])
   if len(matches) == 1:
     return matches[0]
@@ -45,7 +45,7 @@ class UserRegistrationView(generics.CreateAPIView):
     summary="Log in with e-mail address or username",
     description=(
         "`login` accepts an e-mail address (contains `@`, case-insensitive) "
-        "or a username (case-sensitive). Every failed login returns the same 401."
+        "or a username (case-insensitive). Every failed login returns the same 401."
     ),
     request=UserLoginSerializer,
     responses={

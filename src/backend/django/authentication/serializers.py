@@ -14,6 +14,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
   def validate_username(self, value):
     if '@' in value:
       raise serializers.ValidationError("Username must not contain '@'.")
+    if User.objects.filter(username__iexact=value).exists():
+      raise serializers.ValidationError('A user with that username already exists.')
     return value
 
   def validate_email(self, value):

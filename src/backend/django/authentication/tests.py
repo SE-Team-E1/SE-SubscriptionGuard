@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.auth import get_user_model
+from django.db import IntegrityError, transaction
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -74,7 +75,7 @@ class LoginApiTest(APITestCase):
     self.assertEqual(response.status_code, status.HTTP_200_OK)
     self.assertEqual(response.json()['user']['id'], self.otto.id)
 
-  def test_login_with_username_is_case_sensitive(self):  # T-4
+  def test_login_with_username_ignores_case(self):  # T-4
     # Arrange
     data = {'login': 'OTTO', 'password': PASSWORD}
 
@@ -82,8 +83,9 @@ class LoginApiTest(APITestCase):
     response = self._login(data)
 
     # Assert
-    self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-    self.assertEqual(response.json(), INVALID_CREDENTIALS)
+    self.assertEqual(response.status_code, status.HTTP_200_OK)
+    self.assertEqual(response.json()['user']['id'], self.otto.id)
+    self.assertEqual(response.json()['user']['username'], 'otto')
 
   def test_login_after_registration(self):  # T-16
     # Arrange
@@ -283,6 +285,22 @@ class RegistrationApiTest(APITestCase):
     self.assertEqual(set(response.json().keys()), {'message', 'access', 'refresh'})
     self.assertEqual(User.objects.get(username='neu').email, 'neu@example.de')
 
+  def test_register_keeps_username_case(self):  # T-24
+    # Arrange
+    data = {**self.valid_registration, 'username': 'NeuerUser'}
+
+    # Act
+    response = self.client.post('/api/auth/register/', data, format='json')
+
+    # Assert
+    self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    self.assertTrue(User.objects.filter(username='NeuerUser').exists())
+
+  def test_database_rejects_username_with_other_case(self):  # T-25
+    # Act / Assert
+    with self.assertRaises(IntegrityError), transaction.atomic():
+      User.objects.create_user(username='OTTO', email='otto2@example.de', password=PASSWORD)
+
 
 class UserRegistrationSerializerTest(APITestCase):
 
@@ -312,6 +330,18 @@ class UserRegistrationSerializerTest(APITestCase):
     # Assert
     self.assertFalse(is_valid)
     self.assertIn('email', serializer.errors)
+
+  def test_existing_username_with_other_case_fails(self):  # T-26
+    # Arrange
+    data = {**self.valid_registration, 'username': 'Otto'}
+    serializer = UserRegistrationSerializer(data=data)
+
+    # Act
+    is_valid = serializer.is_valid()
+
+    # Assert
+    self.assertFalse(is_valid)
+    self.assertIn('username', serializer.errors)
 
   def test_invalid_email_format_fails(self):  # T-14
     # Arrange
