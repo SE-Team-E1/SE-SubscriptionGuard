@@ -76,24 +76,32 @@ class UserRegistrationView(generics.CreateAPIView):
         ),
     ],
 )
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_view(request):
+
   serializer = UserLoginSerializer(data=request.data)
+
   if serializer.is_valid():
+
     login = serializer.validated_data['login']
     password = serializer.validated_data['password']
     user = _find_user_for_login(login)
+
     if user is None:
       # Hash anyway so unknown identifiers take as long as known ones.
       User().set_password(password)
       return Response(INVALID_CREDENTIALS, status=status.HTTP_401_UNAUTHORIZED)
+    
     if not user.check_password(password) or not user.is_active:
       return Response(INVALID_CREDENTIALS, status=status.HTTP_401_UNAUTHORIZED)
     refresh = RefreshToken.for_user(user)
+
     return Response({
       'access': str(refresh.access_token),
       'refresh': str(refresh),
       'user': UserSerializer(user).data,
     }, status=status.HTTP_200_OK)
+  
   return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

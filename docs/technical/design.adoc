@@ -526,7 +526,7 @@ WARNING: In `feature/79` wurden die Django-URLs auf `path('api/', include('abos.
 
 ==== DTO-Format: Auth (Login Request)
 
-`login` ist eine E-Mail-Adresse (enthält `@`, Groß-/Kleinschreibung egal) oder ein Username (case-sensitiv).
+`login` ist eine E-Mail-Adresse (enthält `@`, Groß-/Kleinschreibung egal) oder ein Username (Groß-/Kleinschreibung egal).
 
 [source,json]
 ----
