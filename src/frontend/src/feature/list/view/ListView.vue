@@ -7,15 +7,19 @@ import {
 } from '@mdi/js'
 import useSubscriptionList from "@/feature/list/composables/useSubscriptionList.ts";
 import {onMounted} from "vue";
-import type {Price, RenewalPeriod} from "@/domain/domain";
+import {currencySymbols, type Currency, type Price, type RenewalPeriod} from "@/domain/domain";
 
 const {list, isLoading, hasError, loadList} = useSubscriptionList();
 const renewalToString = (renewal: RenewalPeriod) => {
   return renewal.amount.toFixed() + " " + renewal.unit;
 }
 
+const currencyToString = (currency: Currency) => {
+  return currencySymbols[currency];
+}
+
 const priceToString = (price: Price) => {
-  return price.amount.toFixed(2) + " " + "€"; // TODO replace with currency mapping
+  return price.amount.toFixed(2) + " " + currencyToString(price.currency);
 }
 
 onMounted(() => {
