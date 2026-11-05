@@ -14,9 +14,10 @@ import { mapSubscriptionDTOtoEntity } from "@/repository/subscriptions/mapper/su
 export type SubscriptionListIssue = {
   subscriptionId: string;
   subscriptionName: string;
-  providerId: string;
-  reason: 'provider-missing' | 'provider-load-failed';
-};
+} & (
+  | { providerId: string; reason: 'provider-missing' | 'provider-load-failed' }
+  | { categoryIds: string[]; reason: 'category-missing' | 'category-load-failed' }
+);
 
 export type ListSubscriptionsResult = {
   subscriptions: Subscription[];
@@ -39,11 +40,8 @@ export class ListSubscriptionService {
         this.categoryRepository.findAll()
       ]);
 
-      if (categoryResult.status === 'rejected') {
-        throw categoryResult.reason;
-      }
       const providers = providerResult.status === 'fulfilled' ? providerResult.value : [];
-      const categories = categoryResult.value;
+      const categories = categoryResult.status === 'fulfilled' ? categoryResult.value : [];
 
       const providerMap = new Map<string, Provider>(
         providers.map(p => [p.id, Provider.rehydrate({id: EntityId.fromString(p.id), name: p.name})])
@@ -65,10 +63,20 @@ export class ListSubscriptionService {
           });
           continue;
         }
-        const categories = dto.categoriesId
+        const missingCategoryIds = dto.categoriesId.filter(id => !categoryMap.has(id));
+        if (missingCategoryIds.length) {
+          subscriptionLoadIssues.push({
+            subscriptionId: dto.id,
+            subscriptionName: dto.name,
+            categoryIds: missingCategoryIds,
+            reason: categoryResult.status === 'rejected' ? 'category-load-failed' : 'category-missing',
+          });
+          continue;
+        }
+        const subscriptionCategories = dto.categoriesId
           .map(id => categoryMap.get(id))
-          .filter((c): c is Category => !!c); // Strips away undefined balances safely;
-        subscriptions.push(mapSubscriptionDTOtoEntity(dto, provider, categories));
+          .filter((category): category is Category => category !== undefined);
+        subscriptions.push(mapSubscriptionDTOtoEntity(dto, provider, subscriptionCategories));
       }
       return { subscriptions, subscriptionLoadIssues };
     }

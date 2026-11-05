@@ -134,12 +134,12 @@ describe("subscription list service", () => {
    })));
  });
 
- test.each(['subscriptions', 'categories'] as const)('rejects when the %s request fails', async (source) => {
+ test('rejects when the subscription request fails', async () => {
    const subscriptions = new MockedSubscriptionRepository();
    const providers = new MockedProviderRepository();
    const categories = new MockedCategoryRepository();
    const failure = new Error('Network unavailable');
-   vi.spyOn(source === 'subscriptions' ? subscriptions : categories, 'findAll').mockRejectedValue(failure);
+   vi.spyOn(subscriptions, 'findAll').mockRejectedValue(failure);
    const service = new ListSubscriptionService(subscriptions, categories, providers);
    await expect(service.execute()).rejects.toMatchObject({ message: 'Could not list subscriptions', cause: failure });
  });
@@ -173,3 +173,54 @@ describe("subscription list service", () => {
    const service = new ListSubscriptionService(new MockedSubscriptionRepository(), new MockedCategoryRepository(), providers);
    await expect(service.execute()).resolves.toEqual({subscriptions: [], subscriptionLoadIssues: []});
  });
+
+describe('category loading issues', () => {
+  test('keeps subscriptions without category references and recovers from a category request failure', async () => {
+    const dtos = mapTestEntitiesToDTO(createTestEntities(2));
+    dtos[0]!.subscription.categoriesId = [];
+    const categories = new MockedCategoryRepository(dtos.flatMap(dto => dto.categories));
+    vi.spyOn(categories, 'findAll').mockRejectedValueOnce(new Error('Network unavailable'));
+    const service = new ListSubscriptionService(
+      new MockedSubscriptionRepository(dtos.map(dto => dto.subscription)),
+      categories,
+      new MockedProviderRepository(dtos.map(dto => dto.provider)),
+    );
+    const result = await service.execute();
+    expect(result.subscriptions.map(sub => sub.id.value)).toEqual([dtos[0]!.subscription.id]);
+    expect(result.subscriptions[0]!.categories).toEqual([]);
+    expect(result.subscriptionLoadIssues).toEqual([{
+      subscriptionId: dtos[1]!.subscription.id,
+      subscriptionName: dtos[1]!.subscription.name,
+      categoryIds: dtos[1]!.subscription.categoriesId,
+      reason: 'category-load-failed',
+    }]);
+    const recovered = await service.execute();
+    expect(recovered.subscriptions).toHaveLength(2);
+    expect(recovered.subscriptions[1]!.categories).toHaveLength(1);
+    expect(recovered.subscriptionLoadIssues).toEqual([]);
+  });
+
+  test('reports missing category references instead of silently dropping them', async () => {
+    const dtos = mapTestEntitiesToDTO(createTestEntities(2));
+    const service = new ListSubscriptionService(
+      new MockedSubscriptionRepository(dtos.map(dto => dto.subscription)),
+      new MockedCategoryRepository(dtos[0]!.categories),
+      new MockedProviderRepository(dtos.map(dto => dto.provider)),
+    );
+    const result = await service.execute();
+    expect(result.subscriptions.map(sub => sub.id.value)).toEqual([dtos[0]!.subscription.id]);
+    expect(result.subscriptionLoadIssues).toEqual([{
+      subscriptionId: dtos[1]!.subscription.id,
+      subscriptionName: dtos[1]!.subscription.name,
+      categoryIds: dtos[1]!.subscription.categoriesId,
+      reason: 'category-missing',
+    }]);
+  });
+
+  test('returns an empty result if categories fail and there are no subscriptions', async () => {
+    const categories = new MockedCategoryRepository();
+    vi.spyOn(categories, 'findAll').mockRejectedValue(new Error('Network unavailable'));
+    const service = new ListSubscriptionService(new MockedSubscriptionRepository(), categories, new MockedProviderRepository());
+    await expect(service.execute()).resolves.toEqual({subscriptions: [], subscriptionLoadIssues: []});
+  });
+});

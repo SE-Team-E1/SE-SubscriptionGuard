@@ -140,3 +140,61 @@ describe('subscription provider issues', () => {
     cy.get('.list-warning').should('not.exist')
   })
 })
+
+describe('subscription category issues', () => {
+  const category = {
+    id: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+    name: 'Music',
+    icon: 'M0 0h24v24H0z',
+  }
+  const categorizedSubscription = {
+    ...subscription,
+    id: 'ffffffff-ffff-4fff-8fff-ffffffffffff',
+    name: 'Categorized subscription',
+    categoriesId: [category.id],
+  }
+
+  for (const requestFails of [true, false]) {
+    it(`keeps uncategorized subscriptions visible when categories ${requestFails ? 'fail to load' : 'are missing'} and recovers on retry`, () => {
+      cy.viewport(390, 844)
+      cy.intercept({ method: 'GET', pathname: '/api/subscriptions/' }, {
+        body: [subscription, categorizedSubscription],
+      })
+      cy.intercept({ method: 'GET', pathname: '/api/providers/' }, {
+        body: [{ id: subscription.providerId, name: 'Premium Music Ltd.' }],
+      })
+      let categoryRequests = 0
+      cy.intercept({ method: 'GET', pathname: '/api/categories/' }, (request) => {
+        categoryRequests += 1
+        request.reply(categoryRequests === 1
+          ? requestFails ? { statusCode: 500 } : { body: [] }
+          : { body: [category] })
+      })
+
+      cy.visit('/list')
+      cy.contains('.v-list-item', subscription.name).should('be.visible')
+      cy.get('.list-error').should('not.exist')
+      cy.get('.list-warning').within(() => {
+        cy.contains(requestFails ? 'Category details couldn’t be loaded' : 'Some subscriptions couldn’t be loaded').should('be.visible')
+        cy.contains(`Categorized subscription: ${requestFails ? 'category details couldn’t be loaded' : 'category unavailable'}`).should('be.visible')
+        cy.contains('This list is incomplete.').should('be.visible')
+        cy.contains('button', 'Try again').click()
+      })
+      cy.contains('.v-list-item', categorizedSubscription.name).should('be.visible')
+      cy.get('.list-warning').should('not.exist')
+    })
+  }
+
+  it('shows category issues rather than an empty or fatal state when no subscriptions can be hydrated', () => {
+    cy.intercept({ method: 'GET', pathname: '/api/subscriptions/' }, { body: [categorizedSubscription] })
+    cy.intercept({ method: 'GET', pathname: '/api/providers/' }, {
+      body: [{ id: subscription.providerId, name: 'Premium Music Ltd.' }],
+    })
+    cy.intercept({ method: 'GET', pathname: '/api/categories/' }, { statusCode: 500 })
+    cy.visit('/list')
+    cy.contains('Category details couldn’t be loaded').should('be.visible')
+    cy.get('.list-error').should('not.exist')
+    cy.contains('No subscriptions yet').should('not.exist')
+    cy.contains('Categorized subscription: category details couldn’t be loaded').should('be.visible')
+  })
+})

@@ -6,10 +6,19 @@ import {
   mdiFire,
 } from '@mdi/js'
 import useSubscriptionList from "@/feature/list/composables/useSubscriptionList.ts";
+import type { SubscriptionListIssue } from '@/feature/list/services/listSubscriptionService';
 import {onMounted} from "vue";
 import {currencySymbols, type Currency, type Price, type RenewalPeriod} from "@/domain/domain";
 
-const {list, subscriptionLoadIssues, providerLoadFailed, isLoading, hasListLoadError, loadList} = useSubscriptionList();
+const {list, subscriptionLoadIssues, providerLoadFailed, categoryLoadFailed, isLoading, hasListLoadError, loadList} = useSubscriptionList();
+
+const issueMessages: Record<SubscriptionListIssue['reason'], string> = {
+  'provider-missing': 'provider unavailable',
+  'provider-load-failed': 'provider details couldn’t be loaded',
+  'category-missing': 'category unavailable',
+  'category-load-failed': 'category details couldn’t be loaded',
+};
+
 const renewalToString = (renewal: RenewalPeriod) => {
   return renewal.amount.toFixed() + " " + renewal.unit;
 }
@@ -54,18 +63,21 @@ onMounted(() => {
       type="warning"
       variant="tonal"
       role="alert"
-      :title="providerLoadFailed ? 'Provider details couldn’t be loaded' : 'Some subscriptions couldn’t be loaded'"
+      :title="providerLoadFailed ? 'Provider details couldn’t be loaded' : categoryLoadFailed ? 'Category details couldn’t be loaded' : 'Some subscriptions couldn’t be loaded'"
     >
       <p v-if="providerLoadFailed">
         Your subscriptions couldn’t be displayed because provider details are unavailable. Try again to reload them.
       </p>
+      <p v-else-if="categoryLoadFailed">
+        Some subscriptions couldn’t be displayed because category details are unavailable. This list is incomplete.
+      </p>
       <p v-else>
         {{ subscriptionLoadIssues.length }} {{ subscriptionLoadIssues.length === 1 ? 'subscription is' : 'subscriptions are' }}
-        missing provider details. This list is incomplete.
+        missing provider or category details. This list is incomplete.
       </p>
       <ul>
         <li v-for="issue in subscriptionLoadIssues" :key="issue.subscriptionId">
-          {{ issue.subscriptionName }}: {{ issue.reason === 'provider-load-failed' ? 'provider details couldn’t be loaded' : 'provider unavailable' }}
+          {{ issue.subscriptionName }}: {{ issueMessages[issue.reason] }}
         </li>
       </ul>
       <v-btn class="mt-3" variant="tonal" @click="loadList">Try again</v-btn>

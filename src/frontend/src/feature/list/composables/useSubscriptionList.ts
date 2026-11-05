@@ -18,6 +18,7 @@ export default function useSubscriptionList() {
   const list = ref<Subscription[]>([]);
   const subscriptionLoadIssues = ref<SubscriptionListIssue[]>([]);
   const providerLoadFailed = computed(() => subscriptionLoadIssues.value.some(issue => issue.reason === 'provider-load-failed'));
+  const categoryLoadFailed = computed(() => subscriptionLoadIssues.value.some(issue => issue.reason === 'category-load-failed'));
   const isLoading = ref(false);
   const hasListLoadError = ref(false);
   const {service} = useListSubscriptionService();
@@ -38,5 +39,5 @@ export default function useSubscriptionList() {
     }
   }
 
-  return {list, subscriptionLoadIssues, providerLoadFailed, isLoading, hasListLoadError, loadList};
+  return {list, subscriptionLoadIssues, providerLoadFailed, categoryLoadFailed, isLoading, hasListLoadError, loadList};
 }
