@@ -2,7 +2,7 @@
 
 import {
   mdiInboxOutline,
-  mdiSpotify,
+  mdiTagOutline,
   mdiFire,
 } from '@mdi/js'
 import useSubscriptionList from "@/feature/list/composables/useSubscriptionList.ts";
@@ -64,7 +64,7 @@ onMounted(() => {
       :key="sub.id.value"
       :title="sub.name"
       :subtitle="`${priceToString(sub.price)} · ${renewalToString(sub.renewal)}`"
-      :prepend-icon="mdiSpotify"
+      :prepend-icon="sub.categories.find(category => category.icon.trim())?.icon || mdiTagOutline"
       variant="outlined"
       rounded="lg"
     >
