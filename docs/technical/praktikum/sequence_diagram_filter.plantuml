@@ -28,17 +28,19 @@ group load and display
 
     c03 --> c02: filterState
 
-    c02 -> c04: execute(filterState)
+    c02 -> c04: findSubs(filterState)
 
-    c04 -> c05: findAll()
+    c04 -> c05: findAllSubs()
 
     c05 -> c06: fetch /api/abos
 
-    c06 --> c05: receive subscriptions
+    c06 --> c05: receive subscriptions json
 
-    c05 --> c04: domain models
+    c05 --> c04: SubscriptionRepoDtos[]
 
-    c04 -> c04: apply filterState\non domain models
+    c04 -> c04: .map(mapSubscriptionDTOtoDomain(Provider, Categories), \n SubscriptionDtos)
+
+    c04 -> c04: apply filterState\non Subscription Domains
 
     c04 --> c02: filtered subscriptions
 
@@ -54,7 +56,15 @@ group change filter (frontend only)
 
     c03 --> c02: filterState
 
-    c02 -> c04: execute(filterState)
+    c02 -> c04: findSubs(filterState)
+
+    c04 -> c05: findAllSubs()
+
+    c05 -> c05: use cached SubscriptionDtos[]
+
+    c05 --> c04: SubscriptionRepoDtos[]
+
+    c04 -> c04: .map(mapSubscriptionDTOtoDomain(Provider, Categories), \n SubscriptionDtos)
 
     c04 -> c04: apply filterState\non loaded domain models
 
