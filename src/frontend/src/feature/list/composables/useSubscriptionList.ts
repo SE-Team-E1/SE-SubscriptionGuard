@@ -1,10 +1,10 @@
-import {inject, ref} from "vue";
+import {computed, inject, ref} from "vue";
 import type {
   CategoryRepository, ProviderRepository,
   SubscriptionRepository
 } from "../../../repository/subscriptions/repositories.ts";
 import type {Subscription} from "@/domain/subscriptionModel.ts";
-import {ListSubscriptionService} from "@/feature/list/services/listSubscriptionService";
+import {ListSubscriptionService, type SubscriptionListIssue} from "@/feature/list/services/listSubscriptionService";
 
 function useListSubscriptionService() {
   const subRepo: SubscriptionRepository = inject("subscriptionRepository") as SubscriptionRepository;
@@ -16,6 +16,8 @@ function useListSubscriptionService() {
 
 export default function useSubscriptionList() {
   const list = ref<Subscription[]>([]);
+  const issues = ref<SubscriptionListIssue[]>([]);
+  const providerLoadFailed = computed(() => issues.value.some(issue => issue.reason === 'provider-load-failed'));
   const isLoading = ref(false);
   const hasError = ref(false);
   const {service} = useListSubscriptionService();
@@ -23,14 +25,18 @@ export default function useSubscriptionList() {
   const loadList = async() => {
     isLoading.value = true;
     hasError.value = false;
+    issues.value = [];
     try {
-      list.value = await service.execute();
+      const result = await service.execute();
+      list.value = result.subscriptions;
+      issues.value = result.issues;
     } catch {
+      list.value = [];
       hasError.value = true;
     } finally {
       isLoading.value = false;
     }
   }
 
-  return {list, isLoading, hasError, loadList};
+  return {list, issues, providerLoadFailed, isLoading, hasError, loadList};
 }
