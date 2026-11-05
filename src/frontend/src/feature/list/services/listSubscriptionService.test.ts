@@ -99,7 +99,7 @@ describe("subscription list service", () => {
 
  test("returns empty list when no subscriptions were inserted", async () => {
     const service = new ListSubscriptionService(new MockedSubscriptionRepository(), new MockedCategoryRepository(), new MockedProviderRepository());
-    await expect(service.execute()).resolves.toEqual({ subscriptions: [], issues: [] });
+    await expect(service.execute()).resolves.toEqual({ subscriptions: [], subscriptionLoadIssues: [] });
   })
 
   test("returns subscriptions that were inserted", async () => {
@@ -112,7 +112,7 @@ describe("subscription list service", () => {
     const provRepo = new MockedProviderRepository(dtos.map(dto => dto.provider));
 
     const service = new ListSubscriptionService(subRepo, catRepo, provRepo);
-    await expect(service.execute()).resolves.toStrictEqual({ subscriptions: entities, issues: [] });
+    await expect(service.execute()).resolves.toStrictEqual({ subscriptions: entities, subscriptionLoadIssues: [] });
   })
 })
 
@@ -126,7 +126,7 @@ describe("subscription list service", () => {
    );
    const result = await service.execute();
    expect(result.subscriptions.map(sub => sub.id.value)).toEqual(dtos.slice(0, validCount).map(dto => dto.subscription.id));
-   expect(result.issues).toEqual(dtos.slice(validCount).map(({subscription}) => ({
+   expect(result.subscriptionLoadIssues).toEqual(dtos.slice(validCount).map(({subscription}) => ({
      subscriptionId: subscription.id,
      subscriptionName: subscription.name,
      providerId: subscription.providerId,
@@ -155,7 +155,7 @@ describe("subscription list service", () => {
    );
    await expect(service.execute()).resolves.toEqual({
      subscriptions: [],
-     issues: dtos.map(({subscription}) => ({
+     subscriptionLoadIssues: dtos.map(({subscription}) => ({
        subscriptionId: subscription.id,
        subscriptionName: subscription.name,
        providerId: subscription.providerId,
@@ -164,12 +164,12 @@ describe("subscription list service", () => {
    });
    const recovered = await service.execute();
    expect(recovered.subscriptions).toHaveLength(2);
-   expect(recovered.issues).toEqual([]);
+   expect(recovered.subscriptionLoadIssues).toEqual([]);
  });
 
  test('returns an empty result when providers fail but there are no subscriptions', async () => {
    const providers = new MockedProviderRepository();
    vi.spyOn(providers, 'findAll').mockRejectedValue(new Error('Network unavailable'));
    const service = new ListSubscriptionService(new MockedSubscriptionRepository(), new MockedCategoryRepository(), providers);
-   await expect(service.execute()).resolves.toEqual({subscriptions: [], issues: []});
+   await expect(service.execute()).resolves.toEqual({subscriptions: [], subscriptionLoadIssues: []});
  });

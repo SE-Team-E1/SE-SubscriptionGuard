@@ -20,7 +20,7 @@ export type SubscriptionListIssue = {
 
 export type ListSubscriptionsResult = {
   subscriptions: Subscription[];
-  issues: SubscriptionListIssue[];
+  subscriptionLoadIssues: SubscriptionListIssue[];
 };
 
 export class ListSubscriptionService {
@@ -53,11 +53,11 @@ export class ListSubscriptionService {
       );
 
       const subscriptions: Subscription[] = [];
-      const issues: SubscriptionListIssue[] = [];
+      const subscriptionLoadIssues: SubscriptionListIssue[] = [];
       for (const dto of dtos) {
         const provider = providerMap.get(dto.providerId);
         if (!provider) {
-          issues.push({
+          subscriptionLoadIssues.push({
             subscriptionId: dto.id,
             subscriptionName: dto.name,
             providerId: dto.providerId,
@@ -70,7 +70,7 @@ export class ListSubscriptionService {
           .filter((c): c is Category => !!c); // Strips away undefined balances safely;
         subscriptions.push(mapSubscriptionDTOtoEntity(dto, provider, categories));
       }
-      return { subscriptions, issues };
+      return { subscriptions, subscriptionLoadIssues };
     }
     catch(error) {
       throw new Error(`Could not list subscriptions`, { cause: error });

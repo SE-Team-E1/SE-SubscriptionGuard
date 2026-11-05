@@ -9,7 +9,7 @@ import useSubscriptionList from "@/feature/list/composables/useSubscriptionList.
 import {onMounted} from "vue";
 import {currencySymbols, type Currency, type Price, type RenewalPeriod} from "@/domain/domain";
 
-const {list, issues, providerLoadFailed, isLoading, hasError, loadList} = useSubscriptionList();
+const {list, subscriptionLoadIssues, providerLoadFailed, isLoading, hasListLoadError, loadList} = useSubscriptionList();
 const renewalToString = (renewal: RenewalPeriod) => {
   return renewal.amount.toFixed() + " " + renewal.unit;
 }
@@ -35,7 +35,7 @@ onMounted(() => {
   </v-container>
 
   <v-alert
-    v-else-if="hasError"
+    v-else-if="hasListLoadError"
     class="list-state list-error"
     type="error"
     variant="tonal"
@@ -49,7 +49,7 @@ onMounted(() => {
 
   <template v-else>
     <v-alert
-      v-if="issues.length"
+      v-if="subscriptionLoadIssues.length"
       class="list-warning"
       type="warning"
       variant="tonal"
@@ -60,11 +60,11 @@ onMounted(() => {
         Your subscriptions couldn’t be displayed because provider details are unavailable. Try again to reload them.
       </p>
       <p v-else>
-        {{ issues.length }} {{ issues.length === 1 ? 'subscription is' : 'subscriptions are' }}
+        {{ subscriptionLoadIssues.length }} {{ subscriptionLoadIssues.length === 1 ? 'subscription is' : 'subscriptions are' }}
         missing provider details. This list is incomplete.
       </p>
       <ul>
-        <li v-for="issue in issues" :key="issue.subscriptionId">
+        <li v-for="issue in subscriptionLoadIssues" :key="issue.subscriptionId">
           {{ issue.subscriptionName }}: {{ issue.reason === 'provider-load-failed' ? 'provider details couldn’t be loaded' : 'provider unavailable' }}
         </li>
       </ul>
@@ -72,7 +72,7 @@ onMounted(() => {
     </v-alert>
 
     <v-empty-state
-      v-if="list.length === 0 && issues.length === 0"
+      v-if="list.length === 0 && subscriptionLoadIssues.length === 0"
       class="list-state"
       :icon="mdiInboxOutline"
       headline="Your list is empty"

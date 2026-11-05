@@ -16,27 +16,27 @@ function useListSubscriptionService() {
 
 export default function useSubscriptionList() {
   const list = ref<Subscription[]>([]);
-  const issues = ref<SubscriptionListIssue[]>([]);
-  const providerLoadFailed = computed(() => issues.value.some(issue => issue.reason === 'provider-load-failed'));
+  const subscriptionLoadIssues = ref<SubscriptionListIssue[]>([]);
+  const providerLoadFailed = computed(() => subscriptionLoadIssues.value.some(issue => issue.reason === 'provider-load-failed'));
   const isLoading = ref(false);
-  const hasError = ref(false);
+  const hasListLoadError = ref(false);
   const {service} = useListSubscriptionService();
 
   const loadList = async() => {
     isLoading.value = true;
-    hasError.value = false;
-    issues.value = [];
+    hasListLoadError.value = false;
+    subscriptionLoadIssues.value = [];
     try {
       const result = await service.execute();
       list.value = result.subscriptions;
-      issues.value = result.issues;
+      subscriptionLoadIssues.value = result.subscriptionLoadIssues;
     } catch {
       list.value = [];
-      hasError.value = true;
+      hasListLoadError.value = true;
     } finally {
       isLoading.value = false;
     }
   }
 
-  return {list, issues, providerLoadFailed, isLoading, hasError, loadList};
+  return {list, subscriptionLoadIssues, providerLoadFailed, isLoading, hasListLoadError, loadList};
 }
