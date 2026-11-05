@@ -31,7 +31,7 @@ import {
 } from "@/repository/subscriptions/restRepositories.ts";
 import {Category, Provider, Subscription} from "@/domain/subscriptionModel.ts";
 import {Currency, RenewalPeriodUnitEnum} from "@/domain/domain.ts";
-import {mapSubscriptionEntityToDTO} from "@/services/subscriptionServices.ts";
+import {mapSubscriptionEntityToDTO} from "@/repository/subscriptions/mapper/subscriptionMapper";
 
 const vuetify = createVuetify({
   components,

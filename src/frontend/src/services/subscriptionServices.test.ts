@@ -1,10 +1,10 @@
 import {Category, EntityId, Provider, Subscription} from "@/domain/subscriptionModel.ts";
 import {Currency, RenewalPeriodUnitEnum} from "@/domain/domain.ts";
 import {
-  ListSubscriptionService,
   mapSubscriptionDTOtoEntity,
   mapSubscriptionEntityToDTO
-} from "@/services/subscriptionServices.ts";
+} from "@/repository/subscriptions/mapper/subscriptionMapper";
+import { ListSubscriptionService } from "@/services/subscriptionServices.ts";
 import {describe, test, expect} from "vitest";
 import {
   MockedCategoryRepository, MockedProviderRepository,
