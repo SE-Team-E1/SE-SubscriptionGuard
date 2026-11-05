@@ -68,3 +68,14 @@ npm run test:e2e
 ```sh
 npm run lint
 ```
+
+### Run UI tests with the in-memory repositories
+
+```sh
+npm run test:e2e:mock
+```
+
+This starts Vite in mock mode and runs `cypress/mock` tests against the app's
+mocked repositories. No backend is needed. Each test starts with fresh data;
+navigation within the app retains subscriptions created during that test.
+The regular `test:e2e` suite continues to test the REST flow with intercepted responses.
