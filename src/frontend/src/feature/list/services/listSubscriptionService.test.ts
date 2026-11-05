@@ -4,7 +4,7 @@ import {
   mapSubscriptionDTOtoEntity,
   mapSubscriptionEntityToDTO
 } from "@/repository/subscriptions/mapper/subscriptionMapper";
-import { ListSubscriptionService } from "@/services/subscriptionServices.ts";
+import { ListSubscriptionService } from "@/feature/list/services/listSubscriptionService";
 import {describe, test, expect} from "vitest";
 import {
   MockedCategoryRepository, MockedProviderRepository,

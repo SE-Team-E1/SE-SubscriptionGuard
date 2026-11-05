@@ -4,7 +4,7 @@ import type {
   SubscriptionRepository
 } from "../../../repository/subscriptions/repositories.ts";
 import type {Subscription} from "@/domain/subscriptionModel.ts";
-import {ListSubscriptionService} from "@/services/subscriptionServices.ts";
+import {ListSubscriptionService} from "@/feature/list/services/listSubscriptionService";
 
 function useListSubscriptionService() {
   const subRepo: SubscriptionRepository = inject("subscriptionRepository") as SubscriptionRepository;
