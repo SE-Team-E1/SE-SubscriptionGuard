@@ -22,8 +22,8 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/abos': {
-        target: 'http://iseproject05.informatik.htw-dresden.de:8001',
+      '/api': {
+        target: process.env.API_PROXY_TARGET || 'http://localhost:8000',
         changeOrigin: true,
         secure: false,
       },
