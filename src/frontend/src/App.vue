@@ -41,12 +41,3 @@ const route = useRoute();
     </v-bottom-navigation>
   </v-app>
 </template>
-
-
-<style scoped>
-@media (min-width: 504px) {
-  .v-bottom-navigation {
-    display: none;
-  }
-}
-</style>
