@@ -1,6 +1,7 @@
 import os
 from io import StringIO
 from unittest.mock import patch
+from uuid import NAMESPACE_URL, UUID, uuid5
 
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
@@ -25,7 +26,7 @@ class LocalSeedTest(TestCase):
         self.assertFalse(user.is_staff)
         user.set_password("changed-local-password")
         user.save()
-        subscription = Subscription.objects.get(id="local-subscription-demo")
+        subscription = Subscription.objects.get(id=str(uuid5(NAMESPACE_URL, "subscriptionguard:local-subscription-demo")))
         subscription.name = "Edited example"
         subscription.save()
 
@@ -38,3 +39,7 @@ class LocalSeedTest(TestCase):
         self.assertEqual(get_user_model().objects.count(), 2)
         self.assertEqual(Subscription.objects.count(), 2)
         self.assertEqual(subscription.categoryIds.count(), 1)
+        # The frontend validates all three entity IDs as UUIDs.
+        UUID(subscription.id)
+        UUID(subscription.providerId_id)
+        UUID(subscription.categoryIds.get().id)

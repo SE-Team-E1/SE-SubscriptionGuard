@@ -16,7 +16,8 @@
     "lint": "run-s lint:*",
     "lint:oxlint": "oxlint  --fix",
     "lint:eslint": "eslint  --fix --cache",
-    "format": "prettier --write --experimental-cli src"
+    "format": "prettier --write --experimental-cli src",
+    "test:e2e:mock": "start-server-and-test 'vite --mode mock --port 4173 --strictPort' http://localhost:4173 'cypress run --e2e --config specPattern=cypress/mock/**/*.cy.ts'"
   },
   "dependencies": {
     "pinia": "^3.0.4",

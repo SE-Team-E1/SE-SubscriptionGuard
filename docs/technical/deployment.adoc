@@ -19,10 +19,12 @@ Dieses Dokument beschreibt das *Wie* und *Was*._
 NOTE: Planungsstand: Das lokale Docker-Setup ist implementiert. CI, Releases und
 VM-Deployment beschreiben weiterhin den abgestimmten Zielzustand.
 
-IMPORTANT: Das Frontend dieses Branches verwendet noch Mock-Repositories.
-Die Container und das lokale API-Routing ermöglichen Tests des echten Backends,
-verbinden aber die Benutzeroberfläche noch nicht mit der API. Die Frontend-Anbindung
-einschließlich Anmeldung bleibt eine separate Feature-Aufgabe.
+IMPORTANT: Nach Integration von Feature 22 nutzt das Frontend die echte API.
+Im Entwicklungsmodus meldet es sich mit dem lokalen Testkonto an; zuvor
+`seed_local` ausführen. Der paketierte Integrationsmodus enthält diese
+Entwicklungshilfe nicht und hat noch keinen Benutzer-Login. Ein vollständiger
+UI-Test ist dort erst nach Integration der Login-Funktion möglich;
+API-Tests mit separat bezogenem Token sind bereits möglich.
 
 == Umgebungsübersicht
 
@@ -136,7 +138,8 @@ Für Start und Moduswechsel gibt es Shell-Skripte:
 Die Startskripte stoppen zuerst den bisherigen Modus, bauen die Images und
 warten auf die Bereitschaft der Services. Datenbankdaten bleiben erhalten.
 Die Skripte können auch über ihren vollständigen Pfad aus anderen Verzeichnissen
-aufgerufen werden. Testdaten werden weiterhin explizit mit `seed_local` angelegt.
+aufgerufen werden. Testdaten werden weiterhin explizit mit `seed_local` angelegt. Für die automatische
+Anmeldung im Entwicklungsmodus wird standardmäßig das Konto `demo` verwendet.
 Die entsprechenden direkten Compose-Befehle stehen im Folgenden.
 
 Alle Befehle werden im Repository-Root ausgeführt. Root-`compose.yml` ist das
@@ -308,6 +311,13 @@ Beispielkonfigurationen dokumentieren die benötigten Werte ohne echte Secrets.
 | `http://backend:8000`
 | Serverseitiges Proxy-Ziel von Vite im Entwicklungscontainer
 | Durch Entwicklungs-Compose gesetzt
+
+| `LOCAL_API_USERNAME`, `LOCAL_API_PASSWORD`
+| `demo`, `local-demo-password`
+| Lokale Entwicklungsanmeldung; Compose übergibt diese Werte als
+  `VITE_DEV_API_USERNAME` und `VITE_DEV_API_PASSWORD` an Vite.
+  Die Werte sind im Browser sichtbar, daher nur Testkonten verwenden.
+| Lokal vorbelegt
 |===
 
 IMPORTANT: Passwörter, Schlüssel und Tokens werden nie in Git gespeichert.

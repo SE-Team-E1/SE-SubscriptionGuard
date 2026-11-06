@@ -2,6 +2,7 @@
 import os
 from datetime import date, datetime, timezone
 from decimal import Decimal
+from uuid import NAMESPACE_URL, uuid5
 
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
@@ -27,14 +28,14 @@ class Command(BaseCommand):
             users.append(user)
 
         category, _ = Category.objects.get_or_create(
-            id="local-streaming", defaults={"name": "Streaming", "icon": ""}
+            id=str(uuid5(NAMESPACE_URL, "subscriptionguard:local-streaming")), defaults={"name": "Streaming", "icon": ""}
         )
         provider, _ = Provider.objects.get_or_create(
-            id="local-provider", defaults={"name": "Example streaming"}
+            id=str(uuid5(NAMESPACE_URL, "subscriptionguard:local-provider")), defaults={"name": "Example streaming"}
         )
         for user in users:
             subscription, created = Subscription.objects.get_or_create(
-                id=f"local-subscription-{user.username}",
+                id=str(uuid5(NAMESPACE_URL, f"subscriptionguard:local-subscription-{user.username}")),
                 defaults={
                     "user": user,
                     "name": f"Example subscription ({user.username})",
