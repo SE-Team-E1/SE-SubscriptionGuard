@@ -16,8 +16,10 @@ Dieses Dokument beschreibt das *Wie* und *Was*._
 
 ---
 
-NOTE: Planungsstand: Das lokale Docker-Setup ist implementiert. CI, Releases und
-VM-Deployment beschreiben weiterhin den abgestimmten Zielzustand.
+NOTE: Planungsstand: Das lokale Docker-Setup ist implementiert. Die grundlegende
+CI ist in `.github/workflows/ci.yml` konfiguriert; der erste Lauf auf GitHub steht
+noch aus. Tests gegen den vollständigen Stack, Releases und VM-Deployment
+beschreiben weiterhin den abgestimmten Zielzustand.
 
 IMPORTANT: Nach Integration von Feature 22 nutzt das Frontend die echte API.
 Im Entwicklungsmodus meldet es sich mit dem lokalen Testkonto an; zuvor
@@ -419,9 +421,38 @@ Der temporäre Stack wird nach dem Testlauf entfernt.
 === Pipeline-Konfiguration
 
 Die Workflow-Dateien liegen unter `.github/workflows/`.
-Vorhanden ist `docker-image.yml`; dessen Anpassung und die Aufteilung der
-geplanten CI- und Release-Workflows erfolgen bei der Umsetzung.
-Eine automatisierte Deployment-Pipeline zur VM ist zunächst nicht vorgesehen.
+`ci.yml` startet bei Pull Requests auf alle Zielbranches, Pushes auf `main`
+und bei manueller Ausführung. Ein neuer Lauf auf demselben PR beziehungsweise
+Branch bricht einen älteren noch laufenden CI-Lauf ab.
+
+Die vier unabhängigen Jobs sind:
+
+* `Frontend lint`: `npm ci` und `npm run lint:check` (Oxlint und ESLint ohne Änderungen).
+* `Frontend build and tests`: `npm ci`, `npm run build`,
+  `npm run test:unit -- --run`, `npm run test:e2e` und `npm run test:e2e:mock`.
+* `Django checks and tests`: Python-Abhängigkeiten installieren,
+  `python manage.py check`, `python manage.py makemigrations --check --dry-run`
+  und `python manage.py test --noinput` gegen einen temporären PostgreSQL-Service.
+* `Docker image builds`: Beide Compose-Konfigurationen validieren und
+  Frontend- und Backend-Images bauen, ohne sie zu veröffentlichen.
+
+Node.js 22, Python 3.14 und PostgreSQL 16 entsprechen den Container-Laufzeiten.
+Die CI verwendet ausschließlich kurzlebige Testzugangsdaten, keine VM-Secrets.
+Cypress-Screenshots und Videos werden bei Fehlern für sieben Tage gespeichert.
+Die Cypress-Suites verwenden derzeit gemockte APIs oder In-Memory-Repositories;
+sie ersetzen noch keine Tests gegen den echten Compose-Stack.
+
+Der Check-only-Lintlauf findet aktuell bestehende Verstöße im Frontend.
+Diese werden als Fehler gemeldet und müssen vor einer verpflichtenden grünen
+Merge-Prüfung bereinigt werden. Der bestehende lokale Befehl `npm run lint`
+behält seine automatische Korrekturfunktion; CI verwendet nur `lint:check`.
+
+Erforderliche Statuschecks müssen zusätzlich in den GitHub-Branchregeln aktiviert
+werden. Das Workflow-File allein blockiert keinen Merge.
+Die Prüfung bei Release-Tags wird im späteren Release-Workflow ergänzt.
+`docker-image.yml` ist der bestehende Release-Ansatz und wird in dieser
+Ausbaustufe noch nicht überarbeitet. Eine automatisierte Deployment-Pipeline
+zur VM ist zunächst nicht vorgesehen.
 
 == Deployment-Ablauf
 
