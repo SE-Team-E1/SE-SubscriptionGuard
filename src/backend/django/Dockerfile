@@ -17,5 +17,4 @@ COPY . /app/
 
 EXPOSE 8000
 
-# djangotest = Name deines Projektordners mit wsgi.py
-CMD ["sh", "-c", "python manage.py migrate && gunicorn subscriptionguard.wsgi:application --bind 0.0.0.0:8000 --workers 3"]
+CMD ["gunicorn", "subscriptionguard.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3"]

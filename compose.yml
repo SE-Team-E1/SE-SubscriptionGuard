@@ -1,0 +1,65 @@
+name: subscriptionguard-local
+
+x-backend: &backend
+  build: ./src/backend/django
+  image: subscriptionguard-local-backend
+  environment: &backend-env
+    SECRET_KEY: ${SECRET_KEY:-local-only-not-for-deployment-change-me}
+    DEBUG: "false"
+    USE_POSTGRESQL: "true"
+    DB_HOST: db
+    DB_PORT: "5432"
+    POSTGRES_DB: ${POSTGRES_DB:-subscriptionguard}
+    POSTGRES_USER: ${POSTGRES_USER:-subscriptionguard}
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-only-password}
+    LOCAL_TEST_DATA: "true"
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-subscriptionguard}
+      POSTGRES_USER: ${POSTGRES_USER:-subscriptionguard}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-only-password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  migrate:
+    <<: *backend
+    command: [python, manage.py, migrate, --noinput]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  backend:
+    <<: *backend
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [CMD, python, -c, "import socket; socket.create_connection(('127.0.0.1', 8000), timeout=2).close()"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+  frontend:
+    build: ./src/frontend
+    ports:
+      - "127.0.0.1:${APP_PORT:-8080}:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, http://127.0.0.1:8080/]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  postgres_data:
