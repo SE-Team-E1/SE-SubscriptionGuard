@@ -127,6 +127,8 @@ Container_Boundary(spa, "Vue.js SPA (Browser)") {
     Component(cat_repo, "RestCategoryRepository", "TypeScript Class", "Kategorien laden und anlegen via /api/categories/")
     Component(prov_repo, "RestProviderRepository", "TypeScript Class", "Provider laden und anlegen via /api/providers/")
     Component(mock_repos, "MockedRepositories", "TypeScript Classes", "In-Memory-Implementierungen aller Repositories; aktuell in main.ts bereitgestellt")
+    Component(auth_repo, "RestAuthRepository", "TypeScript Class", "Login, Registrierung und Token-Refresh via /api/auth/")
+    Component(mock_auth_repo, "MockedAuthRepository", "TypeScript Class", "In-Memory-Implementierung des AuthRepository; aktuell in main.ts bereitgestellt")
   }
 
   Container_Boundary(domain_layer, "Domäne") {
@@ -159,6 +161,7 @@ Rel(list_service, prov_repo, "liest Provider (findByIds)")
 Rel(sub_repo, sub_viewset, "POST/GET /api/abos/", "HTTPS / JSON")
 Rel(cat_repo, cat_prov_model, "GET/POST /api/categories/ — fehlt noch", "HTTPS / JSON")
 Rel(prov_repo, cat_prov_model, "GET/POST /api/providers/ — fehlt noch", "HTTPS / JSON")
+Rel(auth_repo, auth_views, "POST /api/auth/login|register|refresh/", "HTTPS / JSON")
 
 Rel(sub_viewset, sub_serializer, "delegiert")
 Rel(sub_serializer, sub_model, "liest / schreibt")
@@ -224,6 +227,14 @@ NOTE: ViewSets für `/api/categories/` und `/api/providers/` fehlen im Backend. 
 | In-Memory-Implementierungen aller drei Repository-Interfaces für Entwicklung und Tests ohne Backend
 | Werden in `main.ts` über Vue `provide()` bereitgestellt
 
+| RestAuthRepository
+| `POST /api/auth/login/`, `/register/` und `/refresh/` aufrufen; Eingaben trimmen; 2xx-Antworten mit `typia` prüfen; nach erfolgreicher Registrierung automatisch einloggen; Fehler als sechs feste Fehlertypen mit Codes statt Backend-Texten weitergeben
+| Backend REST-API (ausgehend); `AuthRepository` (implementiert)
+
+| MockedAuthRepository
+| In-Memory-Implementierung des `AuthRepository` mit Demo-Nutzer `otto` für Entwicklung und Tests ohne Backend; gleiche Fehlertypen und Codes
+| Wird in `main.ts` über Vue `provide()` als `authRepository` bereitgestellt
+
 | SubscriptionViewSet
 | CRUD-Endpunkte für Abos; Anfragen auf den angemeldeten Nutzer filtern (`IsAuthenticated`)
 | DRF DefaultRouter (eingehend); `SubscriptionSerializer` (ausgehend)
@@ -232,9 +243,9 @@ NOTE: ViewSets für `/api/categories/` und `/api/providers/` fehlen im Backend. 
 | JSON-Payload validieren und auf Django-Model mappen; `create()` und `update()` ausführen; verschachtelte `price`- und `renewal`-Felder auflösen
 | `Subscription`, `Category`, `Provider` Django Models
 
-| UserRegistrationView / login_view
-| Nutzer registrieren und einloggen; JWT-Access- und Refresh-Token zurückgeben
-| `POST /api/auth/register/`, `POST /api/auth/login/` (eingehend); Django `auth_user` (ausgehend)
+| UserRegistrationView / login_view / TokenRefreshView
+| Nutzer registrieren und einloggen; JWT-Access- und Refresh-Token zurückgeben; Refresh-Token gegen ein neues Token-Paar tauschen
+| `POST /api/auth/register/`, `POST /api/auth/login/`, `POST /api/auth/refresh/` (eingehend); Django `auth_user` (ausgehend)
 
 |===
 
@@ -428,9 +439,15 @@ Das Frontend hält ein eigenes Domänenmodell in TypeScript, das von den REST-DT
 | `RenewalPeriod`
 | Interface: `{ amount: number, unit: RenewalPeriodUnitEnum }`
 
+| `User`
+| Interface: `{ id: number, username: string, email: string, firstName: string, lastName: string }`; ohne Tokens; `email` darf leer sein
+
+| `AuthTokens`
+| Interface: `{ access: string, refresh: string }`; getrennt von `User`
+
 |===
 
-Der Mapper-Layer (`subscriptionMapper.ts`, `categoryMapper.ts`, `providerMapper.ts`) übersetzt zwischen REST-DTOs und diesen Entitäten. Domänenentitäten bleiben so frei von API-spezifischen Formaten (ISO-8601-Strings, untypisierte UUID-Strings).
+Der Mapper-Layer (`subscriptionMapper.ts`, `categoryMapper.ts`, `providerMapper.ts`, `userMapper.ts`) übersetzt zwischen REST-DTOs und diesen Entitäten. Domänenentitäten bleiben so frei von API-spezifischen Formaten (ISO-8601-Strings, untypisierte UUID-Strings).
 
 ---
 
@@ -514,15 +531,32 @@ WARNING: In `feature/79` wurden die Django-URLs auf `path('api/', include('abos.
 }
 ----
 
+==== DTO-Format: Auth (Register Request)
+
+[source,json]
+----
+{
+  "username": "<Username>",
+  "email": "<E-Mail>",
+  "password": "<Passwort>",
+  "password_confirm": "<Passwort-Bestätigung>"
+}
+----
+
+Bei Validierungsfehlern antwortet das Backend mit `400` und einer Abbildung Feld auf eine Liste englischer Texte, z. B. `{"username": ["A user with that username already exists."]}`.
+
 ==== DTO-Format: Auth (Register Response)
 
 [source,json]
 ----
 {
+  "message": "<Text>",
   "access": "<JWT Access Token>",
   "refresh": "<JWT Refresh Token>"
 }
 ----
+
+Das Frontend liest diese Antwort nicht aus, sondern meldet nach `201` per Login an.
 
 ==== DTO-Format: Auth (Login Request)
 
@@ -555,6 +589,23 @@ WARNING: In `feature/79` wurden die Django-URLs auf `path('api/', include('abos.
 
 Bei unbekannter Kennung, falschem Passwort oder deaktiviertem Account antwortet der Login immer mit `401` und `{"error": "Invalid credentials"}`.
 
+==== DTO-Format: Auth (Refresh Request und Response)
+
+[source,json]
+----
+{ "refresh": "<JWT Refresh Token>" }
+----
+
+[source,json]
+----
+{
+  "access": "<neues JWT Access Token>",
+  "refresh": "<neues JWT Refresh Token>"
+}
+----
+
+Ist der Refresh-Token ungültig oder abgelaufen, antwortet das Backend mit `401` und `{"detail": "Token is invalid or expired", "code": "token_not_valid"}`.
+
 ---
 
 == Eingesetzte Muster & Konventionen
@@ -566,7 +617,7 @@ Bei unbekannter Kennung, falschem Passwort oder deaktiviertem Account antwortet 
 | Muster | Wo eingesetzt | Begründung
 
 | Repository Pattern
-| Frontend: `SubscriptionRepository`, `CategoryRepository`, `ProviderRepository` als TypeScript-Interfaces mit REST-Implementierungen und Mock-Implementierungen
+| Frontend: `SubscriptionRepository`, `CategoryRepository`, `ProviderRepository`, `AuthRepository` als TypeScript-Interfaces mit REST-Implementierungen und Mock-Implementierungen
 | Austauschbarkeit zwischen REST-Backend, Mock-Daten und künftigem lokalem Speicher (IndexedDB); Unit-Tests mit `MockedRepositories` ohne Netzwerk
 
 | DTO Pattern
@@ -599,6 +650,9 @@ Bei unbekannter Kennung, falschem Passwort oder deaktiviertem Account antwortet 
 
 | Frontend-Repositories
 | Alle Repository-Methoden werfen einen `Error` mit `cause` bei fehlgeschlagenen Netzwerkanfragen; kein stiller Fehlschluck
+
+| Auth-Repository
+| `RestAuthRepository` und `MockedAuthRepository` werfen nur sechs Fehlertypen, alle abgeleitet von der gemeinsamen Basisklasse `AuthError`: `InvalidCredentialsError`, `RegistrationValidationError`, `RegistrationLoginFailedError`, `SessionExpiredError`, `NetworkError`, `UnexpectedAuthError`. Aufrufer erkennen jeden Auth-Fehler mit `instanceof AuthError`. Die View bekommt Fehlertypen und Codes (z. B. `USERNAME_TAKEN`), nie Backend-Texte. Die Codes werden im Frontend aus den englischen Backend-Texten abgeleitet (exakter Treffer nach `trim()`); ein unbekannter Text oder ein unbekanntes Feld macht die ganze Antwort zu `UnexpectedAuthError`. Der `cause` enthält keine Passwörter, Tokens oder Antwort-Bodys; bei typia-Fehlern nur Pfad und erwarteten Typ
 
 | Composables
 | Fangen Service-Fehler ab und schreiben die Meldung in `submitError` (reaktive Ref); die View zeigt diese an
