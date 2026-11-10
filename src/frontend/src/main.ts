@@ -22,6 +22,8 @@ import {
   MockedCategoryRepository, MockedProviderRepository,
   MockedSubscriptionRepository
 } from "@/repository/subscriptions/mockedRepositories.ts";
+import type { AuthRepository } from "@/repository/auth/repositories.ts";
+import { MockedAuthRepository } from "@/repository/auth/mockedRepositories.ts";
 
 const vuetify = createVuetify({
   components,
@@ -40,6 +42,7 @@ const app = createApp(App)
 app.provide<SubscriptionRepository, string>("subscriptionRepository", new MockedSubscriptionRepository());
 app.provide<CategoryRepository, string>("categoryRepository", new MockedCategoryRepository());
 app.provide<ProviderRepository, string>("providerRepository", new MockedProviderRepository());
+app.provide<AuthRepository, string>("authRepository", new MockedAuthRepository());
 
 
 app.use(vuetify)
