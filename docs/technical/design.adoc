@@ -652,7 +652,7 @@ Ist der Refresh-Token ungültig oder abgelaufen, antwortet das Backend mit `401`
 | Alle Repository-Methoden werfen einen `Error` mit `cause` bei fehlgeschlagenen Netzwerkanfragen; kein stiller Fehlschluck
 
 | Auth-Repository
-| `RestAuthRepository` und `MockedAuthRepository` werfen nur sechs Fehlertypen: `InvalidCredentialsError`, `RegistrationValidationError`, `RegistrationLoginFailedError`, `SessionExpiredError`, `NetworkError`, `UnexpectedAuthError`. Die View bekommt Fehlertypen und Codes (z. B. `USERNAME_TAKEN`), nie Backend-Texte. Die Codes werden im Frontend aus den englischen Backend-Texten abgeleitet (exakter Treffer nach `trim()`); ein unbekannter Text oder ein unbekanntes Feld macht die ganze Antwort zu `UnexpectedAuthError`. Der `cause` enthält keine Passwörter, Tokens oder Antwort-Bodys; bei typia-Fehlern nur Pfad und erwarteten Typ
+| `RestAuthRepository` und `MockedAuthRepository` werfen nur sechs Fehlertypen, alle abgeleitet von der gemeinsamen Basisklasse `AuthError`: `InvalidCredentialsError`, `RegistrationValidationError`, `RegistrationLoginFailedError`, `SessionExpiredError`, `NetworkError`, `UnexpectedAuthError`. Aufrufer erkennen jeden Auth-Fehler mit `instanceof AuthError`. Die View bekommt Fehlertypen und Codes (z. B. `USERNAME_TAKEN`), nie Backend-Texte. Die Codes werden im Frontend aus den englischen Backend-Texten abgeleitet (exakter Treffer nach `trim()`); ein unbekannter Text oder ein unbekanntes Feld macht die ganze Antwort zu `UnexpectedAuthError`. Der `cause` enthält keine Passwörter, Tokens oder Antwort-Bodys; bei typia-Fehlern nur Pfad und erwarteten Typ
 
 | Composables
 | Fangen Service-Fehler ab und schreiben die Meldung in `submitError` (reaktive Ref); die View zeigt diese an

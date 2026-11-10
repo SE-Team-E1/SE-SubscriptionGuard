@@ -1,65 +1,56 @@
 import type { RegistrationFieldErrors } from './registrationErrorCodes'
 
-export class InvalidCredentialsError extends Error {
-  constructor() {
-    super('Login credentials were rejected')
-    this.name = 'InvalidCredentialsError'
+// Common base so callers and isAuthError do not need to know every concrete error.
+export abstract class AuthError extends Error {
+  protected constructor(name: string, message: string, options?: { cause?: unknown }) {
+    super(message, options)
+    this.name = name
   }
 }
 
-export class RegistrationValidationError extends Error {
+export class InvalidCredentialsError extends AuthError {
+  constructor() {
+    super('InvalidCredentialsError', 'Login credentials were rejected')
+  }
+}
+
+export class RegistrationValidationError extends AuthError {
   readonly fieldErrors: RegistrationFieldErrors
 
   constructor(fieldErrors: RegistrationFieldErrors) {
-    super('Registration data is invalid')
-    this.name = 'RegistrationValidationError'
+    super('RegistrationValidationError', 'Registration data is invalid')
     this.fieldErrors = fieldErrors
   }
 }
 
-export class RegistrationLoginFailedError extends Error {
+export class RegistrationLoginFailedError extends AuthError {
   constructor(options?: { cause?: unknown }) {
-    super('Account was created but the automatic login failed', options)
-    this.name = 'RegistrationLoginFailedError'
+    super(
+      'RegistrationLoginFailedError',
+      'Account was created but the automatic login failed',
+      options,
+    )
   }
 }
 
-export class SessionExpiredError extends Error {
+export class SessionExpiredError extends AuthError {
   constructor() {
-    super('Session expired, please log in again')
-    this.name = 'SessionExpiredError'
+    super('SessionExpiredError', 'Session expired, please log in again')
   }
 }
 
-export class NetworkError extends Error {
+export class NetworkError extends AuthError {
   constructor(options?: { cause?: unknown }) {
-    super('Network request failed', options)
-    this.name = 'NetworkError'
+    super('NetworkError', 'Network request failed', options)
   }
 }
 
-export class UnexpectedAuthError extends Error {
+export class UnexpectedAuthError extends AuthError {
   constructor(options?: { cause?: unknown }) {
-    super('Unexpected authentication error', options)
-    this.name = 'UnexpectedAuthError'
+    super('UnexpectedAuthError', 'Unexpected authentication error', options)
   }
 }
-
-export type AuthError =
-  | InvalidCredentialsError
-  | RegistrationValidationError
-  | RegistrationLoginFailedError
-  | SessionExpiredError
-  | NetworkError
-  | UnexpectedAuthError
 
 export function isAuthError(error: unknown): error is AuthError {
-  return (
-    error instanceof InvalidCredentialsError ||
-    error instanceof RegistrationValidationError ||
-    error instanceof RegistrationLoginFailedError ||
-    error instanceof SessionExpiredError ||
-    error instanceof NetworkError ||
-    error instanceof UnexpectedAuthError
-  )
+  return error instanceof AuthError
 }
