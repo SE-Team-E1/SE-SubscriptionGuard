@@ -1,8 +1,12 @@
 export interface User {
-    id: string,
-    name: string,
-    email: string,
-    token: string,
-    // birthdate: string,
-    // version: number, // for OCC sync
+  id: number
+  username: string
+  email: string
+  firstName: string
+  lastName: string
+}
+
+export interface AuthTokens {
+  access: string
+  refresh: string
 }
