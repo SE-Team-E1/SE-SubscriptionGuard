@@ -10,7 +10,7 @@ import {
   isAuthError,
 } from './authErrors'
 
-// ---- Test helpers (lokal, E-34) ----
+// ---- Test helpers ----
 
 const SECRET_PASSWORD = 'pw-SECRET-123'
 const SECRET_ACCESS = 'ACCESS-SECRET'
@@ -110,7 +110,6 @@ describe('RestAuthRepository', () => {
 
   describe('login', () => {
     test('sends the login request and maps the user', async () => {
-      // T-1
       // Arrange
       queue(loginOk())
 
@@ -130,7 +129,6 @@ describe('RestAuthRepository', () => {
     })
 
     test('throws InvalidCredentialsError on 401', async () => {
-      // T-2
       // Arrange
       queue(jsonResponse(401, { error: 'Invalid credentials' }))
 
@@ -142,7 +140,6 @@ describe('RestAuthRepository', () => {
     })
 
     test('throws UnexpectedAuthError for an invalid 200 body', async () => {
-      // T-4
       // Arrange
       queue(jsonResponse(200, { access: 'A', user: {} }))
 
@@ -156,7 +153,6 @@ describe('RestAuthRepository', () => {
 
   describe('register', () => {
     test('registers and then logs in with the trimmed credentials', async () => {
-      // T-7, T-51
       // Arrange
       queue(registerOk(), loginOk({ access: 'ACCESS-L', refresh: 'REFRESH-L' }))
 
@@ -183,7 +179,6 @@ describe('RestAuthRepository', () => {
     })
 
     test('throws RegistrationLoginFailedError when the follow-up login fails', async () => {
-      // T-8
       // Arrange
       queue(registerOk(), jsonResponse(500, {}))
 
@@ -195,7 +190,6 @@ describe('RestAuthRepository', () => {
     })
 
     test('maps a 400 to RegistrationValidationError with codes only', async () => {
-      // T-9
       // Arrange
       queue(jsonResponse(400, USERNAME_TAKEN_BODY))
 
@@ -209,7 +203,6 @@ describe('RestAuthRepository', () => {
     })
 
     test('throws UnexpectedAuthError for an unmappable 400', async () => {
-      // T-45
       // Arrange
       queue(jsonResponse(400, { username: ['Something new.'] }))
 
@@ -223,7 +216,6 @@ describe('RestAuthRepository', () => {
 
   describe('refresh', () => {
     test('sends the refresh token and returns the new pair', async () => {
-      // T-13
       // Arrange
       queue(jsonResponse(200, { access: 'A2', refresh: 'R2' }))
 
@@ -237,7 +229,6 @@ describe('RestAuthRepository', () => {
     })
 
     test('throws SessionExpiredError on 401', async () => {
-      // T-14
       // Arrange
       queue(jsonResponse(401, { detail: 'Token is invalid or expired', code: 'token_not_valid' }))
 
@@ -249,7 +240,6 @@ describe('RestAuthRepository', () => {
     })
 
     test('throws SessionExpiredError for a blank token without a request', async () => {
-      // T-43
       // Arrange: fetch spy from beforeEach
 
       // Act
@@ -269,7 +259,6 @@ describe('RestAuthRepository', () => {
     ]
 
     test('throws NetworkError when fetch rejects', async () => {
-      // T-3
       for (const [, run] of operations) {
         // Arrange
         fetchMock.mockReset()
@@ -284,7 +273,6 @@ describe('RestAuthRepository', () => {
     })
 
     test('throws UnexpectedAuthError without the backend text on 500', async () => {
-      // T-5
       for (const [, run] of operations) {
         // Arrange
         fetchMock.mockReset()
@@ -300,7 +288,6 @@ describe('RestAuthRepository', () => {
     })
 
     test('leaks no secrets to console or errors', async () => {
-      // T-17
       // Arrange
       const spies = (['log', 'info', 'warn', 'error', 'debug'] as const).map((method) =>
         vi.spyOn(console, method).mockImplementation(() => {}),

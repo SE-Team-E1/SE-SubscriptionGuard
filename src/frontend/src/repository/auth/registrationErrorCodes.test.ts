@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { mapRegistrationErrors, type RegistrationField } from './registrationErrorCodes'
 
-// Ausgeschrieben, nicht aus der Implementierung abgeleitet (E-QA-11)
+// Ausgeschrieben, nicht aus der Implementierung abgeleitet
 const CASES: [RegistrationField, string, string][] = [
   ['username', 'This field is required.', 'USERNAME_REQUIRED'],
   ['username', 'This field may not be blank.', 'USERNAME_REQUIRED'],
@@ -37,7 +37,6 @@ const CASES: [RegistrationField, string, string][] = [
 
 describe('mapRegistrationErrors', () => {
   test('maps every known backend message to its code', () => {
-    // T-10
     for (const [field, text, code] of CASES) {
       // Arrange
       const body = { [field]: [text] }
@@ -51,7 +50,6 @@ describe('mapRegistrationErrors', () => {
   })
 
   test('returns null for unknown texts, unknown fields and malformed bodies', () => {
-    // T-11, T-12, T-22
     // Arrange
     const bodies: unknown[] = [
       { username: ['Something new.'] },

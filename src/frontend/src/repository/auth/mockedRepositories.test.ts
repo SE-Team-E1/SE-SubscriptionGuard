@@ -22,7 +22,6 @@ describe('MockedAuthRepository', () => {
   })
 
   test('logs in the demo user', async () => {
-    // T-27
     // Arrange: fresh mock from beforeEach
 
     // Act
@@ -35,7 +34,6 @@ describe('MockedAuthRepository', () => {
   })
 
   test('throws InvalidCredentialsError for a wrong password', async () => {
-    // T-28
     // Arrange: fresh mock from beforeEach
 
     // Act
@@ -46,7 +44,6 @@ describe('MockedAuthRepository', () => {
   })
 
   test('registers a user who can log in afterwards', async () => {
-    // T-30
     // Arrange: fresh mock from beforeEach
 
     // Act
@@ -59,7 +56,6 @@ describe('MockedAuthRepository', () => {
   })
 
   test('rejects a taken username', async () => {
-    // T-29
     // Arrange
     const input = { ...BASE, username: 'otto' }
 
@@ -73,7 +69,6 @@ describe('MockedAuthRepository', () => {
   })
 
   test('rotates issued refresh tokens and rejects foreign ones', async () => {
-    // T-31
     // Arrange
     const first = (await repo.login('otto', 'passwort123')).tokens
 

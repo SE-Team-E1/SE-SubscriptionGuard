@@ -50,7 +50,7 @@ function unexpectedStatus(status: number): UnexpectedAuthError {
   return new UnexpectedAuthError({ cause: new Error(`HTTP ${status}`) })
 }
 
-// Only path and expected type, never the offending value (NFR-1).
+// Only path and expected type, never the offending value.
 function validate<T>(parse: (input: unknown) => T, input: unknown): T {
   try {
     return parse(input)
