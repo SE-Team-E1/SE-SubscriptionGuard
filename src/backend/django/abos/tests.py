@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from rest_framework.test import APIRequestFactory, force_authenticate
+from rest_framework.test import APIClient, APIRequestFactory, force_authenticate
 from rest_framework.renderers import JSONRenderer
 from rest_framework import status
 from unittest.mock import patch
@@ -210,3 +210,68 @@ class SubscriptionSerializerTest(TestCase):
         self.assertTrue(serializer.is_valid(), serializer.errors)
         updated = serializer.save()
         self.assertEqual(updated.user, self.user)  # user bleibt gleich
+
+
+class TotalCostsViewTest(TestCase):
+
+    def setUp(self):
+        self.client = APIClient()
+        self.user = User.objects.create_user(username="total-costs-user", password="test-password")
+        self.other_user = User.objects.create_user(username="other-total-costs-user", password="test-password")
+        self.provider = Provider.objects.create(id="total-costs-provider", name="Provider")
+        self.category = Category.objects.create(id="total-costs-category", name="Category", icon="icon")
+
+    def _create_subscription(self, subscription_id, user, amount, currency):
+        subscription = Subscription.objects.create(
+            id=subscription_id,
+            createdAt="2024-01-01T00:00:00Z",
+            name=subscription_id,
+            providerId=self.provider,
+            price=amount,
+            price_currency=currency,
+            renewal_amount=1,
+            renewal_unit="months",
+            bookingDate="2024-01-15",
+            user=user,
+        )
+        subscription.categoryIds.add(self.category)
+        return subscription
+
+    def test_requires_authentication(self):
+        response = self.client.get("/api/subscriptions/total-costs/")
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_returns_empty_totals_without_subscriptions(self):
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get("/api/subscriptions/total-costs/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json(), {"totals": {}})
+
+    def test_sums_subscriptions_by_currency(self):
+        self._create_subscription("eur-one", self.user, "9.99", "EUR")
+        self._create_subscription("eur-two", self.user, "10.01", "EUR")
+        self._create_subscription("usd-one", self.user, "12.50", "USD")
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get("/api/subscriptions/total-costs/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json(), {
+            "totals": {
+                "EUR": "20.00",
+                "USD": "12.50",
+            }
+        })
+
+    def test_excludes_other_users_subscriptions(self):
+        self._create_subscription("own-subscription", self.user, "9.99", "EUR")
+        self._create_subscription("other-subscription", self.other_user, "100.00", "EUR")
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.get("/api/subscriptions/total-costs/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json(), {"totals": {"EUR": "9.99"}})

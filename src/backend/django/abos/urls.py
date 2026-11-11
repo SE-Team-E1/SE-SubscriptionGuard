@@ -12,5 +12,6 @@ router.register(r"categories", CategoryViewSet, basename="category")
 
 
 urlpatterns = [
+    path('subscriptions/total-costs/', views.total_costs_view, name='subscription-total-costs'),
     path('', include(router.urls)),
 ]
