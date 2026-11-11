@@ -11,16 +11,21 @@ participant Backend
 == Liste laden ==
 Nutzer -> SubscriptionService: Liste öffnen
 SubscriptionService -> SyncRepository: findAll()
+
+alt online
 SyncRepository -> Backend: downsync(ids, versions): Updates seit letztem Stand
 Backend --> SyncRepository: remote: SyncDto[]
 SyncRepository -> IndexedDB: findByIds(remote.map(id))
 IndexedDB --> SyncRepository: local: SyncDto[]
 SyncRepository -> IndexedDB: merge + speichern
+else Offline
+SyncRepository -> IndexedDB: findAll()
+end 
 IndexedDB --> SyncRepository: SyncDto[]
 SyncRepository --> SubscriptionService: RestDTO[]
 SubscriptionService -> Nutzer: Liste anzeigen
 
-== ändern ==
+== Offline ändern ==
 Nutzer -> SubscriptionService: ändern
 SubscriptionService -> SyncRepository: insert/update(RestDTO)
 
@@ -33,26 +38,27 @@ note over SyncRepository
   SubscriptionService sieht nur RestDTO.
 end note
 
-alt bereits online
-    SyncRepository -> Backend: upsert(id, version, payload)
-    alt Version ist aktuell
-        Backend --> SyncRepository: Objekt mit neuer version
-        SyncRepository -> IndexedDB: speichern, status = synced
-    else Version veraltet
-        Backend --> SyncRepository: 409 und Serverstand
-        SyncRepository -> IndexedDB: speichern, status = conflict\nversion nicht erhöhen
-        opt Übernahme Serverstand
-            SyncRepository -> SyncRepository: localDto.merge(Serverstand)
-            SyncRepository -> IndexedDB: speichern
-        end
-    end
-    opt Synchronisierung des restlichen Serverstands
-        SyncRepository -> Backend: downsync(ids, versions): Updates seit letztem Stand
-        Backend --> SyncRepository: SyncDto[]
-        SyncRepository -> IndexedDB: merge + speichern\nstatus local bleibt stehen
-    end
-else offline
-    note over SyncRepository: upsync und downsync aktuell nicht möglich.
+SyncRepository --> SubscriptionService: RestDTO
+SubscriptionService -> Nutzer: Änderungen anzeigen
+
+== Online ändern ==
+
+Nutzer -> SubscriptionService: ändern
+SubscriptionService -> SyncRepository: insert/update(RestDTO)
+
+SyncRepository -> SyncRepository: als SyncDto wrappen,\n status = local
+SyncRepository -> IndexedDB: speichern
+
+SyncRepository -> Backend: upsert(id, version, payload)
+
+alt Version ist aktuell
+Backend --> SyncRepository: Objekt mit neuer version
+SyncRepository -> IndexedDB: speichern, status = synced
+else Version veraltet
+Backend --> SyncRepository: 409 und Serverstand
+SyncRepository -> IndexedDB: speichern, status = conflict\nversion nicht erhöhen
+SyncRepository -> SyncRepository: local.merge(Serverstand)
+SyncRepository -> IndexedDB: speichern, status = synced
 end
 
 SyncRepository --> SubscriptionService: RestDTO
