@@ -33,22 +33,22 @@ package "Frontend" as frontend {
         }
 
         package "DTOs" as dtos {
-            interface RestDTO {
+            interface RepoDto {
                 +id: string
             }
 
-            class RestProviderDTO implements RestDTO {
+            class RestProviderDTO implements RepoDto {
                 +id: string
                 +name: string
             }
 
-            class RestCategoryDTO implements RestDTO {
+            class RestCategoryDTO implements RepoDto {
                 +id: string
                 +name: string
                 +icon: string
             }
 
-            class RestSubscriptionDTO implements RestDTO {
+            class RestSubscriptionDTO implements RepoDto {
                 +id: string
                 +createdAt: string
                 +name: string

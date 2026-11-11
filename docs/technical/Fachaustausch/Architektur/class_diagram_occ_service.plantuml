@@ -77,18 +77,18 @@ package "Frontend" as frontend {
         }
         
         package "DTOs" as dtos {
-            class RestProviderDTO implements IdDto {
+            class RestProviderDTO implements RepoDto {
                 +id: string
                 +name: string
             }
 
-            class RestCategoryDTO implements IdDto {
+            class RestCategoryDTO implements RepoDto {
                 +id: string
                 +name: string
                 +icon: string
             }
 
-            class RestSubscriptionDTO implements IdDto {
+            class RestSubscriptionDTO implements RepoDto {
                 +id: string
                 +createdAt: string
                 +name: string
@@ -99,7 +99,7 @@ package "Frontend" as frontend {
                 +bookingDate: string
             }
 
-            interface "SyncDto<T extends IdDto>" as SyncDto {
+            interface "SyncDto<T extends RepoDto>" as SyncDto {
                 +payload: T
                 +version: SyncVersion
                 +status: SyncStatus
@@ -119,7 +119,7 @@ package "Frontend" as frontend {
                 +new(): SyncVersion
             }
 
-            interface IdDto {
+            interface RepoDto {
                 +id: String
             }
 
@@ -131,7 +131,7 @@ package "Frontend" as frontend {
                 Die Version wird vom Server vergeben.
             end note
 
-            SyncDto --> IdDto
+            SyncDto --> RepoDto
             SyncDto --> SyncStatus
             SyncDto --> SyncVersion
         }
