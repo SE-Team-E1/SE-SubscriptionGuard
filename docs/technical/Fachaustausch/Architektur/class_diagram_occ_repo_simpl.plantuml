@@ -1,0 +1,174 @@
+@startuml
+title Vereinfachter Plan Zustand mit Repository-Level OCC (Optimistic Concurrency Control)
+
+package "Frontend" as frontend {
+    note as frontendNote
+        Änderungen:
+            + SyncDto
+            + Sync Repository Interfaces
+        
+        Probleme:
+            - könnte argumentieren, dass Repo nun Fachlogik hält
+            - ABER: Preis >= 0 <=> Fachlogik
+                    Sync <=> Datenkonsistenz
+            => sinnvolle Trennung
+        Vorteile:
+            - SubscriptionService nicht verseucht
+            => Wiederverwendung der Repo-Arch
+            => Austauschbarkeit z.B. nur remote, nur local, sync, ...
+
+            - SyncDto verseucht nicht Repo Interfaces
+    end note
+
+    class ListView
+
+    Class SubscriptionService {
+        -repository: Repository
+        +execute(): Promise<Subscription[]>
+    }
+
+     package "Domain" as domain {
+        package "Entities" {
+            note as entityNote
+                Entities brauchen und sollen auch nicht 
+                die zusätzlichen Informationen von SyncDto enthalten, 
+                da diese nur für den Sync und nicht für die Anzeige relevant sind.
+            end note
+            ' class EntityId {
+            '     +value: string
+            '     +new(): EntityId
+            '     +fromString(value: string): EntityId
+            ' }
+
+            class Provider {
+                +id: EntityId
+                +name: string
+            }
+
+            class Category {
+                +id: EntityId
+                +name: string
+                +icon: string
+            }
+
+            class Subscription {
+                +id: EntityId
+                +name: string
+                +createdAt: Date
+                +provider: Provider
+                +categories: Category
+                +price: Price
+                +renewal: RenewalPeriod
+                +bookingDate: Date
+            }
+        }
+        
+        package "DTOs" as dtos {
+            class RestProviderDTO implements IdDto {
+                +id: string
+                +name: string
+            }
+
+            class RestCategoryDTO implements IdDto {
+                +id: string
+                +name: string
+                +icon: string
+            }
+
+            class RestSubscriptionDTO implements IdDto {
+                +id: string
+                +createdAt: string
+                +name: string
+                +providerId: string
+                +categoriesId: string
+                +price: Price
+                +renewal: RenewalPeriod
+                +bookingDate: string
+            }
+
+            interface "SyncDto<T extends IdDto>" as SyncDto {
+                +payload: T
+                +version: SyncVersion
+                +status: SyncStatus
+
+                +equals(other: SyncDto): boolean
+                +merge(other: SyncDto): List<SyncDto>
+            }
+
+            enum SyncStatus {
+                local
+                synced
+                conflict
+            }
+
+            class SyncVersion {
+                +value: number
+                +new(): SyncVersion
+            }
+
+            interface IdDto {
+                +id: String
+            }
+
+            note as identity
+                SyncDto kapselt den Payload und 
+                fügt Version und Status unabhängig dazu.
+            
+                Eine neue id wird beim erstellen Clientseitig vergeben.
+                Die Version wird vom Server vergeben.
+            end note
+
+            SyncDto --> IdDto
+            SyncDto --> SyncStatus
+            SyncDto --> SyncVersion
+        }
+    }
+
+
+    package "Repository Interfaces" as interfaces {
+        note as dip
+            Dependency Inversion
+        end note
+
+        interface Repository {
+            +findAll(): Promise<RestDTO[]>
+            +insert(dto: RestDTO): Promise<RestDTO>>
+            +update(dto: RestDTO): Promise<RestDTO>>
+        }
+    }
+
+    package "Sync" as sync {
+        class SyncRepository implements Repository
+    }
+
+    package "REST" as rest {
+        class RestRepository implements Repository
+    }
+
+    package "IndexedDB" as indexeddb {
+        note as idxbNote
+            IndexedDB als lokale Datenbank.
+        end note
+    }
+
+    ListView --> SubscriptionService
+    SubscriptionService --> interfaces
+}
+
+package "Backend" as backend {
+    class Api {
+        +upsert(id, version, payload)
+        +downsync(ids, versions): Promise<SyncDto[]>
+    }
+}
+
+rest --> backend
+backend --> rest
+
+sync --> backend
+backend --> sync
+
+sync --> indexeddb
+indexeddb --> sync
+
+@enduml

@@ -1,0 +1,199 @@
+@startuml
+title Plan Zustand mit Service-Level OCC (Optimistic Concurrency Control)
+
+package "Frontend" as frontend {
+    note as frontendNote
+        Änderungen:
+            + SyncService
+            + SyncDto
+            - Parametertypen in Repository Interfaces
+            - Service hält SyncService
+        
+        Probleme:
+            - Repo Interfaces "versucht" mit neuen SyncDto
+            - 2 Services halten Repos doppelt
+            => kein klarer Path zw. Datenhaltung und Anzeige
+            - könnte SubService direkt auf SyncService zugreifen?
+            => Dann müsste SyncService Datenbankoperationen bereitstellen
+            => Dafür nicht gedacht
+    end note
+
+    class ListView
+
+    Class SubscriptionService {
+        -subscriptionRepository: SubscriptionRepository
+        -categoryRepository: CategoryRepository
+        -providerRepository: ProviderRepository
+        -syncService: SyncService
+        +execute(): Promise<Subscription[]>
+    }
+
+    class SyncService {
+        localSubRepo: SubscriptionRepository
+        localCatRepo: CategoryRepository
+        localProvRepo: ProviderRepository
+        remoteSubRepo: SubscriptionRepository
+        remoteCatRepo: CategoryRepository
+        remoteProvRepo: ProviderRepository
+        +onLocalChange(): Promise<void>
+        +upsync(): Promise<void>
+        +downsync(): Promise<void>
+    }
+
+     package "Domain" as domain {
+        package "Entities" {
+            note as entityNote
+                Entities brauchen und sollen auch nicht 
+                die zusätzlichen Informationen von SyncDto enthalten, 
+                da diese nur für den Sync und nicht für die Anzeige relevant sind.
+            end note
+            ' class EntityId {
+            '     +value: string
+            '     +new(): EntityId
+            '     +fromString(value: string): EntityId
+            ' }
+
+            class Provider {
+                +id: EntityId
+                +name: string
+            }
+
+            class Category {
+                +id: EntityId
+                +name: string
+                +icon: string
+            }
+
+            class Subscription {
+                +id: EntityId
+                +name: string
+                +createdAt: Date
+                +provider: Provider
+                +categories: Category
+                +price: Price
+                +renewal: RenewalPeriod
+                +bookingDate: Date
+            }
+        }
+        
+        package "DTOs" as dtos {
+            class RestProviderDTO implements IdDto {
+                +id: string
+                +name: string
+            }
+
+            class RestCategoryDTO implements IdDto {
+                +id: string
+                +name: string
+                +icon: string
+            }
+
+            class RestSubscriptionDTO implements IdDto {
+                +id: string
+                +createdAt: string
+                +name: string
+                +providerId: string
+                +categoriesId: string
+                +price: Price
+                +renewal: RenewalPeriod
+                +bookingDate: string
+            }
+
+            interface "SyncDto<T extends IdDto>" as SyncDto {
+                +payload: T
+                +version: SyncVersion
+                +status: SyncStatus
+
+                +equals(other: SyncDto): boolean
+                +merge(other: SyncDto): List<SyncDto>
+            }
+
+            enum SyncStatus {
+                local
+                synced
+                conflict
+            }
+
+            class SyncVersion {
+                +value: number
+                +new(): SyncVersion
+            }
+
+            interface IdDto {
+                +id: String
+            }
+
+            note as identity
+                SyncDto kapselt den Payload und 
+                fügt Version und Status unabhängig dazu.
+            
+                Eine neue id wird beim erstellen Clientseitig vergeben.
+                Die Version wird vom Server vergeben.
+            end note
+
+            SyncDto --> IdDto
+            SyncDto --> SyncStatus
+            SyncDto --> SyncVersion
+        }
+    }
+
+
+    package "Repository Interfaces" as interfaces {
+        note as dip
+            Dependency Inversion
+        end note
+
+        interface CategoryRepository {
+            +findAll(): Promise<SyncDto<RestCategoryDTO>[]>
+            +insert(category: SyncDto<RestCategoryDTO>): Promise<SyncDto<RestCategoryDTO>>
+            +update(category: SyncDto<RestCategoryDTO>): Promise<SyncDto<RestCategoryDTO>>
+        }
+        interface ProviderRepository {
+            +findAll(): Promise<SyncDto<RestProviderDTO>[]>
+            +insert(provider: SyncDto<RestCategoryDTO>): Promise<SyncDto<RestProviderDTO>>
+            +update(provider: SyncDto<RestCategoryDTO>): Promise<SyncDto<RestProviderDTO>>
+        }
+        interface SubscriptionRepository {
+            +findAll(): Promise<RestSubscriptionDTO[]>
+            +insert(subscription: SyncDto<RestCategoryDTO>): Promise<SyncDto<RestCategoryDTO>>
+            +update(subscription: SyncDto<RestCategoryDTO>): Promise<SyncDto<RestCategoryDTO>>
+        }
+    }
+
+    package "Local" as local {
+        class IndexedDbCategoryRepository implements CategoryRepository
+        class IndexedDbProviderRepository implements ProviderRepository
+        class IndexedDbSubscriptionRepository implements SubscriptionRepository
+    }
+
+    package "REST" as rest {
+        class RestCategoryRepository implements CategoryRepository
+        class RestProviderRepository implements ProviderRepository
+        class RestSubscriptionRepository implements SubscriptionRepository
+    }
+
+    package "IndexedDB" as indexeddb {
+        note as idxbNote
+            IndexedDB als lokale Datenbank.
+        end note
+    }
+
+    ListView --> SubscriptionService
+    SubscriptionService --> SyncService
+    SubscriptionService --> interfaces
+    SyncService --> interfaces
+}
+
+package "Backend" as backend {
+    class Api {
+        +upsert(id, version, payload)
+    }
+}
+
+rest --> backend
+backend --> rest
+
+local --> indexeddb
+indexeddb --> local
+
+@enduml

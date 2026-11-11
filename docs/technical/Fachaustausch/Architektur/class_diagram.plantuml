@@ -1,0 +1,141 @@
+@startuml
+title Ist Zustand
+package "Frontend" as frontend {
+    package "Domain" as domain {
+        package "Entities" {
+            ' class EntityId {
+            '     +value: string
+            '     +new(): EntityId
+            '     +fromString(value: string): EntityId
+            ' }
+
+            class Provider {
+                +id: EntityId
+                +name: string
+            }
+
+            class Category {
+                +id: EntityId
+                +name: string
+                +icon: string
+            }
+
+            class Subscription {
+                +id: EntityId
+                +name: string
+                +createdAt: Date
+                +provider: Provider
+                +categories: Category
+                +price: Price
+                +renewal: RenewalPeriod
+                +bookingDate: Date
+            }
+        }
+
+        package "DTOs" as dtos {
+            interface RestDTO {
+                +id: string
+            }
+
+            class RestProviderDTO implements RestDTO {
+                +id: string
+                +name: string
+            }
+
+            class RestCategoryDTO implements RestDTO {
+                +id: string
+                +name: string
+                +icon: string
+            }
+
+            class RestSubscriptionDTO implements RestDTO {
+                +id: string
+                +createdAt: string
+                +name: string
+                +providerId: string
+                +categoriesId: string
+                +price: Price
+                +renewal: RenewalPeriod
+                +bookingDate: string
+            }
+        }
+    }
+
+
+    Class ListView{
+    -{Subscription[], function} useListSubscriptionService()
+    }
+
+    package "Repository Interfaces" as interfaces {
+        note as dip
+            Dependency Inversion
+        end note
+
+        Interface SubscriptionRepository{
+            +findAll(): Promise<RestSubscriptionDTO[]>
+            +insert(subscription: RestSubscriptionDTO): Promise<RestSubscriptionDTO>
+            +update(subscription: RestSubscriptionDTO): Promise<RestSubscriptionDTO>
+        }
+
+        Interface CategoryRepository{
+            +findAll(): Promise<RestCategoryDTO[]>
+            +findByIds(ids: string[]): Promise<RestCategoryDTO[]>
+            +insert(category: RestCategoryDTO): Promise<RestCategoryDTO>
+            +update(category: RestCategoryDTO): Promise<RestCategoryDTO>
+        }
+
+        Interface ProviderRepository{
+            +findAll(): Promise<RestProviderDTO[]>
+            +findByIds(ids: string[]): Promise<RestProviderDTO[]>
+            +insert(provider: RestProviderDTO): Promise<RestProviderDTO>
+            +update(provider: RestProviderDTO): Promise<RestProviderDTO>
+        }
+    }
+
+    package "Repository Implementations" as implementations {
+        Class RestSubscriptionRepository implements SubscriptionRepository {
+            findAll()
+            insert()
+            update()
+        }
+
+        Class RestCategoryRepository implements CategoryRepository {
+            findAll()
+            findByIds()
+            insert()
+            update()
+        }
+
+        Class RestProviderRepository implements ProviderRepository {
+            findAll()
+            findByIds()
+            insert()
+            update()
+        }
+    }
+
+    Class SubscriptionService {
+        -subscriptionRepository: SubscriptionRepository
+        -categoryRepository: CategoryRepository
+        -providerRepository: ProviderRepository
+        +execute(): Promise<Subscription[]>
+    }
+
+    ' interfaces --> dtos
+    ' implementations --> dtos
+    ' SubscriptionService --> domain
+
+    SubscriptionService --> SubscriptionRepository
+    SubscriptionService --> CategoryRepository
+    SubscriptionService --> ProviderRepository
+
+    ListView --> SubscriptionService
+}
+
+package "Backend" as backend {
+    
+}
+
+implementations --> backend
+
+@enduml

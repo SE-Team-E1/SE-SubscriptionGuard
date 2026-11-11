@@ -1,0 +1,70 @@
+@startuml
+title Service-Level OCC, eine Entität
+
+actor Nutzer
+participant SubscriptionService
+participant SyncService
+participant IndexedDbRepository
+participant RestRepository
+participant Backend
+
+Nutzer -> SubscriptionService: ändern
+SubscriptionService -> IndexedDbRepository: insert/update(SyncDto), status = local
+IndexedDbRepository --> SubscriptionService: SyncDto
+SubscriptionService -> SyncService: onLocalChange()
+
+note over SyncService
+  upsync und downsync je Entität:
+  Kategorie, dann Provider, dann Abo.
+end note
+
+alt bereits online
+    SyncService -> IndexedDbRepository: findAll()
+    IndexedDbRepository --> SyncService: SyncDto[] mit status local
+    SyncService -> RestRepository: upsync: insert/update(SyncDto)
+    RestRepository -> Backend: upsert(id, version, payload)
+    alt Version ist aktuell
+        Backend --> RestRepository: Objekt mit neuer version
+        RestRepository --> SyncService: SyncDto
+        SyncService -> IndexedDbRepository: update(SyncDto)\nstatus = synced
+    else Version veraltet
+        Backend --> RestRepository: 409 und Serverstand
+        RestRepository --> SyncService: SyncDto
+        SyncService -> IndexedDbRepository: update(SyncDto)\nstatus = conflict, version nicht erhöhen
+        opt Nutzer übernimmt Serverstand
+            SyncService -> IndexedDbRepository: merge(Serverstand)
+        end
+    end
+    SyncService -> RestRepository: downsync: findAll()
+    RestRepository -> Backend: Updates seit letztem Stand
+    Backend --> RestRepository: SyncDto[]
+    RestRepository --> SyncService: SyncDto[]
+    SyncService -> IndexedDbRepository: merge + update
+else offline
+    note over SyncService: upsync und downsync warten auf Netz
+end
+
+== wieder online ==
+SyncService -> IndexedDbRepository: findAll()
+IndexedDbRepository --> SyncService: SyncDto[] mit status local
+SyncService -> RestRepository: upsync: insert/update(SyncDto)
+RestRepository -> Backend: upsert(id, version, payload)
+alt Version ist aktuell
+    Backend --> RestRepository: Objekt mit neuer version
+    RestRepository --> SyncService: SyncDto
+    SyncService -> IndexedDbRepository: update(SyncDto)\nstatus = synced
+else Version veraltet
+    Backend --> RestRepository: 409 und Serverstand
+    RestRepository --> SyncService: SyncDto
+    SyncService -> IndexedDbRepository: update(SyncDto)\nstatus = conflict, version nicht erhöhen
+    opt Nutzer übernimmt Serverstand
+        SyncService -> IndexedDbRepository: merge(Serverstand)
+    end
+end
+SyncService -> RestRepository: downsync: findAll()
+RestRepository -> Backend: Updates seit letztem Stand
+Backend --> RestRepository: SyncDto[]
+RestRepository --> SyncService: SyncDto[]
+SyncService -> IndexedDbRepository: merge + update\nstatus local bleibt stehen
+
+@enduml

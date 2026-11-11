@@ -1,0 +1,112 @@
+@startuml
+title Simplifizierter Ist Zustand
+package "Frontend" as frontend {
+    package "Domain" as domain {
+        package "Entities" {
+            ' class EntityId {
+            '     +value: string
+            '     +new(): EntityId
+            '     +fromString(value: string): EntityId
+            ' }
+
+            class Provider {
+                +id: EntityId
+                +name: string
+            }
+
+            class Category {
+                +id: EntityId
+                +name: string
+                +icon: string
+            }
+
+            class Subscription {
+                +id: EntityId
+                +name: string
+                +createdAt: Date
+                +provider: Provider
+                +categories: Category
+                +price: Price
+                +renewal: RenewalPeriod
+                +bookingDate: Date
+            }
+        }
+        
+        package "DTOs" as dtos {
+            interface RestDTO {
+                +id: string
+            }
+
+            class RestProviderDTO implements RestDTO {
+                +id: string
+                +name: string
+            }
+
+            class RestCategoryDTO implements RestDTO {
+                +id: string
+                +name: string
+                +icon: string
+            }
+
+            class RestSubscriptionDTO implements RestDTO {
+                +id: string
+                +createdAt: string
+                +name: string
+                +providerId: string
+                +categoriesId: string
+                +price: Price
+                +renewal: RenewalPeriod
+                +bookingDate: string
+            }
+        }
+    }
+
+
+    Class ListView{
+    -{Subscription[], function} useListSubscriptionService()
+    }
+
+    package "Repository Interfaces" as interfaces {
+        note as dip
+            Dependency Inversion
+
+            Simplifiezierung: Mehrere Repository Interfaces sind zu einem zusammengefasst.
+        end note
+
+        Interface Repository{
+            +findAll(): Promise<RestDTO[]>
+            +findByIds(ids: string[]): Promise<RestDTO[]>
+            +insert(object: RestDTO): Promise<RestDTO>
+            +update(object: RestDTO): Promise<RestDTO>
+        }
+    }
+
+    package "Repository Implementations" as implementations {
+        Class RestRepository implements Repository {
+            findAll()
+            insert()
+            update()
+        }
+    }
+
+    Class SubscriptionService {
+        -repository: Repository
+        +execute(): Promise<Subscription[]>
+    }
+
+    ' interfaces --> dtos
+    ' implementations --> dtos
+    ' SubscriptionService --> domain
+
+    SubscriptionService --> Repository
+
+    ListView --> SubscriptionService
+}
+
+package "Backend" as backend {
+    
+}
+
+implementations --> backend
+
+@enduml

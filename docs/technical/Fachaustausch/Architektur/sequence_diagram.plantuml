@@ -1,0 +1,47 @@
+@startuml
+title Liste laden
+
+actor Nutzer
+participant ListView
+participant SubscriptionService
+
+box "Repository Interfaces"
+  participant SubscriptionRepository
+  participant ProviderRepository
+  participant CategoryRepository
+end box
+
+participant "REST-Implementierungen" as REST
+participant Backend
+
+Nutzer -> ListView: Liste öffnen
+ListView -> SubscriptionService: execute()
+
+SubscriptionService -> SubscriptionRepository: findAll()
+SubscriptionRepository -> REST: findAll()
+REST -> Backend: Abos laden
+Backend --> REST: Subscription-DTOs
+REST --> SubscriptionRepository: DTOs
+SubscriptionRepository --> SubscriptionService: DTOs
+
+par Provider und Kategorien
+  SubscriptionService -> ProviderRepository: findAll()
+  ProviderRepository -> REST: findAll()
+  REST -> Backend: Provider laden
+  Backend --> REST: Provider-DTOs
+  REST --> ProviderRepository: DTOs
+  ProviderRepository --> SubscriptionService: DTOs
+else
+  SubscriptionService -> CategoryRepository: findAll()
+  CategoryRepository -> REST: findAll()
+  REST -> Backend: Kategorien laden
+  Backend --> REST: Category-DTOs
+  REST --> CategoryRepository: DTOs
+  CategoryRepository --> SubscriptionService: DTOs
+end
+
+SubscriptionService -> SubscriptionService: Subscription aus den drei DTOs zusammensetzen
+SubscriptionService --> ListView: Subscription[]
+ListView --> Nutzer: Liste anzeigen
+
+@enduml
