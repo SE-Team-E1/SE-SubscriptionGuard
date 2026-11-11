@@ -1,6 +1,7 @@
 @startuml
 title Repository-Level OCC
 
+participant System
 actor Nutzer
 participant SubscriptionService
 participant SyncRepository
@@ -17,6 +18,7 @@ IndexedDB --> SyncRepository: local: SyncDto[]
 SyncRepository -> IndexedDB: merge + speichern
 IndexedDB --> SyncRepository: SyncDto[]
 SyncRepository --> SubscriptionService: RestDTO[]
+SubscriptionService -> Nutzer: Liste anzeigen
 
 == ändern ==
 Nutzer -> SubscriptionService: ändern
@@ -54,9 +56,12 @@ else offline
 end
 
 SyncRepository --> SubscriptionService: RestDTO
+SubscriptionService -> Nutzer: Änderungen anzeigen
 
 == wieder online ==
 note over SyncRepository: Upsync
+
+System -> SyncRepository: online
 
 SyncRepository -> IndexedDB: SyncDto[] mit status local
 IndexedDB --> SyncRepository: local: SyncDto[]
@@ -83,5 +88,7 @@ SyncRepository -> IndexedDB: findByIds(remote.map(id))
 IndexedDB -> SyncRepository: local: SyncDto[]
 SyncRepository -> SyncRepository: merge local und remote
 SyncRepository -> IndexedDB: speichern
+
+SyncRepository -> Nutzer: Änderungen anzeigen
 
 @enduml
