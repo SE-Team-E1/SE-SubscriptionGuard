@@ -131,9 +131,9 @@ package "Frontend" as frontend {
         end note
 
         interface Repository {
-            +findAll(): Promise<RestDTO[]>
-            +insert(dto: RestDTO): Promise<RestDTO>>
-            +update(dto: RestDTO): Promise<RestDTO>>
+            +findAll(): Promise<RepoDto[]>
+            +insert(dto: RepoDto): Promise<RepoDto>>
+            +update(dto: RepoDto): Promise<RepoDto>>
         }
     }
 
