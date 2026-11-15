@@ -31,8 +31,7 @@ export class MockedAuthRepository implements AuthRepository {
 
   async login(login: string, password: string): Promise<AuthResult> {
     const identifier = login.trim().toLowerCase()
-    const secret = password.trim()
-    if (identifier === '' || secret === '') {
+    if (identifier === '' || password.trim() === '') {
       throw new UnexpectedAuthError()
     }
 
@@ -40,7 +39,7 @@ export class MockedAuthRepository implements AuthRepository {
     const stored = this.users.find((u) =>
       byEmail ? u.email.toLowerCase() === identifier : u.username.toLowerCase() === identifier,
     )
-    if (stored === undefined || stored.password !== secret) {
+    if (stored === undefined || stored.password !== password) {
       throw new InvalidCredentialsError()
     }
     return { user: this.toUser(stored), tokens: this.issueTokens() }
@@ -49,8 +48,8 @@ export class MockedAuthRepository implements AuthRepository {
   async register(input: RegistrationInput): Promise<AuthResult> {
     const username = input.username.trim()
     const email = input.email.trim()
-    const password = input.password.trim()
-    const passwordConfirm = input.passwordConfirm.trim()
+    const password = input.password
+    const passwordConfirm = input.passwordConfirm
 
     const errors: RegistrationFieldErrors = {}
     if (username === '') {
@@ -69,13 +68,13 @@ export class MockedAuthRepository implements AuthRepository {
       errors.email = ['EMAIL_TAKEN']
     }
 
-    if (password === '') {
+    if (password.trim() === '') {
       errors.password = ['PASSWORD_REQUIRED']
     } else if (password.length < 8) {
       errors.password = ['PASSWORD_TOO_SHORT']
     }
 
-    if (passwordConfirm === '') {
+    if (passwordConfirm.trim() === '') {
       errors.password_confirm = ['PASSWORD_CONFIRM_REQUIRED']
     }
 

@@ -55,6 +55,19 @@ describe('MockedAuthRepository', () => {
     expect(loggedIn.user.id).toBe(registered.user.id)
   })
 
+  test('keeps leading and trailing spaces in passwords', async () => {
+    // Arrange
+    await repo.register({ ...BASE, password: ' passwort123 ', passwordConfirm: ' passwort123 ' })
+
+    // Act
+    const trimmedAttempt = repo.login('lena', 'passwort123')
+    const exactAttempt = repo.login('lena', ' passwort123 ')
+
+    // Assert
+    await expect(trimmedAttempt).rejects.toBeInstanceOf(InvalidCredentialsError)
+    await expect(exactAttempt).resolves.toMatchObject({ user: { username: 'lena' } })
+  })
+
   test('rejects a taken username', async () => {
     // Arrange
     const input = { ...BASE, username: 'otto' }
