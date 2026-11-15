@@ -115,6 +115,26 @@ class LoginApiTest(APITestCase):
     # Assert
     self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+  def test_password_keeps_surrounding_whitespace(self):  # T-27
+    # Arrange
+    spaced = f' {PASSWORD} '
+    registration = {
+      'username': 'neu',
+      'email': 'neu@example.de',
+      'password': spaced,
+      'password_confirm': spaced,
+    }
+    registered = self.client.post('/api/auth/register/', registration, format='json')
+
+    # Act
+    exact = self._login({'login': 'neu', 'password': spaced})
+    trimmed = self._login({'login': 'neu', 'password': PASSWORD})
+
+    # Assert
+    self.assertEqual(registered.status_code, status.HTTP_201_CREATED)
+    self.assertEqual(exact.status_code, status.HTTP_200_OK)
+    self.assertEqual(trimmed.status_code, status.HTTP_401_UNAUTHORIZED)
+
   # -------------------------
   # Fehlerantworten
   # -------------------------
@@ -402,6 +422,20 @@ class UserRegistrationSerializerTest(APITestCase):
     # Assert
     self.assertFalse(is_valid)
     self.assertIn('email', serializer.errors)
+
+  def test_whitespace_only_password_fails(self):  # T-28
+    # Arrange
+    blank = ' ' * 8
+    data = {**self.valid_registration, 'password': blank, 'password_confirm': blank}
+    serializer = UserRegistrationSerializer(data=data)
+
+    # Act
+    is_valid = serializer.is_valid()
+
+    # Assert
+    self.assertFalse(is_valid)
+    self.assertEqual(serializer.errors['password'], ['This field may not be blank.'])
+    self.assertEqual(serializer.errors['password_confirm'], ['This field may not be blank.'])
 
 
 class LoginSchemaTest(APITestCase):
