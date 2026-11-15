@@ -1,10 +1,19 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
+BLANK_MESSAGE = 'This field may not be blank.'
+
+
+def _reject_whitespace_only(value):
+  # Passwords keep surrounding spaces, but a password made only of spaces is blank.
+  if not value.strip():
+    raise serializers.ValidationError(BLANK_MESSAGE)
+  return value
+
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-  password = serializers.CharField(write_only=True, min_length=8)
-  password_confirm = serializers.CharField(write_only=True, min_length=8)
+  password = serializers.CharField(write_only=True, min_length=8, trim_whitespace=False)
+  password_confirm = serializers.CharField(write_only=True, min_length=8, trim_whitespace=False)
   email = serializers.EmailField(max_length=254)
 
   class Meta:
@@ -17,6 +26,12 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     if User.objects.filter(username__iexact=value).exists():
       raise serializers.ValidationError('A user with that username already exists.')
     return value
+
+  def validate_password(self, value):
+    return _reject_whitespace_only(value)
+
+  def validate_password_confirm(self, value):
+    return _reject_whitespace_only(value)
 
   def validate_email(self, value):
     value = value.strip().lower()
@@ -40,7 +55,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 class UserLoginSerializer(serializers.Serializer):
   login = serializers.CharField(help_text='E-mail address or username')
-  password = serializers.CharField(write_only=True)
+  password = serializers.CharField(write_only=True, trim_whitespace=False)
 
 
 class UserSerializer(serializers.ModelSerializer):
