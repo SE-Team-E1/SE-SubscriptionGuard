@@ -74,7 +74,7 @@ function normalize(error: unknown): Error {
 export class RestAuthRepository implements AuthRepository {
   async login(login: string, password: string): Promise<AuthResult> {
     try {
-      const request: RestLoginRequestDTO = { login: login.trim(), password: password.trim() }
+      const request: RestLoginRequestDTO = { login: login.trim(), password }
       const response = await post(LOGIN_URL, request)
 
       if (response.status === 401) {
@@ -96,13 +96,13 @@ export class RestAuthRepository implements AuthRepository {
 
   async register(input: RegistrationInput): Promise<AuthResult> {
     const username = input.username.trim()
-    const password = input.password.trim()
+    const password = input.password
     try {
       const request: RestRegisterRequestDTO = {
         username,
         email: input.email.trim(),
         password,
-        password_confirm: input.passwordConfirm.trim(),
+        password_confirm: input.passwordConfirm,
       }
       const response = await post(REGISTER_URL, request)
 

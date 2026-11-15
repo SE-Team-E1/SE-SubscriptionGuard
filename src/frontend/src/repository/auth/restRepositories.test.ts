@@ -152,7 +152,7 @@ describe('RestAuthRepository', () => {
   })
 
   describe('register', () => {
-    test('registers and then logs in with the trimmed credentials', async () => {
+    test('registers and logs in with trimmed identifiers but untouched passwords', async () => {
       // Arrange
       queue(registerOk(), loginOk({ access: 'ACCESS-L', refresh: 'REFRESH-L' }))
 
@@ -170,11 +170,11 @@ describe('RestAuthRepository', () => {
       expect(callOf(0).body).toEqual({
         username: 'lena',
         email: 'lena@example.com',
-        password: 'passwort123',
-        password_confirm: 'passwort123',
+        password: ' passwort123 ',
+        password_confirm: ' passwort123 ',
       })
       expect(callOf(1).url).toBe('/api/auth/login/')
-      expect(callOf(1).body).toEqual({ login: 'lena', password: 'passwort123' })
+      expect(callOf(1).body).toEqual({ login: 'lena', password: ' passwort123 ' })
       expect(result.tokens).toEqual({ access: 'ACCESS-L', refresh: 'REFRESH-L' })
     })
 
