@@ -6,6 +6,12 @@ const router = createRouter({
   routes: [
     { path: '/', redirect: '/add' },
     { path: '/add', name: 'add', component: AddSubscriptionView, meta: { pageTitle: 'Abonnement hinzufügen' } },
+    {
+      path: '/subscription/:id',
+      name: 'subscription-detail',
+      component: () => import('@/feature/detail/view/SubscriptionDetailView.vue'),
+      meta: { pageTitle: 'Abonnement' },
+    },
     { path: '/overview', name: 'overview', component: () => import('@/feature/PlaceholderView.vue'), meta: { pageTitle: 'Overview' } },
     {
       path: '/list',
