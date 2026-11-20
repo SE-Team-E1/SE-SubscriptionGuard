@@ -2,10 +2,6 @@
 include::../_includes/default-attributes.inc.adoc[]
 {authoren}
 {localdatetime}
-// Platzhalter für weitere Dokumenten-Attribute
-
-= 
-[Projektname]
 :toc:
 :toc-title: Inhalt
 :toclevels: 3
@@ -20,43 +16,55 @@ Dieses Dokument beschreibt das *Wie* und *Was*._
 
 ---
 
+NOTE: Planungsstand: Das lokale Docker-Setup ist implementiert. Die grundlegende
+CI ist in `.github/workflows/ci.yml` konfiguriert; der erste Lauf auf GitHub steht
+noch aus. Tests gegen den vollständigen Stack, Releases und VM-Deployment
+beschreiben weiterhin den abgestimmten Zielzustand.
+
+IMPORTANT: Nach Integration von Feature 22 nutzt das Frontend die echte API.
+Im Entwicklungsmodus meldet es sich mit dem lokalen Testkonto an; zuvor
+`seed_local` ausführen. Der paketierte Integrationsmodus enthält diese
+Entwicklungshilfe nicht und hat noch keinen Benutzer-Login. Ein vollständiger
+UI-Test ist dort erst nach Integration der Login-Funktion möglich;
+API-Tests mit separat bezogenem Token sind bereits möglich.
+
 == Umgebungsübersicht
 
 Das System wird in mehreren Umgebungen betrieben, die unterschiedliche Zwecke haben.
-Jede Umgebung ist vollständig isoliert. Eine Änderung in einer Umgebung beeinflusst
-keine andere.
+Lokale und CI-Umgebungen verwenden eigene Datenbanken und Testdaten und greifen
+nicht auf die Datenbank der Demo-VM zu.
 
 [cols="1,1,2,1,1", options="header"]
 |===
 | Umgebung | URL | Zweck | Branch | Deployment
 
-| Lokal
+| Lokale Entwicklung
 | http://localhost:8080
-| Entwicklung und manuelle Tests auf dem eigenen Rechner
+| Entwicklung mit Entwicklungsservern in Containern
+| Beliebig
+| Manuell (Docker Compose)
+
+| Lokale Integration
+| http://localhost:8080
+| Prüfen, ob Änderungen im Zusammenspiel von Frontend, Backend und Datenbank funktionieren
 | Beliebig
 | Manuell (Docker Compose)
 
 | CI
 | —
-| Automatische Qualitätsprüfung bei jedem Push
-| Alle Branches
-| Automatisch (GitHub Actions)
+| Automatische Codeprüfung und Tests mit Frontend, Backend und Datenbank, die für den Testlauf gestartet werden
+| PRs und `main`; erneute Prüfung bei Release-Tags
+| Temporär auf GitHub-Runnern
 
-| Staging
-| [z. B. https://staging.example.com]
-| Integrationstest; Abnahme durch Product Owner vor Release
-| `main`
-| Automatisch nach Merge in `main`
-
-| Produktion
-| [z. B. https://example.com]
-| Live-System für Endnutzer:innen
-| `main` (getaggt)
-| Manuell mit Freigabe
+| Hochschuldemo
+| Hostname und HTTPS noch zu klären
+| Vorführung auf der Universitäts-VM
+| Getesteter, getaggter Commit auf `main`
+| Manuell über Universitäts-VPN und SSH
 |===
 
-NOTE: In der Hochschulumgebung entfällt oft eine separate Produktionsumgebung.
-In diesem Fall dient Staging gleichzeitig als Produktionsumgebung.
+NOTE: Es gibt keine separate gehostete Staging-Umgebung. Auf der
+Universitäts-VM sind SSH-Zugang und Docker bereits vorhanden.
 
 == Lokale Entwicklungsumgebung
 
@@ -70,57 +78,147 @@ Mal lokal zum Laufen bringen wollen.
 | Werkzeug | Version | Installationshinweis
 
 | Docker
-| ≥ 24.0
+| Bei Umsetzung festzulegen
 | https://docs.docker.com/get-docker/
 
 | Docker Compose
-| ≥ 2.0
+| V2; Mindestversion bei Umsetzung festzulegen
 | Wird mit Docker Desktop mitgeliefert
-
-| [z. B. Node.js]
-| [z. B. ≥ 20 LTS]
-| [z. B. https://nodejs.org — oder via `nvm`]
-
-| [z. B. Java JDK]
-| [z. B. ≥ 21]
-| [z. B. https://adoptium.net]
 
 | Git
 | Aktuell
 | https://git-scm.com
 |===
 
+Die Entwicklungsserver laufen in Containern. Separate lokale Node.js- und
+Python-Installationen sind für diesen geplanten Ablauf nicht erforderlich.
+
 === System lokal starten
+
+Docker Compose startet Frontend, Backend und PostgreSQL vom Repository-Root aus. Das Setup funktioniert sowohl auf `main` als auch auf
+Feature- und Feature-Integrationsbranches.
+
+==== Entwicklungsmodus
+
+* Vite und Djangos Entwicklungsserver laufen in Containern.
+* Lokale Quellcodeverzeichnisse werden eingebunden, damit Änderungen beim
+  Entwickeln ohne vollständigen Image-Neubau verfügbar sind.
+* PostgreSQL läuft als eigener Service.
+
+==== Integrationsmodus
+
+* Frontend und Backend werden aus dem aktuellen Checkout in Images gebaut.
+* Das Vue-Frontend wird als statischer Build von Nginx ausgeliefert.
+* Django läuft mit Gunicorn.
+* PostgreSQL ist Teil des lokalen Stacks.
+
+Dieser Modus prüft die verpackte Anwendung und das Zusammenspiel der Services.
+Die Verwendung der für das Deployment vorgesehenen Dockerfiles bedeutet kein
+Deployment und keinen Zugriff auf Daten der Demo-VM.
+
+==== Konfiguration und Testdaten
+
+* Beide Modi verwenden eine gemeinsame Konfigurationsbasis mit modusspezifischen
+  Anpassungen. Beispielkonfigurationen werden versioniert, Secrets nicht.
+* Datenbankbereitschaft und Migrationen werden beim Start berücksichtigt.
+* Lokale Daten bleiben über Neustarts erhalten.
+* Ein wiederholbar ausführbarer Seed-Befehl erzeugt lokale Testkonten und
+  Beispieldaten. Ein expliziter Reset-Befehl stellt einen sauberen Testzustand her.
+* Start, Stopp, Moduswechsel und Datenreset werden dokumentiert.
+
+==== Befehle
+
+Für Start und Moduswechsel gibt es Shell-Skripte:
 
 [source,bash]
 ----
-# 1. Repository klonen
-git clone [Repository-URL]
-cd [projektname]
-
-# 2. Umgebungsvariablen konfigurieren
-cp .env.example .env
-# .env mit einem Editor öffnen und ggf. anpassen
-
-# 3. Alle Dienste starten
-docker compose up --build
-
-# 4. Prüfen, ob alles läuft
-# Frontend:  http://localhost:3000
-# Backend:   http://localhost:8080
-# API-Docs:  http://localhost:8080/swagger-ui
+./scripts/dev.sh          # Entwicklungsmodus starten
+./scripts/integration.sh  # Integrationsmodus starten
+./scripts/stop.sh         # Beide Modi stoppen, Daten behalten
 ----
+
+Die Startskripte stoppen zuerst den bisherigen Modus, bauen die Images und
+warten auf die Bereitschaft der Services. Datenbankdaten bleiben erhalten.
+Die Skripte können auch über ihren vollständigen Pfad aus anderen Verzeichnissen
+aufgerufen werden. Testdaten werden weiterhin explizit mit `seed_local` angelegt. Für die automatische
+Anmeldung im Entwicklungsmodus wird standardmäßig das Konto `demo` verwendet.
+Die entsprechenden direkten Compose-Befehle stehen im Folgenden.
+
+Alle Befehle werden im Repository-Root ausgeführt. Root-`compose.yml` ist das
+lokale Integrationssetup; `compose.dev.yml` ergänzt die Entwicklungseinstellungen.
+Das ältere Compose-Setup unter `src/backend/django` ist davon unabhängig und wird
+für diesen Ablauf nicht benötigt.
+
+[source,bash]
+----
+# Optional: lokale Standardwerte überschreiben (bestehende .env behalten)
+cp .env.example .env
+
+# Integration: Images aus dem aktuellen Branch bauen und starten
+docker compose up -d --build --wait
+
+# Wiederholbar Testkonten und Beispieldaten anlegen
+docker compose exec backend python manage.py seed_local
+
+# Status und Logs
+docker compose ps
+docker compose logs -f backend frontend
+----
+
+Browser: http://localhost:8080; API-Dokumentation:
+http://localhost:8080/api/schema/swagger/.
+Die Datenbank und das Backend sind nicht direkt auf dem Host veröffentlicht.
+Der Browser erreicht `/api` über Nginx beziehungsweise den Vite-Proxy.
+`APP_PORT` in der optionalen Root-`.env` ändert den Browser-Port.
+
+[source,bash]
+----
+# Erst den bisherigen Modus stoppen
+docker compose down
+
+# Entwicklung: Vite und Django-Entwicklungsserver mit lokalen Quellen
+docker compose -f compose.yml -f compose.dev.yml up -d --build --wait
+
+# Seed auch im Entwicklungsmodus ausführbar
+docker compose -f compose.yml -f compose.dev.yml exec backend python manage.py seed_local
+----
+
+Die Entwicklung nutzt denselben Datenbank-Volume wie die lokale Integration.
+Beim Wechsel zuerst stoppen, dann den anderen Modus starten. Nach einem
+Branchwechsel stets `--build` verwenden. In Entwicklung wird `npm ci` beim
+Containerstart ausgeführt; nach Lockfile-Änderungen den Frontend-Container neu starten.
+Bei Python-Abhängigkeitsänderungen das Backend neu bauen.
+
+Die Konten `demo` und `other-demo` erhalten beim ersten Seed das Passwort
+`local-demo-password`, jeweils mit einem Beispielabonnement. Erneutes Seeding
+überschreibt weder bestehende Konten noch geänderte Beispieldaten.
+Es sind normale Benutzerkonten ohne Administratorrechte.
+`LOCAL_TEST_DATA=true` erlaubt das Seeding ausschließlich im lokalen Setup;
+diese Einstellung gehört nicht ins VM-Deployment.
+
+Beide lokalen Modi starten erst nach Datenbankbereitschaft und erfolgreichem
+Migrationslauf. Die bekannten lokalen Zugangsdaten sind nur für die Entwicklung;
+die Dienste sind am Host ausschließlich über die Loopback-Adresse erreichbar.
 
 === System stoppen und aufräumen
 
 [source,bash]
 ----
-# Dienste stoppen (Daten bleiben erhalten)
+# Stoppen: lokale Daten bleiben erhalten
 docker compose down
 
-# Dienste stoppen und Volumes löschen (Datenbank wird geleert)
+# Entwicklungsmodus stoppen
+docker compose -f compose.yml -f compose.dev.yml down
+
+# Bewusster Reset: löscht die lokale PostgreSQL-Datenbank vollständig
 docker compose down -v
+docker compose up -d --build --wait
+docker compose exec backend python manage.py seed_local
 ----
+
+`down -v` löscht im Entwicklungsmodus zusätzlich das Node-Abhängigkeitsvolume,
+wenn beide Compose-Dateien angegeben werden. Es betrifft nur das lokale
+Compose-Projekt `subscriptionguard-local`.
 
 === Häufige Probleme beim lokalen Start
 
@@ -129,19 +227,18 @@ docker compose down -v
 | Problem | Lösung
 
 | Port bereits belegt (`address already in use`)
-| `docker compose down` ausführen oder belegten Port prüfen:
-  `lsof -i :8080` (macOS/Linux) bzw. `netstat -ano` (Windows)
+| Belegenden Prozess prüfen oder vorherigen Stack stoppen. Standardport: 8080; bei Konflikten `APP_PORT` ändern.
 
 | Datenbank-Container startet nicht
-| Volumes löschen und neu starten: `docker compose down -v && docker compose up`
+| Compose-Status und Datenbanklogs prüfen. Ein Datenreset erfolgt nur bewusst,
+  da dabei lokale Daten verloren gehen.
 
 | Umgebungsvariablen fehlen
-| Prüfen ob `.env`-Datei vorhanden ist; Beispielwerte in `.env.example` ansehen
+| Lokale Konfiguration mit der zugehörigen Beispielkonfiguration abgleichen.
 
-| [Weiteres Problem]
-| [Lösung]
+| Weitere Probleme
+| Mit der Umsetzung und den ersten Tests ergänzen.
 |===
-
 
 == Docker & Container
 
@@ -154,223 +251,292 @@ existieren, wie sie konfiguriert werden, und wie sie zusammenarbeiten.
 |===
 | Service | Image | Zweck | Port (intern → extern)
 
-| [z. B. frontend]
-| [z. B. node:20-alpine (Build-Image)]
-| React-Anwendung — wird als statische Dateien gebaut und über nginx ausgeliefert
-| 80 → 3000
+| Frontend
+| Lokaler Build bzw. versioniertes Release-Image
+| Vue-Anwendung; Vite in Entwicklung, statischer Build mit Nginx bei Integration und Deployment
+| 8080 → `127.0.0.1:8080` (über `APP_PORT` anpassbar)
 
-| [z. B. backend]
-| [z. B. eclipse-temurin:21-jre-alpine]
-| Spring Boot REST-API
-| 8080 → 8080
+| Backend
+| Lokaler Build bzw. versioniertes Release-Image
+| Django-API; Entwicklungsserver in Entwicklung, Gunicorn bei Integration und Deployment
+| 8000 intern, kein Host-Port
 
-| [z. B. db]
-| [z. B. postgres:15-alpine]
-| PostgreSQL-Datenbank
-| 5432 → 5432
-
-| [z. B. mailhog]
-| [z. B. mailhog/mailhog]
-| E-Mail-Testserver (nur lokal); fängt alle ausgehenden E-Mails ab
-| 1025 (SMTP), 8025 (UI) → 8025
+| Datenbank
+| `postgres:16-alpine`
+| Persistente Anwendungsdaten; getrennte Daten pro Umgebung
+| 5432 intern, kein Host-Port
 |===
+
+Frontend und API sollen unter einer gemeinsamen Adresse erreichbar sein;
+`/api` wird zum Backend geroutet. Die HTTPS-Einbindung auf der VM ist noch offen.
 
 === Umgebungsvariablen
 
-Alle Konfiguration erfolgt über Umgebungsvariablen und *nicht* über feste Werte
-im Code. Eine vollständige Liste mit Beispielwerten befindet sich in `.env.example`.
+Die Konfiguration soll über Umgebungsvariablen erfolgen. Versionierte
+Beispielkonfigurationen dokumentieren die benötigten Werte ohne echte Secrets.
 
 [cols="1,1,2,1", options="header"]
 |===
 | Variable | Beispielwert | Beschreibung | Pflicht
 
-| `DATABASE_URL`
-| `jdbc:postgresql://db:5432/projektname`
-| Verbindungs-URL zur Datenbank
+| `APP_PORT`
+| `8080`
+| Lokaler Browser-Port; in der Root-`.env` überschreibbar
+| Nein
+
+| `SECRET_KEY`
+| Nur lokaler Standardwert in `.env.example`
+| Django-Schlüssel; für VM später eigenen geheimen Wert verwenden
+| Lokal vorbelegt
+
+| `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`
+| Lokale Standardwerte in `.env.example`
+| PostgreSQL-Zugang; gleicher Wert für Datenbank und Backend
+| Lokal vorbelegt
+
+| `USE_POSTGRESQL`, `DB_HOST`, `DB_PORT`
+| `true`, `db`, `5432`
+| Im lokalen Compose festgelegte Datenbankverbindung
 | Ja
 
-| `DATABASE_USER`
-| `projektname`
-| Datenbankbenutzername
-| Ja
+| `DEBUG`
+| `false` für Integration, `true` für Entwicklung
+| Django-Debugmodus
+| Durch Compose gesetzt
 
-| `DATABASE_PASSWORD`
-| `[sicheres Passwort]`
-| Datenbankpasswort — nie im Repository speichern
-| Ja
+| `LOCAL_TEST_DATA`
+| `true` ausschließlich lokal
+| Erlaubt den expliziten Seed-Befehl
+| Für Seeding
 
-| `JWT_SECRET`
-| `[min. 32 Zeichen]`
-| Geheimnis für JWT-Token-Signierung
-| Ja
+| `API_PROXY_TARGET`
+| `http://backend:8000`
+| Serverseitiges Proxy-Ziel von Vite im Entwicklungscontainer
+| Durch Entwicklungs-Compose gesetzt
 
-| `SMTP_HOST`
-| `mailhog` (lokal) / `smtp.example.com` (prod)
-| E-Mail-Serveradresse
-| Ja
-
-| `LOG_LEVEL`
-| `INFO`
-| Log-Level: DEBUG / INFO / WARN / ERROR
-| Nein (Standard: INFO)
-
-| [Weitere Variable]
-| [Beispielwert]
-| [Beschreibung]
-| [Ja / Nein]
+| `LOCAL_API_USERNAME`, `LOCAL_API_PASSWORD`
+| `demo`, `local-demo-password`
+| Lokale Entwicklungsanmeldung; Compose übergibt diese Werte als
+  `VITE_DEV_API_USERNAME` und `VITE_DEV_API_PASSWORD` an Vite.
+  Die Werte sind im Browser sichtbar, daher nur Testkonten verwenden.
+| Lokal vorbelegt
 |===
 
-IMPORTANT: Produktions-Secrets (Passwörter, API-Keys, JWT-Secrets) werden *nie*
-im Repository gespeichert — auch nicht in `.env`-Dateien. Sie werden ausschließlich
-als CI/CD-Secrets oder über einen Secret-Manager verwaltet.
+IMPORTANT: Passwörter, Schlüssel und Tokens werden nie in Git gespeichert.
+Lokale und VM-spezifische Secrets bleiben außerhalb des Repository-Verlaufs;
+Registry-Zugangsdaten für die Pipeline werden als CI-Secrets verwaltet.
 
 ---
 
 == CI/CD-Pipeline
 
-Die Pipeline automatisiert Qualitätsprüfung und Deployment. Sie stellt sicher,
-dass kein Code in `main` gelangt, der Tests bricht oder Qualitätsstandards verletzt.
+Die Pipeline automatisiert Qualitätsprüfung und Veröffentlichung der Release-Images.
+Das Deployment auf die nur über VPN erreichbare VM bleibt manuell.
+CI schützt das durch Tests abgedeckte Verhalten vor Regressionen;
+erfolgreiche Prüfungen ersetzen keine vollständige fachliche Abnahme.
+
+=== Branches und Integration
+
+`main` ist der gemeinsame Integrationsbranch. Änderungen gelangen über Pull
+Requests mit erfolgreichen erforderlichen CI-Prüfungen nach `main`.
+Ein Merge löst kein Deployment und keine Veröffentlichung von Release-Images aus.
+
+* Unabhängige, rückwärtskompatible Änderungen können direkt per PR nach `main`
+  gelangen. Dazu gehören neue Backend-Endpunkte, die bestehendes Verhalten
+  erhalten und später vom Frontend verwendet werden können.
+* Änderungen, die voneinander abhängen und nicht sicher einzeln integriert
+  werden können, werden zuerst auf einem Feature-Integrationsbranch gemeinsam
+  integriert und getestet. Anschließend erfolgt ein gemeinsamer PR nach `main`.
+* Kleinere Teilbranches können in den Feature-Integrationsbranch zusammengeführt
+  werden. Ein dauerhafter `staging`-Branch ist nicht erforderlich.
+
+CI schützt das durch automatisierte Tests abgedeckte bestehende Verhalten vor
+Regressionen. Zusätzlich prüfen Integrationstests vollständige Abläufe über die
+Komponentengrenzen hinweg. Abhängige Änderungen werden vor dem Merge auch mit
+dem lokalen Integrationssetup getestet; das Ergebnis wird im PR festgehalten.
 
 === Pipeline-Schritte im Detail
+
+PRs nach `main` prüfen den vorgeschlagenen Merge-Stand. PRs auf
+Feature-Integrationsbranches werden ebenfalls geprüft. Fehlgeschlagene
+erforderliche Checks blockieren den Merge.
 
 [cols="1,2,1,1", options="header"]
 |===
 | Schritt | Beschreibung | Schlägt fehl bei | Ausgeführt bei
 
 | Linting
-| Code-Stil und statische Analyse prüfen
-| Stilfehler oder Warnungen über Schwellwert
-| Jedem Push
+| Frontend mit vorhandenem ESLint und Oxlint prüfen, ohne Dateien automatisch zu ändern
+| Lint-Fehlern
+| PRs, Merges nach `main`, Release-Tags
 
-| Unit-Tests
-| Alle Unit-Tests ausführen
-| Fehlschlagende Tests
-| Jedem Push
+| TypeScript und Frontend-Build
+| Typkorrektheit und Paketierbarkeit prüfen; `npm run build` umfasst bereits beides
+| Typ- oder Build-Fehlern
+| PRs, Merges nach `main`, Release-Tags
+
+| Unit- und Backend-Tests
+| Frontend-Unit-Tests sowie Django-Tests gegen PostgreSQL
+| Fehlschlagenden Tests
+| PRs, Merges nach `main`, Release-Tags
+
+| Migrationsprüfung
+| Modelländerungen ohne zugehörige Django-Migration erkennen
+| Fehlenden Migrationen
+| PRs, Merges nach `main`, Release-Tags
 
 | Integrationstests
-| Tests gegen echte Datenbank (Testcontainers)
-| Fehlschlagende Tests
-| Jedem Push
-
-| Abdeckungsprüfung
-| Testabdeckung messen und mit Mindestwert vergleichen
-| Unterschreitung des Mindestwerts (siehe Testkonzept)
-| Jedem Push
+| Vollständigen Compose-Stack starten und reale Abläufe prüfen
+| Fehlschlagenden Tests oder Stack-Start
+| PRs, Merges nach `main`, Release-Tags
 
 | Image-Build
-| Docker-Images für alle Services bauen
-| Build-Fehler
-| Jedem Push auf `main` und PRs
+| Frontend- und Backend-Images bauen; bei PRs und Merges nicht als Release veröffentlichen
+| Build-Fehlern
+| PRs, Merges nach `main`, Release-Tags
 
-| Staging-Deployment
-| Neue Images auf Staging-Umgebung ausrollen
-| Deployment-Fehler oder fehlschlagende Smoke Tests
-| Merge in `main`
-
-| Produktions-Deployment
-| Neues Release auf Produktion ausrollen
-| Deployment-Fehler oder fehlschlagende Smoke Tests
-| Manuell nach Tag-Erstellung
+| Image-Veröffentlichung
+| Versionierte Frontend- und Backend-Images nach erfolgreichen Checks in GHCR veröffentlichen
+| Fehlern bei Veröffentlichung
+| Release-Tags
 |===
+
+==== Tests gegen den vollständigen Stack
+
+Die bestehende Cypress-Infrastruktur soll für Tests gegen das echte Backend
+erweitert werden. Gemockte API-Antworten allein prüfen dieses Zusammenspiel nicht.
+Jeder CI-Lauf erhält eine saubere Testdatenbank mit definierten Testdaten.
+
+Die erste Abdeckung umfasst:
+
+* Registrierung beziehungsweise Anmeldung.
+* Anlegen eines Abonnements über das Frontend.
+* Erneutes Laden und Prüfen der gespeicherten Daten.
+* Prüfung, dass Nutzer nicht auf fremde Abonnements zugreifen können.
+
+Feature-PRs ergänzen oder aktualisieren die relevanten automatisierten Tests.
+Bei Fehlern sollen Logs und Cypress-Screenshots zur Diagnose verfügbar sein.
+Der temporäre Stack wird nach dem Testlauf entfernt.
 
 === Pipeline-Konfiguration
 
-Die vollständige Pipeline-Konfiguration befindet sich in:
+Die Workflow-Dateien liegen unter `.github/workflows/`.
+`ci.yml` startet bei Pull Requests auf alle Zielbranches, Pushes auf `main`
+und bei manueller Ausführung. Ein neuer Lauf auf demselben PR beziehungsweise
+Branch bricht einen älteren noch laufenden CI-Lauf ab.
 
-[source]
-----
-.github/workflows/
-├── ci.yml          ← Qualitätsprüfung (bei jedem Push)
-└── deploy.yml      ← Deployment (Staging & Produktion)
-----
+Die vier unabhängigen Jobs sind:
 
+* `Frontend lint`: `npm ci` und `npm run lint:check` (Oxlint und ESLint ohne Änderungen).
+* `Frontend build and tests`: `npm ci`, `npm run build`,
+  `npm run test:unit -- --run`, `npm run test:e2e` und `npm run test:e2e:mock`.
+* `Django checks and tests`: Python-Abhängigkeiten installieren,
+  `python manage.py check`, `python manage.py makemigrations --check --dry-run`
+  und `python manage.py test --noinput` gegen einen temporären PostgreSQL-Service.
+* `Docker image builds`: Beide Compose-Konfigurationen validieren und
+  Frontend- und Backend-Images bauen, ohne sie zu veröffentlichen.
+
+Node.js 22, Python 3.14 und PostgreSQL 16 entsprechen den Container-Laufzeiten.
+Die CI verwendet ausschließlich kurzlebige Testzugangsdaten, keine VM-Secrets.
+Cypress-Screenshots und Videos werden bei Fehlern für sieben Tage gespeichert.
+Die Cypress-Suites verwenden derzeit gemockte APIs oder In-Memory-Repositories;
+sie ersetzen noch keine Tests gegen den echten Compose-Stack.
+
+Der Check-only-Lintlauf findet aktuell bestehende Verstöße im Frontend.
+Diese werden als Fehler gemeldet und müssen vor einer verpflichtenden grünen
+Merge-Prüfung bereinigt werden. Der bestehende lokale Befehl `npm run lint`
+behält seine automatische Korrekturfunktion; CI verwendet nur `lint:check`.
+
+Erforderliche Statuschecks müssen zusätzlich in den GitHub-Branchregeln aktiviert
+werden. Das Workflow-File allein blockiert keinen Merge.
+Die Prüfung bei Release-Tags wird im späteren Release-Workflow ergänzt.
+`docker-image.yml` ist der bestehende Release-Ansatz und wird in dieser
+Ausbaustufe noch nicht überarbeitet. Eine automatisierte Deployment-Pipeline
+zur VM ist zunächst nicht vorgesehen.
 
 == Deployment-Ablauf
 
-=== Deployment auf Staging (automatisch)
+=== Staging und lokale Integration
 
-Jeder Merge in `main` löst automatisch ein Deployment auf Staging aus.
-Kein manueller Eingriff erforderlich.
-
-. Pipeline baut neue Docker Images
-. Images werden in die Container-Registry gepusht
-. Staging-Umgebung zieht die neuen Images
-. Smoke Tests werden automatisch ausgeführt
-. Team wird bei Erfolg oder Fehler benachrichtigt
+Die Integration erfolgt über `main` beziehungsweise Feature-Integrationsbranches
+und das lokale Docker-Setup. Ein Merge nach `main` startet CI, aber kein
+Deployment auf eine gehostete Staging-Umgebung.
 
 === Release und Deployment auf Produktion (manuell)
 
-[source,bash]
-----
-# 1. Sicherstellen, dass main aktuell und stabil ist
-git checkout main
-git pull
+Mit Produktion ist hier die Hochschuldemo auf der Universitäts-VM gemeint.
 
-# 2. Release-Tag erstellen (Semantic Versioning)
-git tag v1.2.0
-git push --tags
+Jedes Teammitglied darf einen getesteten Commit auf `main` als Release auswählen.
+Der Versions-Tag muss genau den geprüften Commit referenzieren, auch wenn `main`
+inzwischen weitere Änderungen enthält.
 
-# 3. In GitHub Actions: Produktions-Deployment manuell freigeben
-# → GitHub → Actions → deploy.yml → "Run workflow" → Version bestätigen
-----
+. Einen getesteten Commit auf `main` auswählen und einen Versions-Tag erstellen.
+. CI prüft den getaggten Commit erneut und baut sowie veröffentlicht versionierte
+  Frontend- und Backend-Images in GHCR. Veröffentlichung erfolgt erst nach
+  erfolgreichen Prüfungen.
+. Ein Teammitglied verbindet sich mit dem Universitäts-VPN und per SSH mit der VM.
+. Ein wiederholbar ausführbares Deployment-Skript wird mit der gewählten Version
+  gestartet. Es lädt die zugehörigen Images, führt Migrationen aus und startet
+  beziehungsweise aktualisiert die Services mit Docker Compose.
+. Smoke Checks prüfen, ob Frontend und API nach dem Deployment erreichbar sind.
 
-NOTE: Wir verwenden _Semantic Versioning_ mit dem Schema MAJOR.MINOR.PATCH: 
-MAJOR bei inkompatiblen Änderungen,
-MINOR bei neuen Features (abwärtskompatibel),
-PATCH bei Bugfixes.
+Ein kurzer Wartungszeitraum ist für die Hochschuldemo akzeptabel.
+Auf der VM verbleiben die Deployment-Konfiguration, lokale Secrets und persistente
+PostgreSQL-Daten. Frontend und API sollen unter einer gemeinsamen Adresse
+mit Routing von `/api` zum Backend erreichbar sein.
+
+==== Offene Infrastrukturdetails
+
+* Hostname und HTTPS-Zertifikat: Universitätszertifikat oder selbstsigniertes
+  Zertifikat; Bereitstellung und Erneuerung sind noch offen.
+* Ausgehender Zugriff der VM auf GHCR und gegebenenfalls notwendige
+  Registry-Zugangsdaten müssen vor dem ersten Deployment geprüft werden.
+* Konkrete Versionskonvention, Image-Referenzen, Deployment-Befehle und
+  Health-Check-Endpunkte werden bei der Umsetzung festgelegt.
 
 === Smoke Tests nach Deployment
 
-Nach jedem Deployment werden folgende Prüfungen ausgeführt:
+Nach jedem Deployment sollen die folgenden Prüfungen ausgeführt werden.
+Die genauen Endpunkte und Befehle werden bei der Umsetzung ergänzt.
 
 [cols="2,2", options="header"]
 |===
 | Prüfung | Erwartetes Ergebnis
 
-| `GET /actuator/health` (Backend)
-| HTTP 200, Status `UP`
+| Frontend-Startseite laden
+| Frontend wird erfolgreich ausgeliefert.
 
-| Startseite laden (Frontend)
-| HTTP 200, Ladezeit < 3 s
+| API-Erreichbarkeit
+| Backend antwortet über das vorgesehene Routing.
 
 | Login-Flow
-| Erfolgreicher Login mit Testnutzer möglich
+| Erfolgreiche Anmeldung mit einem Demo-Testkonto möglich.
 
-| [Kernfunktion prüfen]
-| [Erwartetes Ergebnis]
+| Kernfunktion prüfen
+| Konkreten Umfang bei Umsetzung festlegen.
 |===
 
 == Rollback
 
-Ein Rollback ist notwendig, wenn ein Deployment kritische Fehler in der
-Produktionsumgebung verursacht. Schnelles Handeln minimiert die Auswirkungen.
+NOTE: Backup und Recovery sind nachrangig und kein Blocker für die erste
+Deployment-Umsetzung. Die folgenden Punkte beschreiben den späteren Zielzustand.
 
 === Wann wird ein Rollback durchgeführt?
 
-* Kritische Fehler in Produktion nach einem Deployment
-* Smoke Tests schlagen nach Deployment fehl
-* Fehlerrate oder Antwortzeiten steigen signifikant an
+* Kritische Fehler in der Demo nach einem Deployment.
+* Smoke Tests schlagen nach Deployment fehl.
+* Die vorherige Version muss für eine Vorführung wiederhergestellt werden.
 
 === Rollback-Ablauf
 
-. *Entscheidung treffen* — Tech Lead oder Product Owner entscheiden über Rollback
-. *Stakeholder informieren* — Team und relevante Stakeholder benachrichtigen
-. *Rollback ausführen* (eine von zwei Optionen):
+. Vor dem Deployment PostgreSQL sichern und bisherige Image-Versionen festhalten.
+. Bei Fehlern die vorherigen Images wiederherstellen, sofern das Datenbankschema kompatibel bleibt.
+. Falls Migrationen dies verhindern, zusätzlich die Datenbanksicherung wiederherstellen.
+  Änderungen seit der Sicherung gehen dabei verloren.
+. Smoke Tests ausführen und die Ursache untersuchen.
 
-[source,bash]
-----
-# Option A: Letztes stabiles Tag erneut deployen
-# → GitHub → Actions → deploy.yml → Version des letzten stabilen Tags eingeben
-
-# Option B: Manuell das vorherige Image aktivieren
-docker compose pull [service]:[vorherige-version]
-docker compose up -d [service]
-----
-
-[start=4]
-. *Smoke Tests ausführen* — sicherstellen dass das System wieder stabil ist
-. *Ursache analysieren* — was hat das Problem verursacht?
-. *Nachbereitung dokumentieren* — im Ticket oder als Kommentar im ADR
+Konkrete Befehle, Automatisierung und Wiederherstellungsprüfung werden erst in
+der späteren Ausbaustufe ergänzt. Dieser Ablauf ist noch keine verfügbare Funktion.
 
 == Monitoring & Logging
 
@@ -383,18 +549,16 @@ Fehler diagnostiziert werden können.
 |===
 | Endpunkt | Beschreibung | Erwartet
 
-| `GET /actuator/health`
-| Gesamtstatus des Systems inkl. Datenbankverbindung
-| HTTP 200, `{"status": "UP"}`
+| Noch festzulegen
+| Bereitschaft der Django-Anwendung und Datenbankverbindung
+| Anfragen können verarbeitet werden.
 
-| `GET /actuator/info`
-| Version und Build-Informationen
-| HTTP 200
-
-| [Weiterer Endpunkt]
-| [Beschreibung]
-| [Erwartetes Ergebnis]
+| Frontend-Startseite
+| Erreichbarkeit der ausgelieferten Anwendung
+| Erfolgreiche HTTP-Antwort
 |===
+
+Konkrete Health-Checks werden bei der Implementierung ergänzt.
 
 === Logs
 
@@ -403,21 +567,32 @@ Fehler diagnostiziert werden können.
 | Aspekt | Beschreibung
 
 | Log-Format
-| Strukturiertes JSON-Logging; enthält Zeitstempel, Level, Service, Message
+| Bei Umsetzung festzulegen.
 
 | Log-Zugriff (lokal)
-| `docker compose logs -f [service]`
+| Über Docker Compose; konkreten Aufruf passend zur Dateiaufteilung ergänzen.
 
-| Log-Zugriff (Staging/Prod)
-| [z. B. `ssh user@server` → `journalctl -u [service]` oder Logging-Dashboard-URL]
+| Log-Zugriff (Demo-VM)
+| Über VPN und SSH auf die Containerlogs zugreifen.
+
+| Log-Zugriff (CI)
+| Bei Fehlern Stack-Logs und Cypress-Screenshots als Diagnoseartefakte bereitstellen.
 
 | Was geloggt wird
-| Alle Fehler (ERROR), Warnungen (WARN), wichtige Geschäftsereignisse (INFO)
+| Fehler und für die Diagnose relevante Service-Ereignisse.
 
 | Was *nicht* geloggt wird
-| Passwörter, Tokens, personenbezogene Daten (DSGVO-Anforderung)
+| Passwörter, Tokens und sensible personenbezogene Daten.
 |===
 
+== Umsetzungsreihenfolge
+
+. Lokale Docker-Modi für Entwicklung und Integration einschließlich Konfiguration,
+  Testdaten und dokumentierten Befehlen bereitstellen.
+. PR-CI einschließlich Tests gegen den echten Stack und erforderlichen Merge-Prüfungen einrichten.
+. Versionierte Release-Images bei Tags bauen und veröffentlichen.
+. Wiederholbares manuelles Deployment auf der Universitäts-VM bereitstellen.
+. Backup- und Recovery-Werkzeuge ergänzen und Wiederherstellung testen.
 
 _Dieses Dokument ist ein lebendes Dokument. Änderungen an der Pipeline,
 den Umgebungen oder dem Deployment-Prozess sind hier im selben Pull Request

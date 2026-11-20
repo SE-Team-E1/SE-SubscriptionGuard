@@ -1,6 +1,29 @@
 # SubscriptionGuard frontend
 
-## Local development setup — temporary first draft
+## Recommended: complete local Docker setup
+
+From the repository root:
+
+```sh
+./scripts/dev.sh
+docker compose -f compose.yml -f compose.dev.yml exec backend python manage.py seed_local
+```
+
+Open http://localhost:8080. Development mode uses the real Django API and
+logs in as the seeded `demo` account. No host Node.js installation or frontend
+`.env.local` is needed. Only use local test credentials: Vite values are visible
+in browser code. Override `LOCAL_API_USERNAME` and `LOCAL_API_PASSWORD` in the
+root `.env` if using another local account.
+
+Use `./scripts/stop.sh` to stop, or `./scripts/integration.sh` to switch to the
+packaged application. Both retain database data. The packaged frontend does
+not include development auto-login and still needs the user-facing login feature;
+until then, test authenticated API calls separately through Swagger.
+
+See [Deployment & Betrieb](docs/technical/deployment.adoc) for configuration,
+seeding, reset commands, and the CI/release plan.
+
+## Alternative: host Vite with backend containers — temporary first draft
 
 This is a **temporary first draft** of the local development setup. It documents
 this branch's current workflow and will need revisiting when the frontend login
