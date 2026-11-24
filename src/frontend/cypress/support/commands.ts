@@ -37,6 +37,8 @@
 // }
 
 declare global {
+  // Cypress extends its types through this namespace.
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Cypress {
     interface Chainable {
       /**

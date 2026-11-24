@@ -40,7 +40,7 @@ export class RestSubscriptionRepository implements SubscriptionRepository {
       dtos = parseRestSubscriptionDTOs(jsonResponse);
       return dtos;
 
-    } catch (error: any) {
+    } catch (error) {
       throw new Error(`Could not fetch subscriptions`, {cause: error});
     }
   }
@@ -76,7 +76,7 @@ export class RestSubscriptionRepository implements SubscriptionRepository {
       //
       // return subscription;
 
-    }catch(error: any) {
+    }catch (error) {
       throw new Error(
         `Could not create new Subscription`,
         { cause: error }
@@ -105,7 +105,7 @@ export class RestCategoryRepository implements CategoryRepository {
 
       return dtos;
 
-    } catch (error: any) {
+    } catch (error) {
       throw new Error(`Could not fetch categories`, {cause: error});
     }
   }
@@ -150,7 +150,7 @@ export class RestProviderRepository implements ProviderRepository {
       const jsonResponse: unknown = await response.json();
       dtos = parseRestProviderDTOs(jsonResponse);
       return dtos;
-    } catch (error: any) {
+    } catch (error) {
       throw new Error(`Could not fetch providers`, {cause: error});
     }
   }
