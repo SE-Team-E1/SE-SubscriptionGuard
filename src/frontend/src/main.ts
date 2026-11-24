@@ -13,6 +13,7 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 
 import App from './App.vue'
 import router from './router'
+import { installSessionGuard } from './router/guards'
 import {
   type CategoryRepository, type ProviderRepository,
   type SubscriptionRepository
@@ -122,6 +123,8 @@ if (useMockRepositories) {
 }
 
 app.provide<AuthSessionService, string>("authSessionService", new AuthSessionService(authRepository, session));
+
+installSessionGuard(router, session)
 
 app.use(vuetify)
 app.use(router)

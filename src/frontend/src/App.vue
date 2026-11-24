@@ -21,7 +21,7 @@ const route = useRoute();
     <v-main>
       <RouterView/>
     </v-main>
-    <v-bottom-navigation grow>
+    <v-bottom-navigation v-if="route.meta.layout !== 'auth'" grow>
       <v-btn to="/overview">
         <v-icon :icon="mdiHome"></v-icon>
         <span>Overview</span>
