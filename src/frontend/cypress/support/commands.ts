@@ -36,4 +36,28 @@
 //   }
 // }
 
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      /**
+       * Logs in through the login page. Tokens only live in memory, so every cy.visit logs
+       * the user out again: call this instead of visiting a guarded route, and reach other
+       * pages through the navigation. A successful login lands on /list.
+       */
+      loginViaUi(login: string, password: string): Chainable<void>
+    }
+  }
+}
+
+Cypress.Commands.add('loginViaUi', (login: string, password: string) => {
+  const field = (label: string) =>
+    cy.contains('label', new RegExp(`^${label}$`)).closest('.v-input').find('input')
+
+  cy.visit('/login')
+  field('E-Mail oder Benutzername').type(login)
+  field('Passwort').type(password)
+  cy.contains('button', 'Anmelden').click()
+  cy.location('pathname').should('eq', '/list')
+})
+
 export {}
