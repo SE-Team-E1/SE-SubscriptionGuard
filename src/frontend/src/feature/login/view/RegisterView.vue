@@ -70,7 +70,7 @@
     </v-tabs-window>
     </v-sheet>
 </template>
-<script setup>
+<script setup lang="ts">
   import { ref } from 'vue'
 
   const tab = ref('one')
