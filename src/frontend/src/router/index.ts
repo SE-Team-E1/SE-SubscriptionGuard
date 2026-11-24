@@ -10,7 +10,12 @@ export const routes: RouteRecordRaw[] = [
     component: AddSubscriptionView,
     meta: { pageTitle: 'Abonnement hinzufügen', requiresAuth: true },
   },
-  { path: '/overview', name: 'overview', component: () => import('@/feature/PlaceholderView.vue'), meta: { pageTitle: 'Overview' } },
+  {
+    path: '/overview',
+    name: 'overview',
+    component: () => import('@/feature/PlaceholderView.vue'),
+    meta: { pageTitle: 'Overview' },
+  },
   {
     path: '/list',
     name: 'list',

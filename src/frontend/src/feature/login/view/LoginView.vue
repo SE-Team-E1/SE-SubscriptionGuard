@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import useLogin from '../composables/useLogin'
+
+const { login, password, fieldErrors, formError, notice, isSubmitting, submit } = useLogin()
+</script>
+
 <template>
     <v-container class="fill-height pa-0" fluid>
         <v-row class="fill-height" align="center" justify="center">
@@ -13,25 +19,33 @@
                 <h1 class="text-center mb-10 mt-0 text-uppercase" style="font-size: 3rem;line-height: 3rem">Subscription Guard</h1>
                 <v-card class="elevation-12">
                     <v-card-text>
-                        <v-form>
-                            <v-label class="mb-2">Email</v-label>
-                            <v-text-field class="mb-4" variant="outlined" required></v-text-field>
-                            <v-label class="mb-2">Password</v-label>
-                            <v-text-field variant="outlined" type="password" required></v-text-field>
+                        <v-form @submit.prevent="submit">
+                            <v-alert v-if="notice" type="info" variant="tonal" class="mb-4">{{ notice }}</v-alert>
+                            <v-alert v-if="formError" type="error" variant="tonal" class="mb-4">{{ formError }}</v-alert>
+                            <v-text-field
+                                v-model="login"
+                                class="mb-4"
+                                label="E-Mail oder Benutzername"
+                                variant="outlined"
+                                autocomplete="username"
+                                :error-messages="fieldErrors.login"
+                            ></v-text-field>
+                            <v-text-field
+                                v-model="password"
+                                label="Passwort"
+                                variant="outlined"
+                                type="password"
+                                autocomplete="current-password"
+                                :error-messages="fieldErrors.password"
+                            ></v-text-field>
+                            <v-btn rounded="lg" block variant="outlined" type="submit" :loading="isSubmitting" :disabled="isSubmitting">Anmelden</v-btn>
                         </v-form>
                         <v-row density="compact">
-                            <v-col cols="12">
-                                <v-btn rounded="lg" block variant="outlined" @click="$router.push('/liste')">Login</v-btn>
-                            </v-col>   
                             <v-col cols="12" class="d-flex justify-center">
                                 <v-label class="text-center text-decoration-underline" rounded="lg" block variant="outlined" @click="$router.push('/forgot-password')">Passwort vergessen?</v-label>
                             </v-col> 
                             <v-col cols="12">
                                 <v-btn rounded="lg" block variant="outlined" @click="$router.push('/register')">Registrieren</v-btn>
-                            </v-col>
-                            <v-divider :thickness="2" class="my-2"></v-divider>
-                            <v-col cols="12">
-                                <v-btn rounded="lg" block variant="outlined" @click="$router.push('/overview')">Lokal fortfahren</v-btn>
                             </v-col>
                         </v-row>
                     </v-card-text>

@@ -49,17 +49,15 @@ describe('session guard', () => {
     const { router } = createGuardedRouter()
 
     // Act
-    const results: [string, string, string][] = []
-    for (const [target, expected] of table) {
+    const results: string[][] = []
+    for (const [target] of table) {
       await router.push('/login')
       const path = await navigate(router, target as string)
-      results.push([target as string, expected as string, path])
+      results.push([target as string, path])
     }
 
     // Assert
-    for (const [target, expected, path] of results) {
-      expect(path, `anonymous ${target}`).toBe(expected)
-    }
+    expect(results).toEqual(table)
   })
 
   test('authenticated user reaches guarded routes and / leads to /list', async () => {
@@ -77,15 +75,13 @@ describe('session guard', () => {
     })
 
     // Act
-    const results: [string, string, string][] = []
-    for (const [target, expected] of table) {
+    const results: string[][] = []
+    for (const [target] of table) {
       const path = await navigate(router, target as string)
-      results.push([target as string, expected as string, path])
+      results.push([target as string, path])
     }
 
     // Assert
-    for (const [target, expected, path] of results) {
-      expect(path, `authenticated ${target}`).toBe(expected)
-    }
+    expect(results).toEqual(table)
   })
 })
