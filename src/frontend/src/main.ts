@@ -26,6 +26,8 @@ import {
 } from "@/repository/subscriptions/mockedRepositories.ts";
 import type { AuthRepository } from "@/repository/auth/repositories.ts";
 import { MockedAuthRepository } from "@/repository/auth/mockedRepositories.ts";
+import { RestAuthRepository } from "@/repository/auth/restRepositories.ts";
+import { useSessionStore } from "@/stores/session.ts";
 import {
   RestCategoryRepository,
   RestProviderRepository,
@@ -48,6 +50,12 @@ const vuetify = createVuetify({
 })
 
 const app = createApp(App)
+
+// Pinia comes first: the REST repositories read the access token from the session store.
+const pinia = createPinia()
+app.use(pinia)
+const session = useSessionStore(pinia)
+const getAccessToken = () => session.accessToken
 
 function createTestEntities(amount: number): Subscription[] {
   return [...Array(amount).keys()].map(i => {
@@ -104,15 +112,14 @@ if (useMockRepositories) {
   app.provide<ProviderRepository, string>("providerRepository", provRepo);
   app.provide<AuthRepository, string>("authRepository", new MockedAuthRepository());
 } else {
-  app.provide<SubscriptionRepository, string>("subscriptionRepository", new RestSubscriptionRepository(() => undefined));
-  app.provide<CategoryRepository, string>("categoryRepository", new RestCategoryRepository(() => undefined));
-  app.provide<ProviderRepository, string>("providerRepository", new RestProviderRepository(() => undefined));
-  app.provide<AuthRepository, string>("authRepository", new MockedAuthRepository());
+  app.provide<SubscriptionRepository, string>("subscriptionRepository", new RestSubscriptionRepository(getAccessToken));
+  app.provide<CategoryRepository, string>("categoryRepository", new RestCategoryRepository(getAccessToken));
+  app.provide<ProviderRepository, string>("providerRepository", new RestProviderRepository(getAccessToken));
+  app.provide<AuthRepository, string>("authRepository", new RestAuthRepository());
 }
 
 
 app.use(vuetify)
-app.use(createPinia())
 app.use(router)
 
 app.mount('#app')
