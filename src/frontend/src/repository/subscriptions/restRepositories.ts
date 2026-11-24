@@ -11,69 +11,27 @@ export type { RestSubscriptionDTO } from "./dto/subscriptionDto";
 export type { RestCategoryDTO } from "./dto/categoryDto";
 export type { RestProviderDTO } from "./dto/providerDto";
 
-let accessToken: string | undefined;
-let loginRequest: Promise<string> | undefined;
+export type AccessTokenProvider = () => string | undefined;
 
-const devCredentials = import.meta.env.DEV
-  ? {
-      username: import.meta.env.VITE_DEV_API_USERNAME,
-      password: import.meta.env.VITE_DEV_API_PASSWORD,
-    }
-  : undefined;
-
-async function loginForDevelopment(): Promise<string> {
-  if (!devCredentials?.username || !devCredentials.password) {
-    throw new Error("Local API credentials are not configured");
-  }
-
-  const response = await fetch("/api/auth/login/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(devCredentials),
-  });
-  if (!response.ok) {
-    throw new Error(`Local API login failed (HTTP ${response.status})`);
-  }
-
-  const result: { access: string } = await response.json();
-  accessToken = result.access;
-  return accessToken;
-}
-
-async function getAccessToken(): Promise<string | undefined> {
-  if (accessToken) return accessToken;
-  if (!devCredentials?.username || !devCredentials.password) return undefined;
-
-  loginRequest ??= loginForDevelopment();
-  try {
-    return await loginRequest;
-  } finally {
-    loginRequest = undefined;
-  }
-}
-
-async function authorizedFetch(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> {
-  const token = await getAccessToken();
+// The token is read per request, so a new login takes effect without recreating the repository.
+async function authorizedFetch(
+  getAccessToken: AccessTokenProvider,
+  input: RequestInfo | URL,
+  init: RequestInit = {},
+): Promise<Response> {
+  const token = getAccessToken();
   const headers = new Headers(init.headers);
   if (token) headers.set("Authorization", `Bearer ${token}`);
-
-  let response = await fetch(input, { ...init, headers });
-  if (response.status === 401 && devCredentials?.username && devCredentials.password) {
-    accessToken = undefined;
-    const refreshedToken = await loginForDevelopment();
-    const retryHeaders = new Headers(init.headers);
-    retryHeaders.set("Authorization", `Bearer ${refreshedToken}`);
-    response = await fetch(input, { ...init, headers: retryHeaders });
-  }
-  return response;
+  return fetch(input, { ...init, headers });
 }
 
 export class RestSubscriptionRepository implements SubscriptionRepository {
+  constructor(private readonly getAccessToken: AccessTokenProvider) {}
 
   async findAll(): Promise<RestSubscriptionDTO[]> {
     let dtos: RestSubscriptionDTO[];
     try {
-      const response = await authorizedFetch("/api/subscriptions/?format=json")
+      const response = await authorizedFetch(this.getAccessToken, "/api/subscriptions/?format=json")
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
@@ -83,7 +41,7 @@ export class RestSubscriptionRepository implements SubscriptionRepository {
       return dtos;
 
     } catch (error: any) {
-      throw new Error(`Could not fetch subscriptions}`, {cause: error});
+      throw new Error(`Could not fetch subscriptions`, {cause: error});
     }
   }
 
@@ -93,7 +51,7 @@ export class RestSubscriptionRepository implements SubscriptionRepository {
         ...newSubscription,
         bookingDate: newSubscription.bookingDate.slice(0, 10),
       };
-      const response = await authorizedFetch("/api/subscriptions/", {
+      const response = await authorizedFetch(this.getAccessToken, "/api/subscriptions/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(apiPayload),
@@ -126,16 +84,18 @@ export class RestSubscriptionRepository implements SubscriptionRepository {
     }
   }
 
-  update(subscription: RestSubscriptionDTO): Promise<RestSubscriptionDTO> {
+  update(_subscription: RestSubscriptionDTO): Promise<RestSubscriptionDTO> {
     return Promise.reject("Not yet supported");
   }
 }
 
 export class RestCategoryRepository implements CategoryRepository {
+  constructor(private readonly getAccessToken: AccessTokenProvider) {}
+
   async findAll(): Promise<RestCategoryDTO[]> {
     let dtos: RestCategoryDTO[];
     try {
-      const response = await authorizedFetch("/api/categories/?format=json")
+      const response = await authorizedFetch(this.getAccessToken, "/api/categories/?format=json")
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
@@ -146,17 +106,17 @@ export class RestCategoryRepository implements CategoryRepository {
       return dtos;
 
     } catch (error: any) {
-      throw new Error(`Could not fetch subscriptions}`, {cause: error});
+      throw new Error(`Could not fetch categories`, {cause: error});
     }
   }
 
-  findByIds(id: string[]): Promise<RestCategoryDTO[]> {
+  findByIds(_ids: string[]): Promise<RestCategoryDTO[]> {
     return Promise.resolve([]);
   }
 
   async insert(newCategory: RestCategoryDTO): Promise<RestCategoryDTO> {
     try {
-      const response = await authorizedFetch("/api/categories/", {
+      const response = await authorizedFetch(this.getAccessToken, "/api/categories/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newCategory),
@@ -171,16 +131,18 @@ export class RestCategoryRepository implements CategoryRepository {
     }
   }
 
-  update(category: RestCategoryDTO): Promise<RestCategoryDTO> {
+  update(_category: RestCategoryDTO): Promise<RestCategoryDTO> {
     return Promise.reject("not yet implemented");
   }
 }
 
 export class RestProviderRepository implements ProviderRepository {
+  constructor(private readonly getAccessToken: AccessTokenProvider) {}
+
   async findAll(): Promise<RestProviderDTO[]> {
     let dtos: RestProviderDTO[];
     try {
-      const response = await authorizedFetch("/api/providers/?format=json")
+      const response = await authorizedFetch(this.getAccessToken, "/api/providers/?format=json")
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
@@ -193,13 +155,13 @@ export class RestProviderRepository implements ProviderRepository {
     }
   }
 
-  findByIds(id: string[]): Promise<RestProviderDTO[]> {
+  findByIds(_ids: string[]): Promise<RestProviderDTO[]> {
     return Promise.resolve([]);
   }
 
   async insert(newProvider: RestProviderDTO): Promise<RestProviderDTO> {
     try {
-      const response = await authorizedFetch("/api/providers/", {
+      const response = await authorizedFetch(this.getAccessToken, "/api/providers/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newProvider),
@@ -214,7 +176,7 @@ export class RestProviderRepository implements ProviderRepository {
     }
   }
 
-  update(provider: RestProviderDTO): Promise<RestProviderDTO> {
+  update(_provider: RestProviderDTO): Promise<RestProviderDTO> {
     return Promise.reject("not yet implemented");
   }
 }

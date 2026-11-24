@@ -15,7 +15,7 @@ import {
 const SECRET_PASSWORD = 'pw-SECRET-123'
 const SECRET_ACCESS = 'ACCESS-SECRET'
 
-const fetchMock = vi.fn()
+const fetchMock = vi.fn<typeof fetch>()
 
 function jsonResponse(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -252,6 +252,28 @@ describe('RestAuthRepository', () => {
   })
 
   describe('shared behavior', () => {
+    test('sends no authorization header on login, register and refresh', async () => {
+      // Arrange
+      queue(
+        loginOk(),
+        registerOk(),
+        loginOk(),
+        jsonResponse(200, { access: 'A-2', refresh: 'R-2' }),
+      )
+
+      // Act
+      await repo.login('otto', 'passwort123')
+      await repo.register(REGISTRATION)
+      await repo.refresh('REFRESH-1')
+
+      // Assert
+      expect(fetchMock).toHaveBeenCalledTimes(4)
+      for (const [, init] of fetchMock.mock.calls) {
+        const headers = new Headers(init?.headers)
+        expect(headers.has('Authorization')).toBe(false)
+      }
+    })
+
     const operations: [string, (repo: RestAuthRepository) => Promise<unknown>][] = [
       ['login', (r) => r.login('otto', 'passwort123')],
       ['register', (r) => r.register(REGISTRATION)],

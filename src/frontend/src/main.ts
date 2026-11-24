@@ -104,9 +104,9 @@ if (useMockRepositories) {
   app.provide<ProviderRepository, string>("providerRepository", provRepo);
   app.provide<AuthRepository, string>("authRepository", new MockedAuthRepository());
 } else {
-  app.provide<SubscriptionRepository, string>("subscriptionRepository", new RestSubscriptionRepository());
-  app.provide<CategoryRepository, string>("categoryRepository", new RestCategoryRepository());
-  app.provide<ProviderRepository, string>("providerRepository", new RestProviderRepository());
+  app.provide<SubscriptionRepository, string>("subscriptionRepository", new RestSubscriptionRepository(() => undefined));
+  app.provide<CategoryRepository, string>("categoryRepository", new RestCategoryRepository(() => undefined));
+  app.provide<ProviderRepository, string>("providerRepository", new RestProviderRepository(() => undefined));
   app.provide<AuthRepository, string>("authRepository", new MockedAuthRepository());
 }
 
