@@ -1,0 +1,100 @@
+@startuml
+title Repository-Level OCC
+
+participant System
+actor Nutzer
+participant SubscriptionService
+participant SyncRepository
+participant IndexedDB
+participant Backend
+
+== Liste laden ==
+Nutzer -> SubscriptionService: Liste öffnen
+SubscriptionService -> SyncRepository: findAll()
+
+alt online
+SyncRepository -> Backend: downsync(ids, versions): Updates seit letztem Stand
+Backend --> SyncRepository: remote: SyncDto[]
+SyncRepository -> IndexedDB: findByIds(remote.map(id))
+IndexedDB --> SyncRepository: local: SyncDto[]
+SyncRepository -> IndexedDB: merge + speichern
+else Offline
+SyncRepository -> IndexedDB: findAll()
+end 
+IndexedDB --> SyncRepository: SyncDto[]
+SyncRepository --> SubscriptionService: RestDTO[]
+SubscriptionService -> Nutzer: Liste anzeigen
+
+== Offline ändern ==
+Nutzer -> SubscriptionService: ändern
+SubscriptionService -> SyncRepository: insert/update(RestDTO)
+
+SyncRepository -> SyncRepository: als SyncDto wrappen\nstatus = local
+SyncRepository -> IndexedDB: speichern
+
+note over SyncRepository
+  Dieselbe Folge je Entität:
+  Kategorie, dann Provider, dann Abo.
+  SubscriptionService sieht nur RestDTO.
+end note
+
+SyncRepository --> SubscriptionService: RestDTO
+SubscriptionService -> Nutzer: Änderungen anzeigen
+
+== Online ändern ==
+
+Nutzer -> SubscriptionService: ändern
+SubscriptionService -> SyncRepository: insert/update(RestDTO)
+
+SyncRepository -> SyncRepository: als SyncDto wrappen,\n status = local
+SyncRepository -> IndexedDB: speichern
+
+SyncRepository -> Backend: upsert(id, version, payload)
+
+alt Version ist aktuell
+Backend --> SyncRepository: Objekt mit neuer version
+SyncRepository -> IndexedDB: speichern, status = synced
+else Version veraltet
+Backend --> SyncRepository: 409 und Serverstand
+SyncRepository -> IndexedDB: speichern, status = conflict\nversion nicht erhöhen
+SyncRepository -> SyncRepository: local.merge(Serverstand)
+SyncRepository -> IndexedDB: speichern, status = synced
+end
+
+SyncRepository --> SubscriptionService: RestDTO
+SubscriptionService -> Nutzer: Änderungen anzeigen
+
+== wieder online ==
+note over SyncRepository: Upsync
+
+System -> SyncRepository: online
+
+SyncRepository -> IndexedDB: SyncDto[] mit status local
+IndexedDB --> SyncRepository: local: SyncDto[]
+SyncRepository -> Backend: local.map(upsert(id, version, payload))
+loop local
+    alt Version ist aktuell
+        Backend --> SyncRepository: Objekt mit neuer version
+        SyncRepository -> IndexedDB: status = synced
+    else Version veraltet
+        Backend --> SyncRepository: 409 und Serverstand
+        SyncRepository -> IndexedDB: status = conflict\nversion nicht erhöhen
+    end
+    opt Übernahme Serverstand
+        SyncRepository -> SyncRepository: local.merge(Serverstand)
+        SyncRepository -> IndexedDB: speichern
+    end
+end
+
+note over SyncRepository: Downsync
+
+SyncRepository -> Backend: downsync(ids, versions): Updates seit letztem Stand
+Backend --> SyncRepository: remote: SyncDto[]
+SyncRepository -> IndexedDB: findByIds(remote.map(id))
+IndexedDB -> SyncRepository: local: SyncDto[]
+SyncRepository -> SyncRepository: merge local und remote
+SyncRepository -> IndexedDB: speichern
+
+SyncRepository -> Nutzer: Änderungen anzeigen
+
+@enduml

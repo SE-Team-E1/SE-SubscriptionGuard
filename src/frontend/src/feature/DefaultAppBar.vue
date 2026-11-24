@@ -2,7 +2,6 @@
 import type {DefaultAppBarProps} from "@/feature/types.d";
 
 const props = defineProps<DefaultAppBarProps>()
-
 </script>
 
 <template>
@@ -15,7 +14,6 @@ const props = defineProps<DefaultAppBarProps>()
     <template v-if="$slots.extension" #extension>
       <slot name="extension" />
     </template>
-
     <template #append>
       <v-app-bar-nav-icon size="large" />
     </template>
@@ -32,15 +30,14 @@ const props = defineProps<DefaultAppBarProps>()
 }
 
 .v-app-bar-title :deep(.v-toolbar-title__placeholder) {
-  white-space: normal;      /* allow multiple lines */
+  white-space: normal;
   overflow: visible;
   text-overflow: unset;
-  word-break: normal;         /* don't split words mid-word */
-  overflow-wrap: break-word;  /* only break a word if it's too long for the line */
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 
 .v-app-bar {
   padding: 0px var(--horizontal-screen-padding);
 }
-
 </style>

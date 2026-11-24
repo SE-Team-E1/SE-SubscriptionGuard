@@ -1,8 +1,10 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIRequestFactory, force_authenticate
+from rest_framework.renderers import JSONRenderer
 from rest_framework import status
 from unittest.mock import patch
+import json
 from .models import Subscription, Provider, Category
 from .serializers import SubscriptionSerializer
 import datetime
@@ -108,6 +110,17 @@ class SubscriptionSerializerTest(TestCase):
         subscription = serializer.save()
         self.assertEqual(float(subscription.price.amount), 9.99)
         self.assertEqual(str(subscription.price_currency), "EUR")
+
+    def test_price_amount_is_serialized_as_number(self):
+        serializer = SubscriptionSerializer(
+            data=self.valid_data,
+            context={"request": self._get_request()}
+        )
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+        serializer.save()
+
+        rendered_data = json.loads(JSONRenderer().render(serializer.data))
+        self.assertIsInstance(rendered_data["price"]["amount"], (int, float))
 
     def test_create_sets_provider_correctly(self):
         serializer = SubscriptionSerializer(
