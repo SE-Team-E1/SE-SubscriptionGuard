@@ -55,31 +55,20 @@ describe('REST subscription repositories', () => {
     }
   })
 
-  test('read the token on every request, so a new login takes effect', async () => {
+  test('read the token on every request and send no header without one', async () => {
     // Arrange
     fetchMock.mockImplementation(() => Promise.resolve(jsonResponse(200, [])))
-    let token: string | undefined = 'FIRST'
-    const repo = new RestSubscriptionRepository(() => token)
+    const tokens = ['FIRST', 'SECOND', undefined]
+    const repo = new RestSubscriptionRepository(() => tokens[fetchMock.mock.calls.length])
 
     // Act
-    await repo.findAll()
-    token = 'SECOND'
-    await repo.findAll()
+    for (let i = 0; i < tokens.length; i++) {
+      await repo.findAll()
+    }
 
     // Assert
-    expect(requestOf(0).headers.get('Authorization')).toBe('Bearer FIRST')
-    expect(requestOf(1).headers.get('Authorization')).toBe('Bearer SECOND')
-  })
-
-  test('send no authorization header without a token', async () => {
-    // Arrange
-    fetchMock.mockImplementation(() => Promise.resolve(jsonResponse(200, [])))
-
-    // Act
-    await new RestSubscriptionRepository(() => undefined).findAll()
-
-    // Assert
-    expect(requestOf(0).headers.has('Authorization')).toBe(false)
+    const headers = [0, 1, 2].map((i) => requestOf(i).headers.get('Authorization'))
+    expect(headers).toEqual(['Bearer FIRST', 'Bearer SECOND', null])
   })
 
   test('fail with a cause on 401 and do not retry', async () => {

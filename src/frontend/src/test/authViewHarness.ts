@@ -75,3 +75,11 @@ export async function settle(): Promise<void> {
   await flushPromises()
   await flushPromises()
 }
+
+// Texts of the validation messages shown below one field.
+export function fieldMessages(wrapper: VueWrapper, label: string): string[] {
+  const container = inputByLabel(wrapper, label).element.closest('.v-input')
+  return Array.from(container?.querySelectorAll('.v-messages__message') ?? []).map(
+    (element) => element.textContent ?? '',
+  )
+}
