@@ -9,6 +9,24 @@ const subscription = {
   bookingDate: '2026-06-01T12:00:00.000Z',
 }
 
+function stubLogin() {
+  cy.intercept({ method: 'POST', pathname: '/api/auth/login/' }, {
+    body: {
+      access: 'ACCESS-TOKEN',
+      refresh: 'REFRESH-TOKEN',
+      user: { id: 1, username: 'otto', email: 'otto@example.com', first_name: '', last_name: '' },
+    },
+  }).as('login')
+}
+
+function login() {
+  cy.loginViaUi('otto', 'passwort123')
+}
+
+beforeEach(() => {
+  stubLogin()
+})
+
 function stubCatalogs() {
   cy.intercept({ method: 'GET', pathname: '/api/providers/' }, {
     body: [{ id: subscription.providerId, name: 'Premium Music Ltd.' }],
@@ -24,7 +42,7 @@ describe('subscription list', () => {
     }).as('getSubscriptions')
     stubCatalogs()
 
-    cy.visit('/list')
+    login()
     cy.contains('Loading subscriptions…').should('be.visible')
     cy.wait('@getSubscriptions')
     cy.contains('No subscriptions yet').should('be.visible')
@@ -35,7 +53,7 @@ describe('subscription list', () => {
       .as('getSubscriptions')
     stubCatalogs()
 
-    cy.visit('/list')
+    login()
     cy.wait('@getSubscriptions')
     cy.contains('No subscriptions yet').should('be.visible')
     cy.contains('Add subscription').should('have.attr', 'href', '/add')
@@ -53,7 +71,7 @@ describe('subscription list', () => {
     }).as('getSubscriptions')
     stubCatalogs()
 
-    cy.visit('/list')
+    login()
     cy.wait('@getSubscriptions')
     cy.contains('Subscriptions couldn’t be loaded').should('be.visible')
     cy.contains('button', 'Try again').click()
@@ -66,7 +84,7 @@ describe('subscription list', () => {
       .as('getSubscriptions')
     stubCatalogs()
 
-    cy.visit('/list')
+    login()
     cy.wait('@getSubscriptions')
     cy.contains('Premium Music').should('be.visible')
     cy.contains('9.99 € · 1 months').should('be.visible')
@@ -98,7 +116,7 @@ describe('subscription provider issues', () => {
       request.reply({ body: providers })
     })
 
-    cy.visit('/list')
+    login()
     cy.contains('.v-list-item', subscription.name).should('be.visible')
     cy.get('.list-warning').within(() => {
       cy.contains('This list is incomplete.').should('be.visible')
@@ -113,7 +131,7 @@ describe('subscription provider issues', () => {
   it('shows issues rather than claiming the list is empty when every provider is missing', () => {
     cy.intercept({ method: 'GET', pathname: '/api/subscriptions/' }, { body: [affectedSubscription] })
     stubCatalogs()
-    cy.visit('/list')
+    login()
     cy.contains('Some subscriptions couldn’t be loaded').should('be.visible')
     cy.contains('No subscriptions yet').should('not.exist')
     cy.contains('Subscription without provider: provider unavailable').should('be.visible')
@@ -129,7 +147,7 @@ describe('subscription provider issues', () => {
         ? { statusCode: 500 }
         : { body: [{ id: subscription.providerId, name: 'Premium Music Ltd.' }] })
     })
-    cy.visit('/list')
+    login()
     cy.contains('Provider details couldn’t be loaded').should('be.visible')
     cy.contains('Your subscriptions couldn’t be displayed because provider details are unavailable.').should('be.visible')
     cy.contains('Premium Music: provider details couldn’t be loaded').should('be.visible')
@@ -171,7 +189,7 @@ describe('subscription category issues', () => {
           : { body: [category] })
       })
 
-      cy.visit('/list')
+      login()
       cy.contains('.v-list-item', subscription.name).should('be.visible')
       cy.get('.list-error').should('not.exist')
       cy.get('.list-warning').within(() => {
@@ -191,7 +209,7 @@ describe('subscription category issues', () => {
       body: [{ id: subscription.providerId, name: 'Premium Music Ltd.' }],
     })
     cy.intercept({ method: 'GET', pathname: '/api/categories/' }, { statusCode: 500 })
-    cy.visit('/list')
+    login()
     cy.contains('Category details couldn’t be loaded').should('be.visible')
     cy.get('.list-error').should('not.exist')
     cy.contains('No subscriptions yet').should('not.exist')

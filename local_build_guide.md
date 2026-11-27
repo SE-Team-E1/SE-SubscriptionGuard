@@ -3,8 +3,7 @@
 ## Local development setup — temporary first draft
 
 This is a **temporary first draft** of the local development setup. It documents
-this branch's current workflow and will need revisiting when the frontend login
-feature is integrated. It is not a production deployment guide.
+this branch's current workflow. It is not a production deployment guide.
 
 ### 1. Prerequisites
 
@@ -57,18 +56,15 @@ until the backend responds.
 
 ### 3. Create a local test account
 
-For this temporary local setup, create a superuser interactively:
+Create a superuser on the command line:
 
 ```sh
 docker compose -f docker-compose.yml -f docker-compose.dev.yml exec web python manage.py createsuperuser
 ```
 
-Follow the prompts and retain the username and password for the frontend
-configuration. This account has administrator privileges in this local database;
-it does not create an account or grant privileges in a deployed environment.
-Administrator privileges are unnecessary for the app's normal API operations.
-A regular test account can alternatively be created through
-`POST /api/auth/register/` in Swagger.
+A superuser has administrator privileges in this local database only; they are
+unnecessary for the app's normal API operations. Regular accounts can also be
+created through `POST /api/auth/register/` in Swagger.
 
 The account and subscriptions persist in the Docker database volume after the
 containers stop. Account creation is only required once for a fresh database.
@@ -87,13 +83,8 @@ These copy commands assume a clean setup. Keep existing `.env` and `.env.local`
 files when restarting an already configured checkout. `npm ci` installs the
 lockfile versions; the install script also downloads Cypress.
 
-Edit `.env.local` to use the account created above:
-
-```dotenv
-VITE_USE_MOCK_REPOSITORIES=false
-VITE_DEV_API_USERNAME=your-local-username
-VITE_DEV_API_PASSWORD=your-local-password
-```
+`.env.local` only contains `VITE_USE_MOCK_REPOSITORIES=false`. There are no
+credentials to configure: you sign in through the login page of the app.
 
 Start Vite:
 
@@ -104,15 +95,12 @@ npm run dev
 Open the URL printed by Vite, normally [localhost:5173](http://localhost:5173).
 Vite forwards `/api` requests to the backend at `localhost:8001`.
 
-The frontend currently logs in automatically with these development credentials,
-keeps the access token in memory, and logs in again after a 401 response before
-retrying the request once. There is no user-facing login flow on this branch.
-Restart Vite after editing `.env.local`.
+Sign in on `/login` with your email address or username. The access token is kept in memory only, so reloading the page signs
+you out. The subscription pages (`/list`, `/add`) redirect to `/login` while you
+are signed out. The "continue locally" mode is not available yet.
 
-The auto-login helper is development-only and is disabled in production builds.
-`VITE_*` values are accessible to browser code: use local test credentials and do
-not commit `.env` or `.env.local`. Production authentication and API routing need
-their own setup.
+`VITE_*` values are accessible to browser code. Do not commit `.env` or
+`.env.local`. Production API routing needs its own setup.
 
 ### 5. Verify the app manually
 
@@ -138,6 +126,15 @@ npm run test:e2e:mock
   Run `build` first.
 - `test:e2e:mock` starts Vite in mock mode and runs `cypress/mock` tests against
   the app's in-memory repositories.
+
+The integration test runs the REST auth repository and the subscription API
+against the running backend (step 2). It is skipped unless the base URL is set,
+and it creates a fresh user per run, so it can be repeated without resetting the
+database:
+
+```sh
+SG_INTEGRATION_API_URL=http://localhost:8001 npm run test:integration
+```
 
 The two UI suites start and stop their own server on port 4173. Run them
 sequentially with that port free. Neither suite requires a running backend;
@@ -165,8 +162,8 @@ Stop the existing Vite process with Ctrl+C, then run from `src/frontend`:
 npm run dev -- --mode mock
 ```
 
-This uses `.env.mock` to select the in-memory repositories. No backend or account
-is required. Created subscriptions survive navigation within the app but reset on
+This uses `.env.mock` to select the in-memory repositories. No backend is
+required: sign in with the demo account `otto` / `passwort123`. Created subscriptions survive navigation within the app but reset on
 page reload.
 
 ### 8. Stop and restart
@@ -192,9 +189,9 @@ when the frontend lockfile changes.
 
 - **Port already in use:** stop the conflicting process. PostgreSQL commonly
   conflicts on 5432; UI test servers require 4173.
-- **401 or development-login failure:** verify the account exists in this local
-  database, check `.env.local`, and restart Vite. Creating a superuser does not
-  automatically configure the frontend credentials.
+- **Login fails or the subscription pages show an error:** verify the account
+  exists in this local database and sign in again. The access token expires after
+  an hour and is lost on reload; open `/login` to sign in again.
 - **Connection refused or 502:** check Docker is running and inspect the `web`,
   `db`, and `nginx` logs with the same two Compose files.
 

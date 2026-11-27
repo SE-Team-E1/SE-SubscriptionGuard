@@ -7,7 +7,9 @@ export default mergeConfig(
   defineConfig({
     test: {
       environment: 'jsdom',
-      exclude: [...configDefaults.exclude, 'e2e/**'],
+      exclude: [...configDefaults.exclude, 'e2e/**', 'src/**/*.integration.test.ts'],
+      setupFiles: ['./src/test/setup.ts'],
+      server: { deps: { inline: ['vuetify'] } },
       root: fileURLToPath(new URL('./', import.meta.url)),
     },
   }),

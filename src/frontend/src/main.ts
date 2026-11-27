@@ -13,6 +13,7 @@ import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
 
 import App from './App.vue'
 import router from './router'
+import { installSessionGuard } from './router/guards'
 import {
   type CategoryRepository, type ProviderRepository,
   type SubscriptionRepository
@@ -26,6 +27,9 @@ import {
 } from "@/repository/subscriptions/mockedRepositories.ts";
 import type { AuthRepository } from "@/repository/auth/repositories.ts";
 import { MockedAuthRepository } from "@/repository/auth/mockedRepositories.ts";
+import { RestAuthRepository } from "@/repository/auth/restRepositories.ts";
+import { useSessionStore } from "@/stores/session.ts";
+import { AuthSessionService } from "@/feature/login/services/authSessionService.ts";
 import {
   RestCategoryRepository,
   RestProviderRepository,
@@ -48,6 +52,12 @@ const vuetify = createVuetify({
 })
 
 const app = createApp(App)
+
+// Pinia comes first: the REST repositories read the access token from the session store.
+const pinia = createPinia()
+app.use(pinia)
+const session = useSessionStore(pinia)
+const getAccessToken = () => session.accessToken
 
 function createTestEntities(amount: number): Subscription[] {
   return [...Array(amount).keys()].map(i => {
@@ -91,6 +101,8 @@ function mapTestEntitiesToDTO(subscriptions: Subscription[]): {subscription: Res
 
 const useMockRepositories = import.meta.env.DEV && import.meta.env.VITE_USE_MOCK_REPOSITORIES === 'true';
 
+const authRepository: AuthRepository = useMockRepositories ? new MockedAuthRepository() : new RestAuthRepository();
+
 if (useMockRepositories) {
   const entities = createTestEntities(3);
   const dtos = mapTestEntitiesToDTO(entities);
@@ -102,17 +114,19 @@ if (useMockRepositories) {
   app.provide<SubscriptionRepository, string>("subscriptionRepository", subRepo);
   app.provide<CategoryRepository, string>("categoryRepository", catRepo);
   app.provide<ProviderRepository, string>("providerRepository", provRepo);
-  app.provide<AuthRepository, string>("authRepository", new MockedAuthRepository());
+  app.provide<AuthRepository, string>("authRepository", authRepository);
 } else {
-  app.provide<SubscriptionRepository, string>("subscriptionRepository", new RestSubscriptionRepository());
-  app.provide<CategoryRepository, string>("categoryRepository", new RestCategoryRepository());
-  app.provide<ProviderRepository, string>("providerRepository", new RestProviderRepository());
-  app.provide<AuthRepository, string>("authRepository", new MockedAuthRepository());
+  app.provide<SubscriptionRepository, string>("subscriptionRepository", new RestSubscriptionRepository(getAccessToken));
+  app.provide<CategoryRepository, string>("categoryRepository", new RestCategoryRepository(getAccessToken));
+  app.provide<ProviderRepository, string>("providerRepository", new RestProviderRepository(getAccessToken));
+  app.provide<AuthRepository, string>("authRepository", authRepository);
 }
 
+app.provide<AuthSessionService, string>("authSessionService", new AuthSessionService(authRepository, session));
+
+installSessionGuard(router, session)
 
 app.use(vuetify)
-app.use(createPinia())
 app.use(router)
 
 app.mount('#app')

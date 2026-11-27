@@ -13,7 +13,8 @@ describe('subscription currency', () => {
     it(`shows ${symbol} in the list after creating a ${currency} subscription`, () => {
       const name = `Currency test ${currency}`
       cy.viewport(390, 844)
-      cy.visit('/add')
+      cy.loginViaUi('otto', 'passwort123')
+      cy.get('.v-bottom-navigation a[href="/add"]').click()
       field('Name').type(name)
       field('Kosten').clear().type('9.99')
       field('Währung').closest('.v-input').click()
