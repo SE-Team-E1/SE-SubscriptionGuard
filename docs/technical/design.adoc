@@ -117,9 +117,9 @@ Container_Boundary(spa, "Vue.js SPA (Browser)") {
   }
 
   Container_Boundary(feature_login, "Feature: Anmeldung") {
-    Component(login_view, "LoginView", "Vue Component / Vuetify", "Formular für die Anmeldung")
-    Component(login_composables, "useLogin", "Vue Composable", "Formularzustand, Pflichtfeldprüfung, Fehlertexte, Navigation")
-    Component(auth_session_service, "AuthSessionService", "TypeScript Class", "Login über das AuthRepository; schreibt das Ergebnis in den Session-Store")
+    Component(login_view, "LoginView / RegisterView", "Vue Components / Vuetify", "Formulare für Anmeldung und Registrierung")
+    Component(login_composables, "useLogin / useRegistration", "Vue Composables", "Formularzustand, Pflichtfeldprüfung, Fehlertexte, Navigation")
+    Component(auth_session_service, "AuthSessionService", "TypeScript Class", "Login und Registrierung über das AuthRepository; schreibt das Ergebnis in den Session-Store")
     Component(session_store, "useSessionStore", "Pinia Store", "Tokens und Nutzer nur im Speicher; kein Passwort")
     Component(session_guard, "installSessionGuard", "Vue Router Guard", "Leitet Routen mit meta.requiresAuth ohne Anmeldung auf /login um")
   }
@@ -156,7 +156,7 @@ ContainerDb(db, "PostgreSQL", "Relationale Datenbank", "Persistente Datenhaltung
 
 Rel(login_view, login_composables, "nutzt")
 Rel(login_composables, auth_session_service, "delegiert an")
-Rel(auth_session_service, auth_repo, "login")
+Rel(auth_session_service, auth_repo, "login / register")
 Rel(auth_session_service, session_store, "setSession")
 Rel(session_guard, session_store, "liest isAuthenticated")
 Rel(sub_repo, session_store, "liest accessToken")
@@ -196,16 +196,16 @@ NOTE: `main.ts` stellt standardmäßig die REST-Repositories bereit (`RestSubscr
 |===
 | Komponente | Verantwortung | Schnittstellen
 
-| LoginView
-| Anmeldeformular rendern; Eingaben an `useLogin` binden; Fehler am Feld oder als Meldung anzeigen
-| `useLogin` (ausgehend); Vue Router `/login`
+| LoginView / RegisterView
+| Anmelde- und Registrierformular rendern (Registrierung in einem Schritt mit vier Feldern); Eingaben an `useLogin` bzw. `useRegistration` binden; Fehler am Feld oder als Meldung anzeigen
+| `useLogin`, `useRegistration` (ausgehend); Vue Router `/login`, `/register`
 
-| useLogin
-| Formularzustand, Feldfehler (nur leere Pflichtfelder clientseitig), `isSubmitting` halten; Fehlertypen in deutsche Texte aus `messages.ts` übersetzen; nach Erfolg zu `/list` navigieren
+| useLogin / useRegistration
+| Formularzustand, Feldfehler (nur leere Pflichtfelder clientseitig), `isSubmitting` halten; Fehlertypen und Fehlercodes in deutsche Texte aus `messages.ts` übersetzen; nach Erfolg zu `/list` navigieren
 | `AuthSessionService` (ausgehend)
 
 | AuthSessionService
-| Login an das `AuthRepository` delegieren; bei Erfolg Tokens und Nutzer im Session-Store ablegen
+| Login und Registrierung an das `AuthRepository` delegieren; bei Erfolg Tokens und Nutzer im Session-Store ablegen; bei fehlgeschlagenem Folge-Login Benutzername und Hinweis für die Login-View vormerken
 | `AuthRepository` (ausgehend); `useSessionStore`
 
 | useSessionStore
@@ -686,8 +686,8 @@ Ist der Refresh-Token ungültig oder abgelaufen, antwortet das Backend mit `401`
 | Auth-Repository
 | `RestAuthRepository` und `MockedAuthRepository` werfen nur sechs Fehlertypen, alle abgeleitet von der gemeinsamen Basisklasse `AuthError`: `InvalidCredentialsError`, `RegistrationValidationError`, `RegistrationLoginFailedError`, `SessionExpiredError`, `NetworkError`, `UnexpectedAuthError`. Aufrufer erkennen jeden Auth-Fehler mit `instanceof AuthError`. Die View bekommt Fehlertypen und Codes (z. B. `USERNAME_TAKEN`), nie Backend-Texte. Die Codes werden im Frontend aus den englischen Backend-Texten abgeleitet (exakter Treffer nach `trim()`); ein unbekannter Text oder ein unbekanntes Feld macht die ganze Antwort zu `UnexpectedAuthError`. Der `cause` enthält keine Passwörter, Tokens oder Antwort-Bodys; bei typia-Fehlern nur Pfad und erwarteten Typ
 
-| Login
-| `useLogin` übersetzt die Fehlertypen des `AuthRepository` in feste deutsche Texte (`feature/login/messages.ts`); `NetworkError` und `UnexpectedAuthError` erhalten jeweils eine allgemeine Meldung. Eine abgelehnte Anmeldung nennt nicht, ob Login oder Passwort falsch war. 401 auf der Abo-API führt zum bestehenden Fehlerzustand der Abo-Übersicht, ohne Redirect und ohne Refresh
+| Login und Registrierung
+| `useLogin` und `useRegistration` übersetzen die Fehlertypen des `AuthRepository` in feste deutsche Texte (`feature/login/messages.ts`); `NetworkError` und `UnexpectedAuthError` erhalten jeweils eine allgemeine Meldung. Eine abgelehnte Anmeldung nennt nicht, ob Login oder Passwort falsch war. 401 auf der Abo-API führt zum bestehenden Fehlerzustand der Abo-Übersicht, ohne Redirect und ohne Refresh
 
 | Composables
 | Fangen Service-Fehler ab und schreiben die Meldung in `submitError` (reaktive Ref); die View zeigt diese an

@@ -56,7 +56,11 @@ until the backend responds.
 
 ### 3. Create a local test account
 
-Create a superuser on the command line:
+Create an account in the app itself: open the registration page of the running
+frontend (step 4) and register with a username, an email address, and a
+password. Registering signs you in directly.
+
+Alternatively, create a superuser on the command line:
 
 ```sh
 docker compose -f docker-compose.yml -f docker-compose.dev.yml exec web python manage.py createsuperuser
@@ -95,7 +99,8 @@ npm run dev
 Open the URL printed by Vite, normally [localhost:5173](http://localhost:5173).
 Vite forwards `/api` requests to the backend at `localhost:8001`.
 
-Sign in on `/login` with your email address or username. The access token is kept in memory only, so reloading the page signs
+Sign in on `/login` with your email address or username, or register on
+`/register`. The access token is kept in memory only, so reloading the page signs
 you out. The subscription pages (`/list`, `/add`) redirect to `/login` while you
 are signed out. The "continue locally" mode is not available yet.
 
@@ -163,7 +168,8 @@ npm run dev -- --mode mock
 ```
 
 This uses `.env.mock` to select the in-memory repositories. No backend is
-required: sign in with the demo account `otto` / `passwort123`. Created subscriptions survive navigation within the app but reset on
+required: sign in with the demo account `otto` / `passwort123`, or register a new
+in-memory account. Created subscriptions survive navigation within the app but reset on
 page reload.
 
 ### 8. Stop and restart
