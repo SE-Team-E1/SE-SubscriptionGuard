@@ -116,6 +116,14 @@ Container_Boundary(spa, "Vue.js SPA (Browser)") {
     Component(add_service, "AddSubscriptionService", "TypeScript Class", "Koordiniert Anlegen von Provider, Kategorien und Abo; prüft auf Duplikate")
   }
 
+  Container_Boundary(feature_login, "Feature: Anmeldung") {
+    Component(login_view, "LoginView", "Vue Component / Vuetify", "Formular für die Anmeldung")
+    Component(login_composables, "useLogin", "Vue Composable", "Formularzustand, Pflichtfeldprüfung, Fehlertexte, Navigation")
+    Component(auth_session_service, "AuthSessionService", "TypeScript Class", "Login über das AuthRepository; schreibt das Ergebnis in den Session-Store")
+    Component(session_store, "useSessionStore", "Pinia Store", "Tokens und Nutzer nur im Speicher; kein Passwort")
+    Component(session_guard, "installSessionGuard", "Vue Router Guard", "Leitet Routen mit meta.requiresAuth ohne Anmeldung auf /login um")
+  }
+
   Container_Boundary(feature_list, "Feature: Abo-Liste") {
     Component(list_view, "ListView", "Vue Component / Vuetify", "Zeigt alle Abonnements des Nutzers an")
     Component(list_composable, "useSubscriptionList", "Vue Composable", "Delegiert an ListSubscriptionService; hält reaktive Liste der Subscription-Entitäten")
@@ -123,12 +131,12 @@ Container_Boundary(spa, "Vue.js SPA (Browser)") {
   }
 
   Container_Boundary(infra, "Infrastruktur") {
-    Component(sub_repo, "RestSubscriptionRepository", "TypeScript Class", "CRUD-Operationen für Abos via /api/abos/")
+    Component(sub_repo, "RestSubscriptionRepository", "TypeScript Class", "CRUD-Operationen für Abos via /api/subscriptions/")
     Component(cat_repo, "RestCategoryRepository", "TypeScript Class", "Kategorien laden und anlegen via /api/categories/")
     Component(prov_repo, "RestProviderRepository", "TypeScript Class", "Provider laden und anlegen via /api/providers/")
-    Component(mock_repos, "MockedRepositories", "TypeScript Classes", "In-Memory-Implementierungen aller Repositories; aktuell in main.ts bereitgestellt")
+    Component(mock_repos, "MockedRepositories", "TypeScript Classes", "In-Memory-Implementierungen aller Repositories; in main.ts nur im Dev-Mock-Modus bereitgestellt")
     Component(auth_repo, "RestAuthRepository", "TypeScript Class", "Login, Registrierung und Token-Refresh via /api/auth/")
-    Component(mock_auth_repo, "MockedAuthRepository", "TypeScript Class", "In-Memory-Implementierung des AuthRepository; aktuell in main.ts bereitgestellt")
+    Component(mock_auth_repo, "MockedAuthRepository", "TypeScript Class", "In-Memory-Implementierung des AuthRepository; in main.ts nur im Dev-Mock-Modus bereitgestellt")
   }
 
   Container_Boundary(domain_layer, "Domäne") {
@@ -146,6 +154,13 @@ Container_Boundary(django, "Django Backend (Server)") {
 
 ContainerDb(db, "PostgreSQL", "Relationale Datenbank", "Persistente Datenhaltung")
 
+Rel(login_view, login_composables, "nutzt")
+Rel(login_composables, auth_session_service, "delegiert an")
+Rel(auth_session_service, auth_repo, "login")
+Rel(auth_session_service, session_store, "setSession")
+Rel(session_guard, session_store, "liest isAuthenticated")
+Rel(sub_repo, session_store, "liest accessToken")
+
 Rel(add_view, add_composable, "nutzt")
 Rel(add_view, category_picker, "enthält")
 Rel(add_composable, add_service, "delegiert an")
@@ -158,9 +173,9 @@ Rel(list_service, sub_repo, "liest Abos (findAll)")
 Rel(list_service, cat_repo, "liest Kategorien (findByIds)")
 Rel(list_service, prov_repo, "liest Provider (findByIds)")
 
-Rel(sub_repo, sub_viewset, "POST/GET /api/abos/", "HTTPS / JSON")
-Rel(cat_repo, cat_prov_model, "GET/POST /api/categories/ — fehlt noch", "HTTPS / JSON")
-Rel(prov_repo, cat_prov_model, "GET/POST /api/providers/ — fehlt noch", "HTTPS / JSON")
+Rel(sub_repo, sub_viewset, "POST/GET /api/subscriptions/", "HTTPS / JSON")
+Rel(cat_repo, cat_prov_model, "GET/POST /api/categories/", "HTTPS / JSON")
+Rel(prov_repo, cat_prov_model, "GET/POST /api/providers/", "HTTPS / JSON")
 Rel(auth_repo, auth_views, "POST /api/auth/login|register|refresh/", "HTTPS / JSON")
 
 Rel(sub_viewset, sub_serializer, "delegiert")
@@ -173,15 +188,33 @@ Rel(auth_views, db, "liest / schreibt auth_user", "Django ORM")
 @enduml
 ....
 
-NOTE: Die REST-Repositories (`RestSubscriptionRepository` usw.) sind implementiert, aber in `main.ts` werden aktuell `MockedRepositories` bereitgestellt. In `feature/22` geschieht das nur im DEV-Modus (`import.meta.env.DEV`); in der Produktionsumgebung müssen die REST-Implementierungen explizit eingebunden werden. Das ist ein offener Integrationsschritt.
-
-NOTE: ViewSets für `/api/categories/` und `/api/providers/` fehlen im Backend. Das blockiert die vollständige Funktion von `AddSubscriptionService`.
+NOTE: `main.ts` stellt standardmäßig die REST-Repositories bereit (`RestSubscriptionRepository`, `RestCategoryRepository`, `RestProviderRepository`, `RestAuthRepository`). Die Mock-Repositories sind nur aktiv, wenn `import.meta.env.DEV` und `VITE_USE_MOCK_REPOSITORIES === 'true'` gelten, nie im Produktions-Build. Die Abo-Repositories bekommen den Access-Token über eine Funktion `() => string | undefined` aus dem `useSessionStore`; die Auth-Endpunkte werden ohne `Authorization`-Header aufgerufen.
 
 === Komponentenbeschreibung
 
 [cols="1,2,2", options="header"]
 |===
 | Komponente | Verantwortung | Schnittstellen
+
+| LoginView
+| Anmeldeformular rendern; Eingaben an `useLogin` binden; Fehler am Feld oder als Meldung anzeigen
+| `useLogin` (ausgehend); Vue Router `/login`
+
+| useLogin
+| Formularzustand, Feldfehler (nur leere Pflichtfelder clientseitig), `isSubmitting` halten; Fehlertypen in deutsche Texte aus `messages.ts` übersetzen; nach Erfolg zu `/list` navigieren
+| `AuthSessionService` (ausgehend)
+
+| AuthSessionService
+| Login an das `AuthRepository` delegieren; bei Erfolg Tokens und Nutzer im Session-Store ablegen
+| `AuthRepository` (ausgehend); `useSessionStore`
+
+| useSessionStore
+| Tokens und Nutzer nur im Speicher halten (nichts in `localStorage`, `sessionStorage` oder Cookies); `isAuthenticated`, `accessToken`; ein neuer Login ersetzt die Daten des vorherigen Nutzers
+| Pinia
+
+| Router-Guard (`installSessionGuard`)
+| Routen mit `meta.requiresAuth` (`/list`, `/add` und weitere Abo-Routen) ohne Anmeldung auf `/login` umleiten; `/overview`, `/login`, `/register` und `/forgot-password` bleiben frei; `/` führt auf `/list`
+| `useSessionStore`; Vue Router (`meta.requiresAuth`, `meta.layout: 'auth'` blendet die Bottom-Navigation aus)
 
 | AddSubscriptionView
 | Formular zur Abo-Erfassung rendern; Nutzereingaben an `useSubscriptionCreation` weitergeben; Ladezustand und Fehler anzeigen
@@ -212,20 +245,20 @@ NOTE: ViewSets für `/api/categories/` und `/api/providers/` fehlen im Backend. 
 | `SubscriptionRepository`, `CategoryRepository`, `ProviderRepository` (ausgehend)
 
 | RestSubscriptionRepository
-| `GET /api/abos/` und `POST /api/abos/` aufrufen; DTO-Validierung mit `typia`
+| `GET /api/subscriptions/` und `POST /api/subscriptions/` aufrufen; DTO-Validierung mit `typia`
 | Backend REST-API (ausgehend)
 
 | RestCategoryRepository
 | `GET /api/categories/` und `POST /api/categories/` aufrufen
-| Backend REST-API (ausgehend) — Gegenstück im Backend fehlt noch
+| Backend REST-API (ausgehend)
 
 | RestProviderRepository
 | `GET /api/providers/` und `POST /api/providers/` aufrufen
-| Backend REST-API (ausgehend) — Gegenstück im Backend fehlt noch
+| Backend REST-API (ausgehend)
 
 | MockedRepositories
 | In-Memory-Implementierungen aller drei Repository-Interfaces für Entwicklung und Tests ohne Backend
-| Werden in `main.ts` über Vue `provide()` bereitgestellt
+| Werden in `main.ts` nur im Dev-Mock-Modus über Vue `provide()` bereitgestellt
 
 | RestAuthRepository
 | `POST /api/auth/login/`, `/register/` und `/refresh/` aufrufen; Eingaben trimmen; 2xx-Antworten mit `typia` prüfen; nach erfolgreicher Registrierung automatisch einloggen; Fehler als sechs feste Fehlertypen mit Codes statt Backend-Texten weitergeben
@@ -233,7 +266,7 @@ NOTE: ViewSets für `/api/categories/` und `/api/providers/` fehlen im Backend. 
 
 | MockedAuthRepository
 | In-Memory-Implementierung des `AuthRepository` mit Demo-Nutzer `otto` für Entwicklung und Tests ohne Backend; gleiche Fehlertypen und Codes
-| Wird in `main.ts` über Vue `provide()` als `authRepository` bereitgestellt
+| Wird in `main.ts` im Dev-Mock-Modus über Vue `provide()` als `authRepository` bereitgestellt
 
 | SubscriptionViewSet
 | CRUD-Endpunkte für Abos; Anfragen auf den angemeldeten Nutzer filtern (`IsAuthenticated`)
@@ -255,7 +288,7 @@ NOTE: ViewSets für `/api/categories/` und `/api/providers/` fehlen im Backend. 
 
 === Abo erfassen (Happy Path, Zielzustand nach Integration)
 
-Dieser Ablauf zeigt den geplanten Fluss nach vollständiger Integration aller Feature-Branches. Er durchläuft alle Schichten und illustriert die Koordinationslogik im `AddSubscriptionService`. Aktuell läuft das System mit `MockedRepositories`, weshalb die HTTP-Aufrufe an das Backend noch nicht stattfinden.
+Dieser Ablauf zeigt den geplanten Fluss nach vollständiger Integration aller Feature-Branches. Er durchläuft alle Schichten und illustriert die Koordinationslogik im `AddSubscriptionService`. Im Dev-Mock-Modus läuft das System mit `MockedRepositories`; dann finden keine HTTP-Aufrufe an das Backend statt.
 
 [plantuml, sequence-add-subscription, svg]
 ....
@@ -279,14 +312,13 @@ composable -> service : addSubscription(dto)
 
 service -> prov_repo : findAll()
 prov_repo -> viewset : GET /api/providers/
-note right : Endpunkt fehlt noch im Backend
 
 service -> service : Provider nicht gefunden,\nneu anlegen
 service -> prov_repo : insert(providerDTO)
 prov_repo -> viewset : POST /api/providers/
 
 service -> sub_repo : insert(subscriptionDTO)
-sub_repo -> viewset : POST /api/abos/\n{id, name, providerId, ...}
+sub_repo -> viewset : POST /api/subscriptions/\n{id, name, providerId, ...}
 viewset -> viewset : JWT validieren,\nNutzer extrahieren
 viewset -> db : INSERT INTO abos_subscription ...
 db --> viewset : OK
@@ -479,27 +511,27 @@ WARNING: In `feature/79` wurden die Django-URLs auf `path('api/', include('abos.
 | Implementiert (`feature/79`)
 
 | GET
-| `/api/abos/`
+| `/api/subscriptions/`
 | Alle Abos des angemeldeten Nutzers auflisten
 | Implementiert (`feature/70`)
 
 | POST
-| `/api/abos/`
+| `/api/subscriptions/`
 | Neues Abo anlegen; Payload: `RestSubscriptionDTO`
 | Implementiert (`feature/70`)
 
 | GET
-| `/api/abos/{id}/`
+| `/api/subscriptions/{id}/`
 | Einzelnes Abo abrufen
 | Implementiert via DRF DefaultRouter
 
 | PUT / PATCH
-| `/api/abos/{id}/`
+| `/api/subscriptions/{id}/`
 | Abo vollständig oder teilweise aktualisieren
 | Implementiert; kein Frontend-Aufruf vorhanden
 
 | DELETE
-| `/api/abos/{id}/`
+| `/api/subscriptions/{id}/`
 | Abo löschen
 | Implementiert via DRF DefaultRouter; kein Frontend-Aufruf vorhanden
 
@@ -638,7 +670,7 @@ Ist der Refresh-Token ungültig oder abgelaufen, antwortet das Backend mit `401`
 
 | Dependency Injection (Vue provide / inject)
 | Repository-Instanzen werden in `main.ts` über `app.provide()` bereitgestellt; Composables rufen sie über `inject()` ab
-| Implementierungen können ohne Code-Änderungen in Komponenten ausgetauscht werden; aktuell Mock-Implementierungen, im Zielbetrieb REST-Implementierungen
+| Implementierungen können ohne Code-Änderungen in Komponenten ausgetauscht werden; standardmäßig REST-Implementierungen, im Dev-Mock-Modus Mock-Implementierungen
 
 |===
 
@@ -653,6 +685,9 @@ Ist der Refresh-Token ungültig oder abgelaufen, antwortet das Backend mit `401`
 
 | Auth-Repository
 | `RestAuthRepository` und `MockedAuthRepository` werfen nur sechs Fehlertypen, alle abgeleitet von der gemeinsamen Basisklasse `AuthError`: `InvalidCredentialsError`, `RegistrationValidationError`, `RegistrationLoginFailedError`, `SessionExpiredError`, `NetworkError`, `UnexpectedAuthError`. Aufrufer erkennen jeden Auth-Fehler mit `instanceof AuthError`. Die View bekommt Fehlertypen und Codes (z. B. `USERNAME_TAKEN`), nie Backend-Texte. Die Codes werden im Frontend aus den englischen Backend-Texten abgeleitet (exakter Treffer nach `trim()`); ein unbekannter Text oder ein unbekanntes Feld macht die ganze Antwort zu `UnexpectedAuthError`. Der `cause` enthält keine Passwörter, Tokens oder Antwort-Bodys; bei typia-Fehlern nur Pfad und erwarteten Typ
+
+| Login
+| `useLogin` übersetzt die Fehlertypen des `AuthRepository` in feste deutsche Texte (`feature/login/messages.ts`); `NetworkError` und `UnexpectedAuthError` erhalten jeweils eine allgemeine Meldung. Eine abgelehnte Anmeldung nennt nicht, ob Login oder Passwort falsch war. 401 auf der Abo-API führt zum bestehenden Fehlerzustand der Abo-Übersicht, ohne Redirect und ohne Refresh
 
 | Composables
 | Fangen Service-Fehler ab und schreiben die Meldung in `submitError` (reaktive Ref); die View zeigt diese an
@@ -675,7 +710,7 @@ Ist der Refresh-Token ungültig oder abgelaufen, antwortet das Backend mit `401`
 | Aspekt | Konvention
 
 | URL-Struktur
-| Ressourcenorientiert im Plural unter `/api/`: `/api/abos/`, `/api/categories/`, `/api/providers/`; Auth-Endpunkte unter `/api/auth/`
+| Ressourcenorientiert im Plural unter `/api/`: `/api/subscriptions/`, `/api/categories/`, `/api/providers/`; Auth-Endpunkte unter `/api/auth/`
 
 | HTTP-Methoden
 | GET = lesen; POST = erstellen; PUT = vollständig ersetzen; PATCH = teilweise ändern; DELETE = löschen
