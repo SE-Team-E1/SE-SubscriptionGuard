@@ -1,0 +1,34 @@
+= Gestaltungsaspekte
+
+Vergleich für den Fachaustausch. Variante A folgt `class_diagram_occ_repo_simpl.plantuml` und `sequence_diagram_occ_repo.plantuml`. Variante B ist die nicht ausmodellierte Alternative: Cache und Schreibsperre. Der Listenfluss aus `sequence_diagram.plantuml` gilt für beide, solange ein Netz da ist.
+
+[cols="1,2,2", options="header"]
+|===
+| Aspekt
+| Variante A, Repo-OCC
+| Variante B, Cache
+
+| Zustand und Invarianten
+| Entitäten bleiben ohne Sync-Felder. `SyncDto` kapselt `payload`, `version` und `status` (`local`, `synced`, `conflict`). Client vergibt die `id`, Server die `version`. Lokales Speichern lässt `version` unverändert. `synced` erst nach erfolgreichem Upsert. Bei `409` bleibt `conflict`, bis `merge()` den Serverstand übernimmt. Downsync überschreibt `status local` nicht.
+| Ein verbindlicher Stand auf dem Server. Der Cache ist eine ablaufende Kopie. Ohne Netz keine Mutation. Veraltete Anzeige ist erlaubt, solange sie als veraltet gekennzeichnet ist.
+
+| Verhalten und Verantwortlichkeiten
+| `SubscriptionService` ruft nur `findAll`, `insert` und `update` mit `RestDTO` auf. `SyncRepository` wrappt nach `SyncDto`, speichert in IndexedDB, upsertet bei Netz und pulled danach Updates. Reihenfolge: Kategorie, Provider, Abo. Backend antwortet mit Objekt und neuer `version` oder `409` plus Serverstand. `RestRepository` bleibt die Alternative ohne Sync.
+| Schreiben geht nur bei Netz direkt ans Backend. Offline bleibt die Liste lesbar, Anlegen und Ändern sind gesperrt. Weder `SyncRepository` noch `SyncDto`.
+
+| Abhängigkeit und Kopplung
+| `SubscriptionService` hängt nur am `Repository`. `SyncRepository` koppelt IndexedDB und Backend über Client-UUID, `version` und `merge()`. Die drei Entitäten sind über die Sync-Reihenfolge gekoppelt. `SyncDto` bleibt hinter der Repository-Grenze.
+| Nur die REST-Implementierung aus dem Ist-Klassendiagramm. Zusätzlich gekoppelt Cache-Dauer im Repo und Netzstatus in fachlichen Services (ListSubscriptionService, AddSubscriptionService). Keine `version`.
+
+| Grenzen und Kohäsion
+| `SubscriptionService` bleibt die Anzeige: DTOs zur Entität zusammensetzen, ohne Sync. Das `Repository` bleibt die CRUD-Grenze mit `RestDTO`. `SyncRepository` bündelt IndexedDB, Upsert, Downsync und `merge()` hinter dieser Grenze; kohäsiv als Datenkonsistenz, nicht als Fachregel. `SyncDto` liegt bei den DTOs, nicht in den Entitäten. `RestRepository` bleibt eine eigene Klasse nur für HTTP.
+| Die Klassengrenzen bleiben die des Ist-Zustands. Cache gehört ins Repository (Antworten halten). Die Schreibsperre gehört in die Fachservices (`ListSubscriptionService`, `AddSubscriptionService`). Kein `SyncRepository`, kein `SyncDto`. Wird beides in `RestRepository` gesteckt, vermischt die Klasse HTTP/Cache und UI-Regel.
+
+| Änderung und Variabilität
+| Austauschbar ist die Repository-Implementierung: nur remote, nur lokal oder `SyncRepository`.
+| Austauschbar sind Cache-Dauer und der Umfang der Schreibsperre.
+
+| Repräsentation und Verarbeitung
+| Nach außen `RestDTO`. Innen `SyncDto` mit Payload, Version und Status. Verarbeitung: wrappen, lokal speichern, `upsert`, danach `downsync` und `merge`. Dieselbe Folge sofort online, wieder online und beim Listenladen.
+| Server-DTO plus Zeitpunkt der letzten Antwort. Lesen aus dem Cache, Schreiben nur als direkter REST-Aufruf.
+|===

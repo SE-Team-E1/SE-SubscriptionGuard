@@ -4,7 +4,7 @@ from decimal import Decimal
 
 
 class PriceSerializer(serializers.Serializer):
-  amount = serializers.DecimalField(max_digits=10, decimal_places=2)
+  amount = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False)
   currency = serializers.ChoiceField(choices=["EUR", "USD", "GBP"])
 
 

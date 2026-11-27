@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
-import DefaultAppBar from '@/feature/DefaultAppBar.vue'
-
-const route = useRoute()
 </script>
 
 <template>
-  <DefaultAppBar :title="route.name?.toString() ?? 'SubscriptionGuard'" />
   <div class="placeholder">
     <p>Diese Seite ist noch nicht implementiert.</p>
   </div>

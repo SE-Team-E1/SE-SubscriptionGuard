@@ -1,0 +1,20 @@
+services:
+  web:
+    image: subscriptionguard-backend:dev
+    build: .
+    environment:
+      USE_POSTGRESQL: "true"
+      DB_HOST: db
+      DB_PORT: "5432"
+      POSTGRES_DB: subscriptionguard
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: local-dev-password
+  db:
+    environment:
+      POSTGRES_DB: subscriptionguard
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: local-dev-password
+  pgadmin:
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@subscriptionguard.dev
+      PGADMIN_DEFAULT_PASSWORD: local-dev-password

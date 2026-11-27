@@ -1,4 +1,3 @@
-// import {type Category, Provider, Subscription} from "@/domain/subscriptionModel.ts";
 import type { RestCategoryDTO } from "./dto/categoryDto";
 import type { RestProviderDTO } from "./dto/providerDto";
 import type { RestSubscriptionDTO } from "./dto/subscriptionDto";
