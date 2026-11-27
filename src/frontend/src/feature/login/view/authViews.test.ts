@@ -15,7 +15,7 @@ type Mounted = Awaited<ReturnType<typeof mountAuthViews>>
 
 const PASSWORD = 'PASSWORD-MARKER'
 
-// Behaviour that the auth views share; each test runs once per view.
+// Behaviour that login and register share; each test runs once per view.
 const VIEWS = [
   {
     path: '/login',
@@ -24,6 +24,19 @@ const VIEWS = [
     answer: (repository: FakeAuthRepository, outcome: () => Promise<AuthResult>) =>
       repository.login.mockImplementation(outcome),
     calls: (repository: FakeAuthRepository) => repository.login.mock.calls.length,
+  },
+  {
+    path: '/register',
+    button: 'Konto erstellen',
+    fields: {
+      Benutzername: 'lena',
+      'E-Mail': 'lena@example.com',
+      Passwort: PASSWORD,
+      'Passwort wiederholen': PASSWORD,
+    },
+    answer: (repository: FakeAuthRepository, outcome: () => Promise<AuthResult>) =>
+      repository.register.mockImplementation(outcome),
+    calls: (repository: FakeAuthRepository) => repository.register.mock.calls.length,
   },
 ]
 
@@ -36,7 +49,7 @@ function authResult(): AuthResult {
   }
 }
 
-describe('auth views', () => {
+describe('login and register views', () => {
   let repository: FakeAuthRepository
 
   beforeEach(() => {
@@ -94,7 +107,7 @@ describe('auth views', () => {
   })
 
   test('shows a hint at each empty required field and sends no request', async () => {
-    // Arrange: the views start with empty fields
+    // Arrange: both views start with empty fields
 
     // Act
     const observed = []
